@@ -1,0 +1,1773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aiorch.ai — Wake Up to a PR You Can Actually Merge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@300;400;500;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050507;
+    --surface: #0c0c10;
+    --surface2: #121218;
+    --border: #1e1e28;
+    --border2: #2a2a38;
+    --green: #00ff87;
+    --green-dim: rgba(0,255,135,0.12);
+    --green-glow: rgba(0,255,135,0.35);
+    --orange: #ff4d1c;
+    --orange-dim: rgba(255,77,28,0.1);
+    --text: #efefef;
+    --muted: #5a5a70;
+    --muted2: #3a3a50;
+    --white: #ffffff;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  /* ── GRID BACKGROUND ── */
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 20px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(5,5,7,0.95) 0%, transparent 100%);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(30,30,40,0.5);
+  }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 3px;
+    color: var(--white);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav-logo .dot {
+    width: 8px;
+    height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--green-glow);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--text); }
+
+  .nav-cta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    padding: 10px 24px;
+    background: var(--green);
+    color: #000;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 700;
+    transition: all 0.2s;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  }
+
+  .nav-cta:hover {
+    background: #fff;
+    box-shadow: 0 0 30px var(--green-glow);
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 140px 48px 80px;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .hero-glow {
+    position: absolute;
+    top: 20%;
+    left: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0,255,135,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-glow-2 {
+    position: absolute;
+    bottom: 10%;
+    right: -5%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(255,77,28,0.04) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: fadeUp 0.8s ease forwards;
+    opacity: 0;
+  }
+
+  .hero-tag::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 1px;
+    background: var(--green);
+  }
+
+  .hero-headline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 10vw, 160px);
+    line-height: 0.92;
+    letter-spacing: 2px;
+    color: var(--white);
+    max-width: 900px;
+    animation: fadeUp 0.8s ease 0.15s forwards;
+    opacity: 0;
+  }
+
+  .hero-headline .accent {
+    color: var(--green);
+    text-shadow: 0 0 60px var(--green-glow);
+  }
+
+  .hero-headline .strike {
+    position: relative;
+    color: var(--muted2);
+  }
+
+  .hero-headline .strike::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 100%;
+    height: 3px;
+    background: var(--orange);
+    transform: translateY(-50%);
+  }
+
+  .hero-sub {
+    max-width: 560px;
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--muted);
+    margin-top: 36px;
+    line-height: 1.7;
+    animation: fadeUp 0.8s ease 0.3s forwards;
+    opacity: 0;
+  }
+
+  .hero-sub strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 48px;
+    animation: fadeUp 0.8s ease 0.45s forwards;
+    opacity: 0;
+  }
+
+  .btn-primary {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    padding: 16px 40px;
+    background: var(--green);
+    color: #000;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.25s;
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    position: relative;
+  }
+
+  .btn-primary:hover {
+    background: #fff;
+    box-shadow: 0 0 50px var(--green-glow), 0 0 100px rgba(0,255,135,0.15);
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
+  }
+
+  .btn-secondary:hover { color: var(--text); }
+
+  .hero-stats {
+    display: flex;
+    gap: 48px;
+    margin-top: 80px;
+    padding-top: 48px;
+    border-top: 1px solid var(--border);
+    animation: fadeUp 0.8s ease 0.6s forwards;
+    opacity: 0;
+  }
+
+  .stat-item { }
+
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 48px;
+    letter-spacing: 2px;
+    color: var(--white);
+    line-height: 1;
+  }
+
+  .stat-num span { color: var(--green); }
+
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 6px;
+  }
+
+  /* ── TERMINAL ── */
+  .terminal-section {
+    position: relative;
+    z-index: 1;
+    padding: 0 48px 120px;
+  }
+
+  .terminal-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 2px;
+    overflow: hidden;
+    box-shadow: 0 40px 120px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,255,135,0.05);
+  }
+
+  .terminal-header {
+    background: var(--surface2);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .term-dots { display: flex; gap: 7px; }
+
+  .term-dot {
+    width: 11px; height: 11px;
+    border-radius: 50%;
+  }
+
+  .term-dot:nth-child(1) { background: #ff5f57; }
+  .term-dot:nth-child(2) { background: #febc2e; }
+  .term-dot:nth-child(3) { background: #28c840; }
+
+  .term-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin-left: 8px;
+    letter-spacing: 1px;
+  }
+
+  .terminal-body {
+    padding: 28px 28px 32px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.9;
+    min-height: 340px;
+  }
+
+  .term-line { display: flex; align-items: flex-start; gap: 10px; }
+
+  .term-prompt { color: var(--green); flex-shrink: 0; }
+  .term-cmd { color: var(--text); }
+  .term-comment { color: var(--muted); }
+
+  .term-output { padding-left: 0; }
+  .term-output .agent { color: #60a5fa; }
+  .term-output .success { color: var(--green); }
+  .term-output .warn { color: #fbbf24; }
+  .term-output .pr { color: var(--orange); }
+  .term-output .dim { color: var(--muted); }
+
+  .term-cursor {
+    display: inline-block;
+    width: 8px;
+    height: 14px;
+    background: var(--green);
+    margin-left: 4px;
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--green);
+  }
+
+  /* ── HOW IT WORKS ── */
+  .how-section {
+    position: relative;
+    z-index: 1;
+    padding: 120px 48px;
+    border-top: 1px solid var(--border);
+  }
+
+  .how-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .how-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: end;
+    margin-bottom: 80px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 5vw, 80px);
+    line-height: 0.95;
+    letter-spacing: 2px;
+    color: var(--white);
+  }
+
+  .section-title .accent { color: var(--green); }
+
+  .how-desc {
+    font-size: 17px;
+    color: var(--muted);
+    line-height: 1.75;
+    align-self: end;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    position: relative;
+  }
+
+  .steps::before {
+    content: '';
+    position: absolute;
+    top: 28px;
+    left: 10%;
+    right: 10%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border2) 20%, var(--border2) 80%, transparent);
+  }
+
+  .step {
+    padding: 0 20px;
+    position: relative;
+  }
+
+  .step-num {
+    width: 56px;
+    height: 56px;
+    border: 1px solid var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    background: var(--bg);
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s;
+    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+  }
+
+  .step:hover .step-num {
+    border-color: var(--green);
+    color: var(--green);
+    box-shadow: 0 0 20px var(--green-dim);
+  }
+
+  .step-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 10px;
+    letter-spacing: 0.3px;
+  }
+
+  .step-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  /* ── BYOK SECTION ── */
+  .byok-section {
+    position: relative;
+    z-index: 1;
+    padding: 120px 48px;
+    border-top: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .byok-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 100px;
+    align-items: center;
+  }
+
+  .byok-content { }
+
+  .byok-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 5vw, 80px);
+    line-height: 0.95;
+    letter-spacing: 2px;
+    color: var(--white);
+    margin-bottom: 28px;
+  }
+
+  .byok-title .accent { color: var(--green); }
+
+  .byok-desc {
+    font-size: 17px;
+    color: var(--muted);
+    line-height: 1.75;
+    margin-bottom: 40px;
+  }
+
+  .byok-points {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    list-style: none;
+  }
+
+  .byok-point {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    font-size: 15px;
+    color: var(--text);
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
+  .byok-point::before {
+    content: '→';
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .byok-visual {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    padding: 32px;
+    clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+  }
+
+  .provider-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .provider-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    transition: border-color 0.2s;
+  }
+
+  .provider-item:hover { border-color: var(--border2); }
+
+  .provider-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .pi-claude { background: rgba(210,130,100,0.15); color: #d28264; }
+  .pi-openai { background: rgba(100,200,130,0.15); color: #64c882; }
+  .pi-gemini { background: rgba(100,150,255,0.15); color: #6496ff; }
+  .pi-ollama { background: rgba(150,100,255,0.15); color: #9664ff; }
+  .pi-azure { background: rgba(0,150,255,0.15); color: #0096ff; }
+
+  .provider-info { flex: 1; }
+
+  .provider-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    letter-spacing: 1px;
+    margin-bottom: 3px;
+  }
+
+  .provider-detail {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .provider-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    border: 1px solid;
+  }
+
+  .ps-ready { color: var(--green); border-color: rgba(0,255,135,0.3); background: var(--green-dim); }
+  .ps-local { color: #9664ff; border-color: rgba(150,100,255,0.3); background: rgba(150,100,255,0.1); }
+
+  .byok-note {
+    margin-top: 24px;
+    padding: 16px 20px;
+    background: var(--green-dim);
+    border: 1px solid rgba(0,255,135,0.2);
+    border-left: 3px solid var(--green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--green);
+    line-height: 1.6;
+  }
+
+  /* ── FEATURES ── */
+  .features-section {
+    position: relative;
+    z-index: 1;
+    padding: 120px 48px;
+    border-top: 1px solid var(--border);
+  }
+
+  .features-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .features-header {
+    margin-bottom: 64px;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+  }
+
+  .feature-card {
+    background: var(--bg);
+    padding: 40px 36px;
+    transition: background 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--green);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  .feature-card:hover { background: var(--surface); }
+  .feature-card:hover::before { transform: scaleX(1); }
+
+  .feature-icon {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .feature-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 12px;
+    letter-spacing: 0.2px;
+  }
+
+  .feature-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  .feature-tag {
+    margin-top: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--green);
+    opacity: 0.7;
+  }
+
+  /* ── PRICING ── */
+  .pricing-section {
+    position: relative;
+    z-index: 1;
+    padding: 120px 48px;
+    border-top: 1px solid var(--border);
+  }
+
+  .pricing-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .pricing-inner .section-label { justify-content: center; }
+  .pricing-inner .section-label::before { display: none; }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 60px;
+  }
+
+  .price-card {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    padding: 44px 40px;
+    text-align: left;
+    position: relative;
+    clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+    transition: all 0.3s;
+  }
+
+  .price-card:hover {
+    border-color: rgba(0,255,135,0.3);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+
+  .price-card.featured {
+    border-color: rgba(0,255,135,0.4);
+    background: linear-gradient(135deg, var(--surface) 0%, rgba(0,255,135,0.04) 100%);
+  }
+
+  .price-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #000;
+    background: var(--green);
+    padding: 4px 12px;
+    display: inline-block;
+    margin-bottom: 28px;
+  }
+
+  .price-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    letter-spacing: 3px;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .price-amount {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 72px;
+    letter-spacing: 2px;
+    color: var(--white);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .price-amount sup {
+    font-size: 28px;
+    vertical-align: super;
+    color: var(--muted);
+  }
+
+  .price-amount .period {
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    color: var(--muted);
+    font-weight: 300;
+    letter-spacing: 0;
+  }
+
+  .price-desc {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 36px;
+    line-height: 1.6;
+  }
+
+  .price-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .price-feature {
+    font-size: 14px;
+    color: var(--text);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-weight: 300;
+  }
+
+  .price-feature::before {
+    content: '✓';
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .price-cta {
+    width: 100%;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 16px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: block;
+    text-align: center;
+  }
+
+  .price-cta:hover {
+    border-color: var(--green);
+    color: var(--green);
+    background: var(--green-dim);
+  }
+
+  .price-cta.primary {
+    background: var(--green);
+    color: #000;
+    border-color: var(--green);
+  }
+
+  .price-cta.primary:hover {
+    background: #fff;
+    border-color: #fff;
+    color: #000;
+    box-shadow: 0 0 40px var(--green-glow);
+  }
+
+  .pricing-note {
+    margin-top: 32px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  /* ── QUOTE ── */
+  .quote-section {
+    position: relative;
+    z-index: 1;
+    padding: 80px 48px;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .quote-section::before {
+    content: '"';
+    position: absolute;
+    top: -40px;
+    left: 40px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 300px;
+    color: var(--border);
+    line-height: 1;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .quote-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .quote-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(32px, 4vw, 56px);
+    letter-spacing: 2px;
+    line-height: 1.1;
+    color: var(--white);
+    margin-bottom: 28px;
+  }
+
+  .quote-text .hl { color: var(--green); }
+
+  .quote-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ── CTA ── */
+  .cta-section {
+    position: relative;
+    z-index: 1;
+    padding: 140px 48px;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .cta-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 800px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(0,255,135,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cta-inner { position: relative; z-index: 1; }
+
+  .cta-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(56px, 7vw, 110px);
+    letter-spacing: 3px;
+    line-height: 0.95;
+    color: var(--white);
+    margin-bottom: 28px;
+  }
+
+  .cta-title .accent { color: var(--green); }
+
+  .cta-sub {
+    font-size: 18px;
+    color: var(--muted);
+    margin-bottom: 52px;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.7;
+  }
+
+  .cta-sub strong { color: var(--text); }
+
+  .cta-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .install-cmd {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--green);
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    padding: 16px 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+
+  .install-cmd:hover {
+    border-color: rgba(0,255,135,0.4);
+    background: var(--green-dim);
+  }
+
+  .install-cmd .copy-icon {
+    color: var(--muted);
+    font-size: 11px;
+    transition: color 0.2s;
+  }
+
+  .install-cmd:hover .copy-icon { color: var(--green); }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 3px;
+    color: var(--muted2);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .footer-links a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--text); }
+
+  .footer-note {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted2);
+    letter-spacing: 1px;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 12px var(--green-glow); }
+    50% { opacity: 0.5; box-shadow: 0 0 6px rgba(0,255,135,0.1); }
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  @keyframes scanline {
+    from { top: -2px; }
+    to { top: 100%; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── MARQUEE ── */
+  .marquee-section {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 0;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+  }
+
+  .marquee-track {
+    display: flex;
+    gap: 60px;
+    animation: marquee 30s linear infinite;
+    white-space: nowrap;
+  }
+
+  .marquee-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted2);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .marquee-item .sep {
+    color: var(--green);
+    opacity: 0.5;
+    font-size: 16px;
+  }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 120px 24px 60px; }
+    .hero-stats { flex-wrap: wrap; gap: 32px; }
+    .how-header { grid-template-columns: 1fr; gap: 24px; }
+    .steps { grid-template-columns: 1fr; gap: 32px; }
+    .steps::before { display: none; }
+    .byok-inner { grid-template-columns: 1fr; gap: 48px; }
+    .features-grid { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .terminal-section, .how-section, .byok-section, .features-section, .pricing-section { padding-left: 24px; padding-right: 24px; }
+    footer { flex-direction: column; gap: 24px; text-align: center; padding: 32px 24px; }
+    .footer-links { flex-wrap: wrap; justify-content: center; }
+    /* New sections responsive */
+    [style*="grid-template-columns:1fr 1fr"] { grid-template-columns: 1fr !important; gap: 40px !important; }
+    [style*="grid-template-columns:repeat(4"] { grid-template-columns: repeat(2,1fr) !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="dot"></div>
+    AIORCH
+  </a>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#docs">Docs</a></li>
+  </ul>
+  <a href="#pricing" class="nav-cta">RUN YOUR FIRST PR →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow-2"></div>
+
+  <div class="hero-tag">
+    Multi-agent code orchestration · BYOK · No token markup
+  </div>
+
+  <h1 class="hero-headline">
+    WAKE UP TO<br>
+    A PR YOU CAN<br>
+    ACTUALLY <span class="accent">MERGE</span>
+  </h1>
+
+  <p class="hero-sub">
+    aiorch runs parallel AI agents on your codebase. They write the code, <strong>review each other's work</strong>, resolve conflicts, and open a GitHub PR — all while you're away. Your keys, your cost, zero middleman.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#pricing" class="btn-primary">
+      RUN YOUR FIRST SESSION
+      <span>→</span>
+    </a>
+    <a href="#demo" class="btn-secondary">
+      <span>▶ Watch 2-min demo</span>
+    </a>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num"><span>5</span>min</div>
+      <div class="stat-label">Install to first session</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num"><span>N</span></div>
+      <div class="stat-label">Parallel agents per session</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num"><span>0</span></div>
+      <div class="stat-label">Token markup — your keys, your cost</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num"><span>1</span>PR</div>
+      <div class="stat-label">Delivered per completed session</div>
+    </div>
+  </div>
+</section>
+
+<!-- TERMINAL -->
+<div class="terminal-section" id="demo">
+  <div style="max-width:900px; margin: 0 auto 20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--muted); display:flex; align-items:center; gap:10px;">
+      <span style="color:var(--green)">▶</span> What actually happens when you run it
+    </div>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted2); letter-spacing:1px;">live session log · real output</div>
+  </div>
+  <div class="terminal-wrap">
+    <div class="terminal-header">
+      <div class="term-dots">
+        <div class="term-dot"></div>
+        <div class="term-dot"></div>
+        <div class="term-dot"></div>
+      </div>
+      <span class="term-title">aiorch · session #2841 · feature/payment-refactor</span>
+    </div>
+    <div class="terminal-body">
+      <div class="term-line">
+        <span class="term-prompt">$</span>
+        <span class="term-cmd">aiorch start "Refactor payment module, add retry logic, write tests"</span>
+      </div>
+      <div style="height:10px"></div>
+      <div class="term-output dim">  ◆ Task decomposed into 4 sub-tasks</div>
+      <div class="term-output dim">  ◆ Creating isolated git worktrees...</div>
+      <div style="height:6px"></div>
+      <div class="term-output"><span class="agent">  [agent-1]</span> <span class="dim">branch: feat/payment-core</span> — Refactoring PaymentService</div>
+      <div class="term-output"><span class="agent">  [agent-2]</span> <span class="dim">branch: feat/payment-retry</span> — Implementing ExponentialBackoff</div>
+      <div class="term-output"><span class="agent">  [agent-3]</span> <span class="dim">branch: feat/payment-tests</span> — Writing unit + integration tests</div>
+      <div class="term-output"><span class="agent">  [agent-4]</span> <span class="dim">branch: feat/payment-docs</span> — Updating API documentation</div>
+      <div style="height:10px"></div>
+      <div class="term-output warn">  ⚡ Review round 1/3 · agent-2 needs revision → sent back</div>
+      <div class="term-output dim">  ⟳ agent-2 · retry attempt · edge case handling improved</div>
+      <div class="term-output success">  ✓ Review round 2/3 · all agents approved</div>
+      <div style="height:10px"></div>
+      <div class="term-output dim">  ◆ Merging branches → integration/payment-refactor</div>
+      <div class="term-output dim">  ◆ Conflict resolved: src/services/payment.ts (line 142)</div>
+      <div class="term-output success">  ✓ Integration tests passed · 38/38</div>
+      <div style="height:10px"></div>
+      <div class="term-output pr">  ⬆ PR created → github.com/yourorg/yourrepo/pull/847</div>
+      <div class="term-output success">  ✓ Session complete · 4 agents · $0.84 (your OpenAI key)</div>
+      <div style="height:6px"></div>
+      <div class="term-line">
+        <span class="term-prompt">$</span>
+        <span class="term-cmd"><span class="term-cursor"></span></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track">
+    <div class="marquee-item">Git worktree isolation <span class="sep">·</span></div>
+    <div class="marquee-item">Parallel agent execution <span class="sep">·</span></div>
+    <div class="marquee-item">Multi-round code review <span class="sep">·</span></div>
+    <div class="marquee-item">Automatic conflict resolution <span class="sep">·</span></div>
+    <div class="marquee-item">GitHub PR delivery <span class="sep">·</span></div>
+    <div class="marquee-item">Bring your own API keys <span class="sep">·</span></div>
+    <div class="marquee-item">Claude · OpenAI · Gemini · Ollama <span class="sep">·</span></div>
+    <div class="marquee-item">Real-time cost tracking <span class="sep">·</span></div>
+    <div class="marquee-item">Zero token markup <span class="sep">·</span></div>
+    <div class="marquee-item">Git worktree isolation <span class="sep">·</span></div>
+    <div class="marquee-item">Parallel agent execution <span class="sep">·</span></div>
+    <div class="marquee-item">Multi-round code review <span class="sep">·</span></div>
+    <div class="marquee-item">Automatic conflict resolution <span class="sep">·</span></div>
+    <div class="marquee-item">GitHub PR delivery <span class="sep">·</span></div>
+    <div class="marquee-item">Bring your own API keys <span class="sep">·</span></div>
+    <div class="marquee-item">Claude · OpenAI · Gemini · Ollama <span class="sep">·</span></div>
+    <div class="marquee-item">Real-time cost tracking <span class="sep">·</span></div>
+    <div class="marquee-item">Zero token markup <span class="sep">·</span></div>
+  </div>
+</div>
+
+<!-- DIFFERENTIATOR -->
+<section style="position:relative; z-index:1; padding: 100px 48px; border-top: 1px solid var(--border);">
+  <div style="max-width:1100px; margin:0 auto;">
+    <div class="reveal" style="display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center;">
+      <div>
+        <div class="section-label">The key difference</div>
+        <h2 style="font-family:'Bebas Neue',sans-serif; font-size:clamp(44px,5vw,76px); line-height:0.95; letter-spacing:2px; color:var(--white); margin-bottom:28px;">
+          MOST AI TOOLS<br>GIVE YOU <span style="color:var(--muted2); position:relative;">CODE<span style="position:absolute;left:0;top:50%;width:100%;height:3px;background:var(--orange);transform:translateY(-50%);"></span></span>
+        </h2>
+        <h2 style="font-family:'Bebas Neue',sans-serif; font-size:clamp(44px,5vw,76px); line-height:0.95; letter-spacing:2px; color:var(--white);">
+          WE GIVE YOU A<br><span style="color:var(--green);">REVIEWED PR</span>
+        </h2>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        <div style="background:var(--surface); border:1px solid var(--border2); padding:24px 28px; border-left: 3px solid var(--orange);">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--orange); margin-bottom:10px;">Every other tool</div>
+          <div style="font-size:15px; color:var(--muted); line-height:1.6;">Generates code. Dumps it on you. You still need to read it, test it, review it, fix it, and open the PR yourself.</div>
+        </div>
+        <div style="background:var(--surface); border:1px solid rgba(0,255,135,0.3); padding:24px 28px; border-left: 3px solid var(--green); box-shadow: 0 0 40px rgba(0,255,135,0.04);">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--green); margin-bottom:10px;">aiorch</div>
+          <div style="font-size:15px; color:var(--text); line-height:1.6;">Agents write code, then <strong>a separate reviewer agent critiques it</strong>, sends it back, forces revisions, and only merges when it passes. PR lands on GitHub. You just review and click merge.</div>
+        </div>
+        <div style="background:var(--green-dim); border:1px solid rgba(0,255,135,0.15); padding:16px 20px;">
+          <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--green); letter-spacing:0.5px;">
+            The code was already reviewed before you saw it. That's the entire product.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT YOU GET -->
+<section style="position:relative; z-index:1; padding: 100px 48px; border-top: 1px solid var(--border); background: linear-gradient(to bottom, var(--surface) 0%, transparent 100%);">
+  <div style="max-width:1100px; margin:0 auto;">
+    <div class="reveal" style="text-align:center; margin-bottom:60px;">
+      <div class="section-label" style="justify-content:center;"><span style="display:none"></span>What you get</div>
+      <h2 style="font-family:'Bebas Neue',sans-serif; font-size:clamp(44px,5vw,76px); line-height:0.95; letter-spacing:2px; color:var(--white);">
+        NOT EFFORT.<br><span style="color:var(--green);">OUTCOMES.</span>
+      </h2>
+    </div>
+    <div class="reveal" style="display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--border);">
+      <div style="background:var(--bg); padding:36px 28px; text-align:center;">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:52px; color:var(--green); line-height:1; margin-bottom:12px;">PR</div>
+        <div style="font-size:15px; font-weight:600; color:var(--white); margin-bottom:8px;">Ready to merge</div>
+        <div style="font-size:13px; color:var(--muted); line-height:1.6;">A real GitHub PR with summary, diff stats, and agent breakdown. Not a code dump.</div>
+      </div>
+      <div style="background:var(--bg); padding:36px 28px; text-align:center;">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:52px; color:var(--green); line-height:1; margin-bottom:12px;">✓</div>
+        <div style="font-size:15px; font-weight:600; color:var(--white); margin-bottom:8px;">Already reviewed</div>
+        <div style="font-size:13px; color:var(--muted); line-height:1.6;">Code went through multiple rounds of AI review before it ever reached you.</div>
+      </div>
+      <div style="background:var(--bg); padding:36px 28px; text-align:center;">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:52px; color:var(--green); line-height:1; margin-bottom:12px;">⟳</div>
+        <div style="font-size:15px; font-weight:600; color:var(--white); margin-bottom:8px;">Conflicts resolved</div>
+        <div style="font-size:13px; color:var(--muted); line-height:1.6;">Merge conflicts between parallel agents are automatically detected and resolved.</div>
+      </div>
+      <div style="background:var(--bg); padding:36px 28px; text-align:center;">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:52px; color:var(--green); line-height:1; margin-bottom:12px;">$</div>
+        <div style="font-size:15px; font-weight:600; color:var(--white); margin-bottom:8px;">Cost you control</div>
+        <div style="font-size:13px; color:var(--muted); line-height:1.6;">Exact cost per session, per agent. Your keys, your rate. We take zero cut.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VIDEO DEMO -->
+<section id="video" style="position:relative; z-index:1; padding: 80px 48px; border-top:1px solid var(--border);">
+  <div style="max-width:900px; margin:0 auto;">
+    <div class="reveal" style="text-align:center; margin-bottom:40px;">
+      <div class="section-label" style="justify-content:center;">Demo</div>
+      <h2 style="font-family:'Bebas Neue',sans-serif; font-size:clamp(36px,4vw,60px); letter-spacing:2px; color:var(--white);">
+        SEE IT <span style="color:var(--green);">LIVE</span>
+      </h2>
+      <p style="font-size:16px; color:var(--muted); margin-top:16px;">Watch aiorch take a real task, deploy agents, review the output, and open a GitHub PR — in 2 minutes.</p>
+    </div>
+    <div class="reveal" style="position:relative; background:var(--surface); border:1px solid var(--border2); aspect-ratio:16/9; display:flex; align-items:center; justify-content:center; cursor:pointer; overflow:hidden; clip-path:polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));"
+         onclick="this.innerHTML='<iframe width=\'100%\' height=\'100%\' src=\'https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1\' frameborder=\'0\' allow=\'autoplay\' style=\'position:absolute;inset:0;\'></iframe>'; this.style.padding='0';">
+      <div style="position:absolute; inset:0; background: linear-gradient(135deg, rgba(0,255,135,0.03) 0%, transparent 60%);"></div>
+      <div style="position:absolute; top:20px; left:24px; font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:2px; color:var(--muted); text-transform:uppercase;">aiorch · demo session</div>
+      <!-- fake terminal lines for background -->
+      <div style="position:absolute; inset:0; padding:52px 24px 24px; overflow:hidden; opacity:0.25;">
+        <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--green); line-height:2.2;">
+          $ aiorch start "Add user authentication..."<br>
+          ◆ Task decomposed into 3 sub-tasks<br>
+          [agent-1] branch: feat/auth-core — Building JWT middleware<br>
+          [agent-2] branch: feat/auth-routes — Creating login endpoints<br>
+          ⚡ Review round 1/2 · agent-1 needs revision<br>
+          ✓ Review round 2/2 · all approved<br>
+          ⬆ PR created → github.com/yourorg/repo/pull/312
+        </div>
+      </div>
+      <div style="position:relative; z-index:2; text-align:center;">
+        <div style="width:72px; height:72px; border-radius:50%; background:var(--green); display:flex; align-items:center; justify-content:center; margin:0 auto 20px; box-shadow: 0 0 60px var(--green-glow); transition:transform 0.2s;">
+          <span style="font-size:26px; margin-left:5px; color:#000;">▶</span>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:2px; text-transform:uppercase; color:var(--text);">Watch Demo · 2 min</div>
+        <div style="font-size:13px; color:var(--muted); margin-top:8px;">Task → Agents → Review → GitHub PR</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REAL PR EXAMPLE -->
+<section style="position:relative; z-index:1; padding:80px 48px; border-top:1px solid var(--border);">
+  <div style="max-width:900px; margin:0 auto;">
+    <div class="reveal" style="text-align:center; margin-bottom:48px;">
+      <div class="section-label" style="justify-content:center;">Proof it works</div>
+      <h2 style="font-family:'Bebas Neue',sans-serif; font-size:clamp(36px,4vw,60px); letter-spacing:2px; color:var(--white);">
+        A REAL PR.<br><span style="color:var(--green);">CREATED BY AIORCH.</span>
+      </h2>
+    </div>
+    <!-- Fake GitHub PR mockup -->
+    <div class="reveal" style="background:var(--surface); border:1px solid var(--border2); border-radius:2px; overflow:hidden; font-family:'JetBrains Mono',monospace;">
+      <!-- PR Header -->
+      <div style="padding:20px 24px; border-bottom:1px solid var(--border); background:var(--surface2);">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+          <span style="background:rgba(34,197,94,0.15); color:#22c55e; border:1px solid rgba(34,197,94,0.3); font-size:11px; letter-spacing:1px; padding:4px 12px;">● OPEN</span>
+          <span style="font-size:15px; color:var(--white); font-family:'Outfit',sans-serif; font-weight:500;">Refactor payment module: retry logic, error handling, full test coverage</span>
+        </div>
+        <div style="font-size:11px; color:var(--muted); letter-spacing:0.5px;">
+          aiorch-bot opened this pull request · <span style="color:var(--green);">4 commits</span> · into <span style="color:#60a5fa;">main</span> from <span style="color:#60a5fa;">integration/payment-refactor</span>
+        </div>
+      </div>
+      <!-- PR Labels -->
+      <div style="padding:14px 24px; border-bottom:1px solid var(--border); display:flex; gap:8px; flex-wrap:wrap;">
+        <span style="font-size:10px; letter-spacing:1px; padding:3px 10px; border:1px solid rgba(0,255,135,0.3); color:var(--green); background:var(--green-dim);">ai-orchestrated</span>
+        <span style="font-size:10px; letter-spacing:1px; padding:3px 10px; border:1px solid var(--border2); color:var(--muted);">4 agents</span>
+        <span style="font-size:10px; letter-spacing:1px; padding:3px 10px; border:1px solid var(--border2); color:var(--muted);">review: 2 rounds</span>
+        <span style="font-size:10px; letter-spacing:1px; padding:3px 10px; border:1px solid var(--border2); color:var(--muted);">cost: $0.84</span>
+        <span style="font-size:10px; letter-spacing:1px; padding:3px 10px; border:1px solid rgba(34,197,94,0.3); color:#22c55e; background:rgba(34,197,94,0.07);">tests: 38/38 ✓</span>
+      </div>
+      <!-- PR Body -->
+      <div style="padding:24px; border-bottom:1px solid var(--border); font-size:13px; color:var(--muted); line-height:1.8; font-family:'Outfit',sans-serif;">
+        <div style="color:var(--text); font-weight:500; margin-bottom:14px;">## Summary</div>
+        <div style="margin-bottom:16px;">This PR was generated by aiorch. Task: <em>"Refactor payment module, add retry logic, write tests"</em></div>
+        <div style="color:var(--text); font-weight:500; margin-bottom:10px;">## Changes</div>
+        <div>✓ &nbsp;PaymentService refactored with clean separation of concerns</div>
+        <div>✓ &nbsp;ExponentialBackoff retry logic with configurable limits</div>
+        <div>✓ &nbsp;38 unit + integration tests (100% coverage on changed files)</div>
+        <div>✓ &nbsp;API documentation updated</div>
+        <div style="margin-top:16px; color:var(--text); font-weight:500; margin-bottom:10px;">## Agents</div>
+        <div style="color:var(--muted);">agent-1 (claude-opus-4) · agent-2 (claude-sonnet-4) · agent-3 (claude-sonnet-4) · agent-4 (openai:gpt-4o) — review model</div>
+        <div style="margin-top:16px; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted2); padding:12px 16px; background:var(--surface2); border:1px solid var(--border);">
+          Session ID: orch-2841 · aiorch.ai/sessions/2841 · Total cost: $0.84 (your API keys)
+        </div>
+      </div>
+      <!-- Diff stats -->
+      <div style="padding:16px 24px; display:flex; align-items:center; gap:24px; font-size:12px; flex-wrap:wrap;">
+        <span style="color:var(--muted);">6 files changed</span>
+        <span style="color:#22c55e;">+284 additions</span>
+        <span style="color:#f87171;">−91 deletions</span>
+        <div style="margin-left:auto;">
+          <a href="#" style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--green); text-decoration:none; border:1px solid rgba(0,255,135,0.3); padding:6px 16px; background:var(--green-dim);">VIEW ON GITHUB →</a>
+        </div>
+      </div>
+    </div>
+    <p style="text-align:center; margin-top:20px; font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted2); letter-spacing:1px;">This is what aiorch delivers. A PR you can actually review and merge.</p>
+  </div>
+</section>
+<section class="how-section" id="how">
+  <div class="how-inner">
+    <div class="how-header reveal">
+      <div>
+        <div class="section-label">How it works</div>
+        <h2 class="section-title">FROM TASK<br>TO <span class="accent">PR</span></h2>
+      </div>
+      <p class="how-desc">
+        aiorch decomposes your task into parallel workstreams, isolates each agent in its own git branch, runs automated review loops, and merges everything into a clean PR — fully unattended.
+      </p>
+    </div>
+
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">01</div>
+        <div class="step-title">Decompose</div>
+        <div class="step-desc">Your task is analyzed and broken into parallel sub-tasks with clear ownership and dependencies.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">02</div>
+        <div class="step-title">Isolate</div>
+        <div class="step-desc">Each agent gets its own git worktree and branch. Zero interference between parallel workstreams.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">03</div>
+        <div class="step-title">Review</div>
+        <div class="step-desc">Multi-round automated code review. Agents negotiate, revise, and resubmit until approved.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">04</div>
+        <div class="step-title">Merge</div>
+        <div class="step-desc">Approved branches merge into an integration branch with automatic conflict resolution.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">05</div>
+        <div class="step-title">PR</div>
+        <div class="step-desc">A detailed GitHub PR appears with summary, cost, file breakdown, and review history.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BYOK -->
+<section class="byok-section">
+  <div class="byok-inner">
+    <div class="byok-content reveal">
+      <div class="section-label">Your keys. Your cost.</div>
+      <h2 class="byok-title">ZERO<br><span class="accent">MIDDLEMAN</span></h2>
+      <p class="byok-desc">
+        aiorch never touches your API spend. Plug in your existing keys — Anthropic, OpenAI, Azure, or run fully local with Ollama. You pay models directly at your negotiated rate.
+      </p>
+      <ul class="byok-points">
+        <li class="byok-point">Enterprise contracts with Anthropic or Azure OpenAI? They work out of the box.</li>
+        <li class="byok-point">API keys encrypted locally. Never transmitted to aiorch servers.</li>
+        <li class="byok-point">Per-role model selection — different models for agents, planning, and review.</li>
+        <li class="byok-point">Exact cost tracking per agent per session. No surprises.</li>
+      </ul>
+    </div>
+
+    <div class="byok-visual reveal">
+      <div class="provider-list">
+        <div class="provider-item">
+          <div class="provider-icon pi-claude">ANT</div>
+          <div class="provider-info">
+            <div class="provider-name">Anthropic Claude</div>
+            <div class="provider-detail">claude-opus-4, claude-sonnet-4</div>
+          </div>
+          <div class="provider-status ps-ready">AGENT ✓</div>
+        </div>
+        <div class="provider-item">
+          <div class="provider-icon pi-openai">OAI</div>
+          <div class="provider-info">
+            <div class="provider-name">OpenAI</div>
+            <div class="provider-detail">gpt-4o, o3, o4-mini</div>
+          </div>
+          <div class="provider-status ps-ready">PLAN / REVIEW</div>
+        </div>
+        <div class="provider-item">
+          <div class="provider-icon pi-gemini">GEM</div>
+          <div class="provider-info">
+            <div class="provider-name">Google Gemini</div>
+            <div class="provider-detail">gemini-2.0-flash, gemini-2.5-pro</div>
+          </div>
+          <div class="provider-status ps-ready">PLAN / REVIEW</div>
+        </div>
+        <div class="provider-item">
+          <div class="provider-icon pi-azure">AZ</div>
+          <div class="provider-info">
+            <div class="provider-name">Azure OpenAI</div>
+            <div class="provider-detail">Your enterprise endpoint</div>
+          </div>
+          <div class="provider-status ps-ready">PLAN / REVIEW</div>
+        </div>
+        <div class="provider-item">
+          <div class="provider-icon pi-ollama">OLL</div>
+          <div class="provider-info">
+            <div class="provider-name">Ollama (Local)</div>
+            <div class="provider-detail">llama3, mistral, codestral</div>
+          </div>
+          <div class="provider-status ps-local">LOCAL · $0</div>
+        </div>
+      </div>
+      <div class="byok-note">
+        🔒 API keys stored encrypted on your machine.<br>
+        They never leave your infrastructure.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section" id="features">
+  <div class="features-inner">
+    <div class="features-header reveal">
+      <div class="section-label">Built for serious codebases</div>
+      <h2 class="section-title">NOT A <span class="accent">DEMO</span>.<br>A PRODUCT.</h2>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <span class="feature-icon">⎇</span>
+        <div class="feature-title">Git Worktree Isolation</div>
+        <div class="feature-desc">Every agent works in its own git worktree. No race conditions. No shared state. Agents can't interfere with each other's work, even when editing the same repository.</div>
+        <div class="feature-tag">Core architecture</div>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">⟳</span>
+        <div class="feature-title">Multi-Round Review Loop</div>
+        <div class="feature-desc">Automated reviewer evaluates each agent's output. Agents negotiate, revise, and resubmit. Work doesn't merge until it passes. Configurable rounds and quality gates.</div>
+        <div class="feature-tag">Quality control</div>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">⬆</span>
+        <div class="feature-title">GitHub PR Delivery</div>
+        <div class="feature-desc">Session complete? A PR appears. Includes summary, files changed, diff stats, agent breakdown, cost, and review history. The screenshot your CTO will ask about.</div>
+        <div class="feature-tag">The magic moment</div>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">⚡</span>
+        <div class="feature-title">Live Cost Tracking</div>
+        <div class="feature-desc">Real-time cost per agent, per session. Exact figures for OpenAI, estimates for Claude CLI, $0 for Ollama. Pre-run cost estimates before you start. No bill shock.</div>
+        <div class="feature-tag">Financial transparency</div>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">⊕</span>
+        <div class="feature-title">Pipeline Orchestration</div>
+        <div class="feature-desc">Chain sessions into multi-phase pipelines. Sequential and parallel execution. Complex workflows that span planning, implementation, testing, and documentation — automated end to end.</div>
+        <div class="feature-tag">Advanced workflows</div>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">◎</span>
+        <div class="feature-title">Audit Trail</div>
+        <div class="feature-desc">Every event logged with typed audit records. State machine with atomic writes and file locks. Every decision traceable. Designed for production, not just demos.</div>
+        <div class="feature-tag">Production grade</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<section class="quote-section">
+  <div class="quote-inner reveal">
+    <div class="quote-text">
+      THE PR IS <span class="hl">WAITING</span> WHEN<br>YOU COME BACK FROM LUNCH
+    </div>
+    <div class="quote-meta">That's the moment developers decide it's worth it</div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="pricing-inner">
+    <div class="section-label">Pricing</div>
+    <h2 class="section-title reveal">SIMPLE.<br><span class="accent">HONEST.</span></h2>
+
+    <div class="pricing-grid reveal">
+      <div class="price-card">
+        <div class="price-name">Developer</div>
+        <div class="price-amount"><sup>$</sup>49<span class="period">/mo</span></div>
+        <div class="price-desc">For solo developers and indie founders who want to ship faster without hiring.</div>
+        <ul class="price-features">
+          <li class="price-feature">Unlimited sessions</li>
+          <li class="price-feature">Up to 8 parallel agents per session</li>
+          <li class="price-feature">GitHub PR integration</li>
+          <li class="price-feature">All LLM providers (BYOK)</li>
+          <li class="price-feature">Real-time cost tracking</li>
+          <li class="price-feature">14-day free trial</li>
+        </ul>
+        <a href="#" class="price-cta">START FREE TRIAL — 14 DAYS</a>
+      </div>
+
+      <div class="price-card featured">
+        <div class="price-badge">MOST POPULAR</div>
+        <div class="price-name">Team</div>
+        <div class="price-amount"><sup>$</sup>99<span class="period">/mo</span></div>
+        <div class="price-desc">For technical founders and small engineering teams who need to multiply output.</div>
+        <ul class="price-features">
+          <li class="price-feature">Everything in Developer</li>
+          <li class="price-feature">Unlimited parallel agents</li>
+          <li class="price-feature">Pipeline orchestration (multi-phase)</li>
+          <li class="price-feature">Advanced review hooks + quality gates</li>
+          <li class="price-feature">Secret scanning + security audit</li>
+          <li class="price-feature">Priority support</li>
+        </ul>
+        <a href="#" class="price-cta primary">RUN YOUR FIRST PR FREE →</a>
+      </div>
+    </div>
+
+    <p class="pricing-note reveal">
+      You pay aiorch for the workflow engine. You pay LLMs directly at your own rate. Zero markup. Always.
+    </p>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-glow"></div>
+  <div class="cta-inner reveal">
+    <h2 class="cta-title">START YOUR<br><span class="accent">FIRST PR</span></h2>
+    <p class="cta-sub">
+      Install in 5 minutes. First PR in 15.<br>
+      <strong>Your keys. Your code. Zero middleman.</strong>
+    </p>
+    <div class="cta-actions">
+      <a href="#pricing" class="btn-primary" style="font-size:14px; padding: 18px 48px;">
+        RUN YOUR FIRST SESSION →
+      </a>
+      <div class="install-cmd" onclick="copyInstall(this)">
+        <span>curl -fsSL aiorch.ai/install.sh | bash</span>
+        <span class="copy-icon" id="copy-label">⎘ copy</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">AIORCH.AI</div>
+  <ul class="footer-links">
+    <li><a href="#">Documentation</a></li>
+    <li><a href="#">GitHub</a></li>
+    <li><a href="#">Changelog</a></li>
+    <li><a href="#">Status</a></li>
+    <li><a href="#">Privacy</a></li>
+  </ul>
+  <div class="footer-note">© 2025 AIORCH.AI · BYOK · MIT</div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Stagger step reveals
+  document.querySelectorAll('.step.reveal').forEach((el, i) => {
+    el.style.transitionDelay = `${i * 80}ms`;
+  });
+
+  // Copy install command
+  function copyInstall(el) {
+    const text = 'curl -fsSL https://aiorch.ai/install.sh | bash';
+    navigator.clipboard.writeText(text).then(() => {
+      const label = document.getElementById('copy-label');
+      label.textContent = '✓ copied';
+      label.style.color = 'var(--green)';
+      setTimeout(() => {
+        label.textContent = '⎘ copy';
+        label.style.color = '';
+      }, 2000);
+    });
+  }
+
+  // Nav scroll effect
+  const nav = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 80) {
+      nav.style.borderBottomColor = 'rgba(30,30,40,0.8)';
+      nav.style.background = 'rgba(5,5,7,0.97)';
+    } else {
+      nav.style.borderBottomColor = 'rgba(30,30,40,0.5)';
+      nav.style.background = 'linear-gradient(to bottom, rgba(5,5,7,0.95) 0%, transparent 100%)';
+    }
+  });
+</script>
+</body>
+</html>
