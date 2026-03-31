@@ -1,0 +1,98 @@
+Orchestrator Commercial License
+
+Copyright (c) 2026 aiorch.ai. All rights reserved.
+
+This software is proprietary and confidential. Unauthorized copying, modification,
+distribution, or use of this software, via any medium, is strictly prohibited.
+
+LICENSE GRANT
+
+Subject to the terms of this agreement and payment of applicable fees, aiorch.ai
+grants you a non-exclusive, non-transferable, revocable license to:
+
+  1. Install and use one copy of the Software per licensed seat
+  2. Run up to the number of concurrent instances specified by your plan
+  3. Use the Software for your internal business purposes
+
+RESTRICTIONS
+
+You may NOT:
+
+  1. Copy, modify, adapt, translate, or create derivative works of the Software
+  2. Reverse engineer, decompile, disassemble, or attempt to derive the source
+     code of the Software
+  3. Redistribute, sublicense, rent, lease, or lend the Software to any third party
+  4. Remove or alter any proprietary notices, labels, or marks on the Software
+  5. Use the Software to build a competing product or service
+  6. Share license keys with unauthorized users
+  7. Circumvent or disable any license validation, usage tracking, or security
+     features of the Software
+
+TRIAL PERIOD
+
+The Software includes a 14-day trial period. During the trial:
+
+  - Full functionality is available
+  - No payment or credit card is required
+  - After the trial expires, new session creation is disabled
+  - Existing session data remains accessible in read-only mode
+
+API KEYS AND THIRD-PARTY SERVICES
+
+The Software facilitates connections to third-party AI model providers (Anthropic,
+OpenAI, and others). You are solely responsible for:
+
+  1. Obtaining and maintaining your own API keys for these services
+  2. Setting appropriate usage limits on your provider accounts
+  3. All costs incurred through your use of third-party APIs
+  4. Compliance with the terms of service of each provider
+
+SECURITY AND DATA
+
+  - API keys are stored encrypted on YOUR server
+  - Keys are transmitted only to the respective API provider for model inference
+  - The Software does not transmit your code, API keys, or configuration to
+    aiorch.ai or any third party, except as required for license validation
+  - License validation transmits only: license key, machine identifier, and
+    software version
+
+DISCLAIMER OF LIABILITY
+
+THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, AIORCH.AI SHALL NOT BE LIABLE FOR:
+
+  1. Any unauthorized access to or use of your API keys
+  2. Any costs incurred through third-party API usage
+  3. Any loss of data, revenue, or business opportunity
+  4. Any security breaches resulting from server misconfiguration
+  5. Any indirect, incidental, special, consequential, or punitive damages
+
+YOU ARE RESPONSIBLE FOR:
+
+  - Securing access to the server running the Software
+  - Setting usage limits on your API provider accounts
+  - Maintaining backups of your data
+  - Keeping your master password and license key secure
+  - Configuring network security (firewalls, HTTPS) for your deployment
+
+TERMINATION
+
+This license is effective until terminated. It terminates automatically if:
+
+  1. You fail to pay applicable fees
+  2. You breach any term of this agreement
+  3. Your license key expires and is not renewed
+
+Upon termination, you must destroy all copies of the Software.
+
+GOVERNING LAW
+
+This agreement is governed by the laws of the jurisdiction in which aiorch.ai
+is incorporated, without regard to conflict of law principles.
+
+CONTACT
+
+For licensing inquiries: license@aiorch.ai
+For support: support@aiorch.ai
+Website: https://aiorch.ai
