@@ -102,14 +102,16 @@ echo ""
 echo "Pulling AIORCH image..."
 docker pull "${REGISTRY}:${IMAGE_TAG}"
 
-# --- Generate session secret ---
-SESSION_SECRET=""
+# --- Generate secrets ---
 if command -v python3 &>/dev/null; then
     SESSION_SECRET=$(python3 -c "import secrets; print(secrets.token_hex(32))")
+    API_KEY=$(python3 -c "import secrets; print(secrets.token_urlsafe(48))")
 elif command -v openssl &>/dev/null; then
     SESSION_SECRET=$(openssl rand -hex 32)
+    API_KEY=$(openssl rand -base64 48 | tr -d '=/+' | head -c 48)
 else
     SESSION_SECRET=$(head -c 32 /dev/urandom | xxd -p | tr -d '\n')
+    API_KEY=$(head -c 48 /dev/urandom | base64 | tr -d '=/+' | head -c 48)
 fi
 
 # --- Generate .env ---
@@ -122,8 +124,8 @@ ORCH_HOST=0.0.0.0
 ORCH_PORT=${PORT}
 ORCH_LOG_LEVEL=INFO
 
-# Authentication (empty = no auth)
-ORCH_API_KEY=
+# Authentication — required for API access (auto-generated)
+ORCH_API_KEY=${API_KEY}
 
 # Paths (inside container)
 ORCH_BASE_DIR=/opt/aiorch
@@ -160,9 +162,10 @@ ORCH_PIPELINE_POLL_INTERVAL=20
 ORCH_AUTO_START_POLL_INTERVAL=30
 ORCH_ZOMBIE_RECOVERY_INTERVAL=60
 
-# Session security
+# Security
 ORCH_SESSION_SECRET=${SESSION_SECRET}
 ORCH_SETTINGS_SESSION_EXPIRY_MINUTES=30
+ORCH_RATE_LIMIT_RPM=120
 
 # Resilience
 ORCH_AGENT_EXECUTION_TIMEOUT=1800
@@ -231,8 +234,12 @@ echo "║   AIORCH is running!                  ║"
 echo "╚═══════════════════════════════════════╝"
 echo ""
 echo "  Dashboard:  http://localhost:${PORT}"
+echo "  API Key:    ${API_KEY}"
 echo "  Config:     ${INSTALL_DIR}/.env"
 echo "  Data:       ${INSTALL_DIR}/data"
+echo ""
+echo "  IMPORTANT: Save your API key above. All API requests require"
+echo "  the X-API-Key header. The key is stored in ${INSTALL_DIR}/.env"
 echo ""
 echo "  Next steps:"
 echo "    1. Open http://localhost:${PORT}/settings"

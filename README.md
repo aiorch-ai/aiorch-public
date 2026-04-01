@@ -79,12 +79,16 @@ Mix models per role: use a cheap model for planning, a strong model for coding, 
 
 ## Security
 
-- API keys managed via master-password-protected settings page
-- All API responses sanitized — 9 regex patterns strip secrets from output
-- Agent subprocesses run with sensitive env vars removed
-- Tool-use loop sandboxed — path validation, command blocking, symlink escape prevention
-- Pre-review hooks scan for hardcoded secrets in code diffs
-- Self-hosted — code and keys stay on your infrastructure
+- **Dashboard authentication** — API key auto-generated on install, required for all API requests
+- **Rate limiting** — 120 requests/minute per IP, configurable via ORCH_RATE_LIMIT_RPM
+- **API keys managed** via master-password-protected settings page
+- **All API responses sanitized** — 9 regex patterns strip secrets from output
+- **Agent subprocesses** run with sensitive env vars removed
+- **Tool-use loop sandboxed** — path validation, command blocking, symlink escape prevention
+- **Pre-review hooks** scan for hardcoded secrets in code diffs
+- **Non-root Docker** — license server runs as unprivileged user
+- **Timing-safe auth** — API key comparison uses constant-time algorithm
+- **Self-hosted** — code and keys stay on your infrastructure
 
 ## Pricing
 
