@@ -1,8 +1,8 @@
-# AIORCH — AI Agents That Check Each Other's Work
+# AIORCH
 
-Multi-agent AI code orchestration platform. Give it a task, get back a reviewed, tested, merged pull request.
+**AI agents write, review, and merge your code. You wake up to a PR you can actually merge.**
 
-Your AI agents don't just write code — they review each other, run quality gates, resolve merge conflicts, and deliver integrated results. You see the PR, not the chaos.
+Give it a task — AIORCH decomposes the work into parallel agents, each in isolated git worktrees. They write code, review each other through adversarial multi-round reviews, pass deterministic quality gates, resolve merge conflicts, and open a GitHub PR. Your keys, your cost, zero middleman.
 
 ## How It Works
 
