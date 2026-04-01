@@ -66,7 +66,7 @@ else
     echo -e "${YELLOW}[INFO] Claude CLI not found — needed for Claude models.${NC}"
     echo ""
     echo "  To install Claude CLI:"
-    echo "    npm install -g @anthropic-ai/claude-code"
+    echo "    curl -fsSL https://claude.ai/install.sh | bash"
     echo "    claude  # Run once to authenticate"
     echo ""
     echo "  After installing, restart AIORCH to pick it up:"
