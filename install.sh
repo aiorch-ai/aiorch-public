@@ -206,15 +206,15 @@ ENVEOF
 echo "[OK] Config: ${INSTALL_DIR}/.env"
 
 # --- Generate docker-compose.yml ---
-VOLUMES="      - ./data:/opt/aiorch/data"
-if [ -n "${CLAUDE_CLI_PATH}" ]; then
-    VOLUMES="${VOLUMES}
-      - ${CLAUDE_CLI_PATH}:/usr/local/bin/claude:ro"
-fi
-if [ -n "${CLAUDE_CONFIG_PATH}" ]; then
-    VOLUMES="${VOLUMES}
-      - ${CLAUDE_CONFIG_PATH}:/root/.claude:ro"
-fi
+# Determine Claude CLI path (detected or common default)
+CLAUDE_BINARY="${CLAUDE_CLI_PATH:-${HOME}/.local/bin/claude}"
+CLAUDE_CONFIG="${HOME}/.claude"
+
+# Always mount Claude CLI paths — if not installed yet, Docker creates empty
+# mount points on Linux. When user installs Claude later and restarts, it works.
+VOLUMES="      - ./data:/opt/aiorch/data
+      - ${CLAUDE_BINARY}:/usr/local/bin/claude:ro
+      - ${CLAUDE_CONFIG}:/root/.claude:ro"
 
 cat > "${INSTALL_DIR}/docker-compose.yml" << DEOF
 services:
