@@ -63,9 +63,16 @@ if command -v claude &>/dev/null; then
         CLAUDE_CONFIG_PATH="${HOME}/.claude"
     fi
 else
-    echo "[INFO] Claude CLI not found — needed for Claude models."
-    echo "  Install: https://docs.anthropic.com/en/docs/claude-code"
-    echo "  OpenAI models work without Claude CLI."
+    echo -e "${YELLOW}[INFO] Claude CLI not found — needed for Claude models.${NC}"
+    echo ""
+    echo "  To install Claude CLI:"
+    echo "    npm install -g @anthropic-ai/claude-code"
+    echo "    claude  # Run once to authenticate"
+    echo ""
+    echo "  After installing, restart AIORCH to pick it up:"
+    echo "    cd /opt/aiorch && docker compose restart"
+    echo ""
+    echo "  OpenAI and Ollama models work without Claude CLI."
     echo ""
 fi
 
