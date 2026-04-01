@@ -10,6 +10,15 @@
 
 set -euo pipefail
 
+# Colors
+GREEN='\033[0;32m'
+CYAN='\033[0;36m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+BOLD='\033[1m'
+DIM='\033[2m'
+NC='\033[0m'
+
 REGISTRY="aiorch/orchestrator"
 DEFAULT_TAG="latest"
 LICENSE_URL="https://license.aiorch.ai"
@@ -234,14 +243,6 @@ echo ""
 echo "Starting AIORCH..."
 cd "${INSTALL_DIR}"
 docker compose up -d
-
-GREEN='\033[0;32m'
-CYAN='\033[0;36m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-BOLD='\033[1m'
-DIM='\033[2m'
-NC='\033[0m'
 
 echo ""
 echo -e "${GREEN}╔═══════════════════════════════════════════════════════════════╗${NC}"
