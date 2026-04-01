@@ -95,8 +95,8 @@ Mix models per role: use a cheap model for planning, a strong model for coding, 
 | Plan | Price | Concurrent Instances |
 |------|-------|---------------------|
 | Trial | Free (14 days) | 1 |
-| Individual | $99/month | 2 |
-| Team | $299/month | 10 |
+| Developer | £19.99/month | 2 |
+| Team | £74.99/month | 10 |
 | Enterprise | Contact us | Custom |
 
 ## Support
