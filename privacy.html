@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy — aiorch.ai</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@300;400;500;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050507;
+    --surface: #0c0c10;
+    --surface2: #121218;
+    --border: #1e1e28;
+    --border2: #2a2a38;
+    --green: #00ff87;
+    --green-dim: rgba(0,255,135,0.12);
+    --green-glow: rgba(0,255,135,0.35);
+    --orange: #ff4d1c;
+    --text: #efefef;
+    --muted: #5a5a70;
+    --muted2: #3a3a50;
+    --white: #ffffff;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 300;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 20px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(5,5,7,0.97);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(30,30,40,0.8);
+  }
+
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 3px;
+    color: var(--white);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav-logo .dot {
+    width: 8px;
+    height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 12px var(--green-glow);
+  }
+
+  .nav-back {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-back:hover { color: var(--text); }
+
+  /* ── LEGAL CONTENT ── */
+  .legal-page {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 140px 48px 80px;
+  }
+
+  .legal-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 16px;
+  }
+
+  .legal-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 4vw, 64px);
+    line-height: 0.95;
+    letter-spacing: 2px;
+    color: var(--white);
+    margin-bottom: 16px;
+  }
+
+  .legal-updated {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 48px;
+  }
+
+  .legal-page h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+    color: var(--white);
+    margin: 48px 0 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .legal-page h2:first-of-type {
+    margin-top: 0;
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .legal-page p {
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+
+  .legal-page ul {
+    margin: 0 0 16px 24px;
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  .legal-page li { margin-bottom: 8px; }
+
+  .legal-page strong { color: var(--white); font-weight: 500; }
+
+  .legal-page a {
+    color: var(--green);
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .legal-page a:hover { opacity: 0.7; }
+
+  .legal-company {
+    margin-top: 48px;
+    padding: 24px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--muted);
+  }
+
+  .legal-company strong { color: var(--text); }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    border-top: 1px solid var(--border);
+    padding: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 3px;
+    color: var(--muted2);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .footer-links a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--text); }
+
+  .footer-note {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted2);
+  }
+
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .legal-page { padding: 120px 24px 60px; }
+    footer { flex-direction: column; gap: 24px; text-align: center; padding: 32px 24px; }
+    .footer-links { flex-wrap: wrap; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo"><span class="dot"></span>AIORCH.AI</a>
+  <a href="index.html" class="nav-back">Back to Home</a>
+</nav>
+
+<div class="legal-page">
+  <div class="legal-tag">Legal</div>
+  <h1 class="legal-title">Privacy Policy</h1>
+  <div class="legal-updated">Last updated: 1 April 2025</div>
+
+  <h2>1. Who We Are</h2>
+  <p>AiOrch is a product of <strong>Reisnova Limited</strong>, a company registered in England. When this policy refers to "we", "us", or "our", it means Reisnova Limited trading as AiOrch.</p>
+
+  <h2>2. Self-Hosted Software</h2>
+  <p>AiOrch is a <strong>self-hosted application</strong>. You install and run it on your own infrastructure (servers, virtual machines, or containers). This has important privacy implications:</p>
+  <ul>
+    <li><strong>We do not host your data.</strong> Your code, session data, agent outputs, API keys, and all other content remain entirely on your infrastructure.</li>
+    <li><strong>We do not have access to your servers.</strong> We cannot see, read, copy, or process any data generated by your use of the software.</li>
+    <li><strong>Your data never leaves your infrastructure</strong> unless you configure external integrations (e.g., API calls to OpenAI, GitHub) — those are governed by the respective third-party providers' privacy policies.</li>
+  </ul>
+
+  <h2>3. What Data We Collect</h2>
+  <p>Because AiOrch is self-hosted, the data we collect is limited to what is necessary for licensing and support:</p>
+  <ul>
+    <li><strong>License activation:</strong> When you activate a license key, our license server receives your license key, a hashed machine identifier (SHA-256 of hostname and MAC address — not the raw values), your server's IP address, and the software version. This is used solely to enforce license terms (e.g., concurrent instance limits).</li>
+    <li><strong>Heartbeat pings:</strong> The software periodically sends a heartbeat to our license server containing only the license key and hashed machine identifier. No code, session data, or user content is included.</li>
+    <li><strong>Trial activation:</strong> If you use the free trial, we record a hashed machine identifier, IP address, software version, and the trial start date.</li>
+    <li><strong>Support requests:</strong> If you contact us at <a href="mailto:tech@aiorch.ai">tech@aiorch.ai</a>, we retain the correspondence and any diagnostic data you voluntarily share. Diagnostic exports from the software are designed to redact secrets (API keys, tokens) before export.</li>
+  </ul>
+
+  <h2>4. What Data We Do Not Collect</h2>
+  <ul>
+    <li>Your source code or repository contents</li>
+    <li>Task descriptions or session configurations</li>
+    <li>Agent outputs, logs, or reports</li>
+    <li>API keys for third-party providers (OpenAI, GitHub, etc.)</li>
+    <li>Passwords or session cookies</li>
+    <li>User analytics, telemetry, or usage tracking</li>
+    <li>Personal information beyond what is listed in Section 3</li>
+  </ul>
+
+  <h2>5. How We Use Your Data</h2>
+  <ul>
+    <li><strong>License enforcement:</strong> To validate your license and enforce concurrent instance limits.</li>
+    <li><strong>Support:</strong> To investigate and resolve issues you report to us.</li>
+    <li><strong>Fraud prevention:</strong> To detect and prevent license abuse.</li>
+  </ul>
+  <p>We do not sell, rent, or share your data with third parties for marketing or advertising purposes.</p>
+
+  <h2>6. Data Retention</h2>
+  <ul>
+    <li><strong>License activation records:</strong> Retained for the duration of your licence plus 12 months after expiry.</li>
+    <li><strong>Heartbeat data:</strong> Overwritten on each heartbeat; only the most recent record is retained per activation.</li>
+    <li><strong>Trial records:</strong> Retained for 24 months after trial start.</li>
+    <li><strong>Support correspondence:</strong> Retained for 24 months after resolution, or longer if required by law.</li>
+  </ul>
+
+  <h2>7. Data Security</h2>
+  <p>Our license server uses parameterised database queries, rate limiting, file-level access controls, and encrypted connections. Machine identifiers are stored as SHA-256 hashes, not raw values.</p>
+  <p>Your self-hosted installation's security is your responsibility. We provide security documentation, secure defaults (auto-generated API keys, authentication enforcement, rate limiting), and guidance for production deployment in our SECURITY.md and commands.md files.</p>
+
+  <h2>8. Third-Party Services</h2>
+  <p>AiOrch integrates with third-party providers that you configure (e.g., OpenAI, Anthropic, GitHub, Ollama). When you use these integrations, your data is sent directly from your server to those providers. Their privacy policies govern that data, not ours. We have no visibility into those communications.</p>
+
+  <h2>9. Your Rights</h2>
+  <p>Under applicable data protection laws (including UK GDPR), you have the right to:</p>
+  <ul>
+    <li>Request access to the personal data we hold about you</li>
+    <li>Request correction of inaccurate data</li>
+    <li>Request deletion of your data (subject to legal retention requirements)</li>
+    <li>Object to processing of your data</li>
+    <li>Request data portability</li>
+  </ul>
+  <p>To exercise any of these rights, contact us at <a href="mailto:tech@aiorch.ai">tech@aiorch.ai</a>.</p>
+
+  <h2>10. Cookies</h2>
+  <p>The AiOrch self-hosted application uses a single authentication cookie (<code>orch_session</code>) on your own server. This is a strictly necessary functional cookie — it is not used for tracking, analytics, or advertising. See our <a href="cookies.html" target="_blank">Cookie Policy</a> for details.</p>
+  <p>This landing page (aiorch.ai) does not set any cookies.</p>
+
+  <h2>11. Children</h2>
+  <p>AiOrch is a professional software development tool. It is not intended for use by individuals under the age of 18.</p>
+
+  <h2>12. Changes to This Policy</h2>
+  <p>We may update this policy from time to time. Material changes will be communicated via our changelog or documentation. The "Last updated" date at the top of this page indicates the most recent revision.</p>
+
+  <div class="legal-company">
+    <strong>Reisnova Limited</strong> trading as AiOrch<br>
+    124 City Road, London, EC1V 2NX, England<br>
+    Contact: <a href="mailto:tech@aiorch.ai">tech@aiorch.ai</a>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">AIORCH.AI</div>
+  <ul class="footer-links">
+    <li><a href="privacy.html">Privacy</a></li>
+    <li><a href="terms.html">Terms</a></li>
+    <li><a href="cookies.html">Cookies</a></li>
+  </ul>
+  <div class="footer-note">&copy; 2025 Reisnova Limited trading as AiOrch</div>
+</footer>
+
+</body>
+</html>
