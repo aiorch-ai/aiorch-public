@@ -7,10 +7,10 @@ Give it a task — AIORCH decomposes the work into parallel agents, each in isol
 ## How It Works
 
 1. **You describe the task** — "Refactor the auth module and add rate limiting"
-2. **AIORCH decomposes it** — Creates parallel sub-tasks with dependency ordering
-3. **Agents work in isolation** — Each agent gets its own git worktree
-4. **Agents review each other** — Automated code review with approve/reject/revise verdicts
-5. **Quality gates enforce standards** — Code must compile, linter must pass, no hardcoded secrets
+2. **AIORCH decomposes it** — Creates parallel sub-tasks with dependency ordering, classifies each by difficulty
+3. **Smart routing assigns models** — Opus for hard tasks, Sonnet for medium, Haiku for simple — mix providers freely
+4. **Agents work in isolation** — Each agent gets its own git worktree
+5. **Agents review each other** — Automated code review with approve/reject/revise verdicts
 6. **Branches merge automatically** — Conflict resolution with dependency-aware ordering
 7. **You get a PR** — Reviewed, tested, merged code with cost breakdown and agent summary
 
@@ -19,7 +19,7 @@ Give it a task — AIORCH decomposes the work into parallel agents, each in isol
 - **Git worktree isolation per agent** — full filesystem isolation, not just branches.
 - **Multi-round adversarial review** — reviewer and coder go back and forth until consensus.
 - **Deterministic quality gates** — compilation, linting, secret scanning run as real checks, not AI prompts.
-- **Any model for any role** — Claude, OpenAI, or Ollama for coding, planning, and review.
+- **Smart model routing** — assign the right model per task difficulty, mix Claude + OpenAI + Ollama in one session.
 - **BYOK — zero token markup** — bring your own API keys, pay providers directly at your rate.
 - **Real-time streaming** — watch agents think and code token-by-token.
 - **Full cost visibility** — per-agent cost tracking with measured vs estimated labels.
@@ -62,8 +62,22 @@ Open `http://localhost:1230` to access the dashboard.
 
 Mix models per role: use a cheap model for planning, a strong model for coding, and a balanced model for review.
 
+### Smart Model Routing
+
+Assign different models per agent based on task difficulty. The planning model classifies each sub-task as high, medium, or low difficulty, then each agent runs on the model configured for its tier.
+
+- **High** (architecture, complex algorithms, security) → Opus, GPT-5.4 Pro
+- **Medium** (feature implementation, APIs, services) → Sonnet, GPT-5.4
+- **Low** (boilerplate, config, simple tests) → Haiku, GPT-5.4 Mini
+
+Mix providers freely — Claude for hard tasks, OpenAI for medium, Ollama for simple. All in one session, running in parallel. Toggle on/off per session via the dashboard.
+
+Model dropdowns are populated dynamically — only available, tested models appear. Adding a new provider (e.g., Kimi K2, Qwen) is a single-file operation via the extensible provider registry.
+
 ## Features
 
+- Smart model routing — difficulty-based model assignment, cross-provider mixing per session
+- Dynamic model catalog — UI auto-discovers available models from live provider health probes
 - Real-time web dashboard with SSE streaming
 - Token-by-token agent output streaming
 - Per-agent cost tracking (measured for API, estimated for CLI, free for Ollama)

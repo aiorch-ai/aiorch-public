@@ -1491,25 +1491,30 @@
       <div class="step reveal">
         <div class="step-num">01</div>
         <div class="step-title">Decompose</div>
-        <div class="step-desc">Your task is analyzed and broken into parallel sub-tasks with clear ownership and dependencies.</div>
+        <div class="step-desc">Your task is analyzed and broken into parallel sub-tasks. Each sub-task is classified by difficulty — high, medium, or low.</div>
       </div>
       <div class="step reveal">
         <div class="step-num">02</div>
+        <div class="step-title">Route</div>
+        <div class="step-desc">Smart model routing assigns the right LLM per task. Opus for architecture, Sonnet for features, Haiku for boilerplate. Mix providers freely — Claude, OpenAI, Ollama in one session.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">03</div>
         <div class="step-title">Isolate</div>
         <div class="step-desc">Each agent gets its own git worktree and branch. Zero interference between parallel workstreams.</div>
       </div>
       <div class="step reveal">
-        <div class="step-num">03</div>
+        <div class="step-num">04</div>
         <div class="step-title">Review</div>
         <div class="step-desc">Multi-round automated code review. Agents negotiate, revise, and resubmit until approved.</div>
       </div>
       <div class="step reveal">
-        <div class="step-num">04</div>
+        <div class="step-num">05</div>
         <div class="step-title">Merge</div>
         <div class="step-desc">Approved branches merge into an integration branch with automatic conflict resolution.</div>
       </div>
       <div class="step reveal">
-        <div class="step-num">05</div>
+        <div class="step-num">06</div>
         <div class="step-title">PR</div>
         <div class="step-desc">A detailed GitHub PR appears with summary, cost, file breakdown, and review history.</div>
       </div>
@@ -1529,7 +1534,7 @@
       <ul class="byok-points">
         <li class="byok-point">Enterprise contracts with Anthropic or Azure OpenAI? They work out of the box.</li>
         <li class="byok-point">API keys encrypted locally. Never transmitted to aiorch servers.</li>
-        <li class="byok-point">Per-role model selection — different models for agents, planning, and review.</li>
+        <li class="byok-point">Smart model routing — Opus for hard tasks, GPT-5 for medium, Haiku for simple. Mix providers in one session.</li>
         <li class="byok-point">Exact cost tracking per agent per session. No surprises.</li>
       </ul>
     </div>
@@ -1548,9 +1553,9 @@
           <div class="provider-icon pi-openai">OAI</div>
           <div class="provider-info">
             <div class="provider-name">OpenAI</div>
-            <div class="provider-detail">gpt-4o, o3, o4-mini</div>
+            <div class="provider-detail">gpt-5.4, gpt-4o, o3, o4-mini</div>
           </div>
-          <div class="provider-status ps-ready">PLAN / REVIEW</div>
+          <div class="provider-status ps-ready">AGENT ✓</div>
         </div>
         <div class="provider-item">
           <div class="provider-icon pi-gemini">GEM</div>
@@ -1572,9 +1577,9 @@
           <div class="provider-icon pi-ollama">OLL</div>
           <div class="provider-info">
             <div class="provider-name">Ollama (Local)</div>
-            <div class="provider-detail">llama3, mistral, codestral</div>
+            <div class="provider-detail">llama3, qwen3, mistral, deepseek</div>
           </div>
-          <div class="provider-status ps-local">LOCAL · $0</div>
+          <div class="provider-status ps-local">AGENT · £0</div>
         </div>
       </div>
       <div class="byok-note">
@@ -1619,6 +1624,12 @@
         <div class="feature-tag">Financial transparency</div>
       </div>
       <div class="feature-card reveal">
+        <span class="feature-icon">◈</span>
+        <div class="feature-title">Smart Model Routing</div>
+        <div class="feature-desc">Each agent gets the right model for its task. Architecture decisions run on Opus. Feature code on Sonnet or GPT-5. Boilerplate on Haiku. Mix providers from different companies in one session. Cut costs 60-70% without sacrificing quality where it matters.</div>
+        <div class="feature-tag">Cost intelligence</div>
+      </div>
+      <div class="feature-card reveal">
         <span class="feature-icon">⊕</span>
         <div class="feature-title">Pipeline Orchestration</div>
         <div class="feature-desc">Chain sessions into multi-phase pipelines. Sequential and parallel execution. Complex workflows that span planning, implementation, testing, and documentation — automated end to end.</div>
@@ -1658,8 +1669,9 @@
         <ul class="price-features">
           <li class="price-feature">Unlimited sessions</li>
           <li class="price-feature">Up to 8 parallel agents per session</li>
-          <li class="price-feature">GitHub PR integration</li>
+          <li class="price-feature">Smart model routing</li>
           <li class="price-feature">All LLM providers (BYOK)</li>
+          <li class="price-feature">GitHub PR integration</li>
           <li class="price-feature">Real-time cost tracking</li>
           <li class="price-feature">14-day free trial</li>
         </ul>
