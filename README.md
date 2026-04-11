@@ -17,6 +17,7 @@ Give it a task — AIORCH decomposes the work into parallel agents, each in isol
 ## What Makes This Different
 
 - **Git worktree isolation per agent** — full filesystem isolation, not just branches.
+- **Automatic build artifact cleanup** — Rust `target/`, Node `node_modules/`, Java `build/`, and similar output dirs are removed from each agent's worktree the moment that agent completes review. Prevents disk fill in parallel sessions for compiled languages. Python/PHP users unaffected.
 - **Multi-round adversarial review** — reviewer and coder go back and forth until consensus.
 - **Deterministic quality gates** — compilation, linting, secret scanning run as real checks, not AI prompts.
 - **Smart model routing** — assign the right model per task difficulty, mix Claude + OpenAI + Ollama in one session.
@@ -87,6 +88,7 @@ Model dropdowns are populated dynamically — only available, tested models appe
 - Dependency graphs with topological ordering
 - Secret scanner in pre-review hooks
 - Agent resilience: auto-retry, timeout detection, zombie recovery
+- Automatic worktree disk cleanup for compiled languages (Rust/Java/C++/Node)
 - One-click restart for stuck or failed agents
 - Diagnostic export for remote support
 - Settings page with master password for API key management
