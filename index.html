@@ -761,7 +761,7 @@
 
   .pricing-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 24px;
     margin-top: 60px;
   }
@@ -1189,7 +1189,7 @@
     <li><a href="#pricing">Pricing</a></li>
     <li><a href="#docs">Docs</a></li>
   </ul>
-  <a href="#pricing" class="nav-cta">RUN YOUR FIRST PR →</a>
+  <a href="#pricing" class="nav-cta">START FREE TRIAL →</a>
 </nav>
 
 <!-- HERO -->
@@ -1213,7 +1213,7 @@
 
   <div class="hero-actions">
     <a href="#pricing" class="btn-primary">
-      RUN YOUR FIRST SESSION
+      START FREE TRIAL
       <span>→</span>
     </a>
     <a href="#demo" class="btn-secondary">
@@ -1663,40 +1663,49 @@
 
     <div class="pricing-grid reveal">
       <div class="price-card">
-        <div class="price-name">Developer</div>
-        <div class="price-amount"><sup>£</sup>19.99<span class="period">/mo</span></div>
-        <div class="price-desc">For solo developers and indie founders who want to ship faster without hiring.</div>
+        <div class="price-name">Team</div>
+        <div class="price-amount"><sup>£</sup>299<span class="period">/mo</span></div>
+        <div class="price-desc">Up to 10 users</div>
         <ul class="price-features">
-          <li class="price-feature">Unlimited sessions</li>
-          <li class="price-feature">Up to 8 parallel agents per session</li>
-          <li class="price-feature">Smart model routing</li>
-          <li class="price-feature">All LLM providers (BYOK)</li>
+          <li class="price-feature">Standard support</li>
+          <li class="price-feature">All LLM providers</li>
           <li class="price-feature">GitHub PR integration</li>
-          <li class="price-feature">Real-time cost tracking</li>
           <li class="price-feature">14-day free trial</li>
         </ul>
-        <a href="https://aiorch.lemonsqueezy.com/checkout/buy/fcad8e13-c2d2-4836-ae5e-e69273570803" class="price-cta">START FREE TRIAL — 14 DAYS</a>
+        <a href="https://aiorch.lemonsqueezy.com/checkout/buy/4a94706f-7607-48e0-8f8d-d62f665e284d" class="price-cta">START FREE TRIAL</a>
       </div>
 
       <div class="price-card featured">
         <div class="price-badge">MOST POPULAR</div>
-        <div class="price-name">Team</div>
-        <div class="price-amount"><sup>£</sup>74.99<span class="period">/mo</span></div>
-        <div class="price-desc">For technical founders and small engineering teams who need to multiply output.</div>
+        <div class="price-name">Growth</div>
+        <div class="price-amount"><sup>£</sup>999<span class="period">/mo</span></div>
+        <div class="price-desc">Unlimited users</div>
         <ul class="price-features">
-          <li class="price-feature">Everything in Developer</li>
-          <li class="price-feature">Unlimited parallel agents</li>
-          <li class="price-feature">Pipeline orchestration (multi-phase)</li>
-          <li class="price-feature">Advanced review hooks + quality gates</li>
-          <li class="price-feature">Secret scanning + security audit</li>
           <li class="price-feature">Priority support</li>
+          <li class="price-feature">All LLM providers</li>
+          <li class="price-feature">GitHub PR integration</li>
+          <li class="price-feature">14-day free trial</li>
         </ul>
-        <a href="https://aiorch.lemonsqueezy.com/checkout/buy/657aa8b9-f166-40a8-918d-bdb107c02baf" class="price-cta primary">RUN YOUR FIRST PR FREE →</a>
+        <a href="https://aiorch.lemonsqueezy.com/checkout/buy/6c904c61-cd59-4da1-8bf6-68eb571f8256" class="price-cta primary">START FREE TRIAL</a>
+      </div>
+
+      <div class="price-card">
+        <div class="price-name">Enterprise</div>
+        <div class="price-amount" style="font-size:48px; letter-spacing:2px; margin-bottom:28px;">Custom</div>
+        <div class="price-desc">Unlimited users + SLA</div>
+        <ul class="price-features">
+          <li class="price-feature">Dedicated success manager</li>
+          <li class="price-feature">SSO + Audit logs</li>
+          <li class="price-feature">Custom routing</li>
+          <li class="price-feature">Security review support</li>
+          <li class="price-feature">Custom terms</li>
+        </ul>
+        <a href="#" class="price-cta">CONTACT SALES</a>
       </div>
     </div>
 
     <p class="pricing-note reveal">
-      You pay aiorch for the workflow engine. You pay LLMs directly at your own rate. Zero markup. Always.
+      Trusted by engineering teams reducing AI costs by 60%+
     </p>
   </div>
 </section>
@@ -1712,7 +1721,7 @@
     </p>
     <div class="cta-actions">
       <a href="#pricing" class="btn-primary" style="font-size:14px; padding: 18px 48px;">
-        RUN YOUR FIRST SESSION →
+        START FREE TRIAL →
       </a>
       <div class="install-cmd" onclick="copyInstall(this)">
         <span>curl -fsSL aiorch.ai/install.sh | bash</span>
@@ -1732,7 +1741,7 @@
     <li><a href="terms.html" target="_blank">Terms</a></li>
     <li><a href="cookies.html" target="_blank">Cookies</a></li>
   </ul>
-  <div class="footer-note">&copy; 2026 AiOrch</div>
+  <div class="footer-note">&copy; 2026 Reisnova Limited trading as AiOrch</div>
 </footer>
 
 <script>

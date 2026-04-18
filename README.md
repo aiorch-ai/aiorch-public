@@ -108,12 +108,11 @@ Model dropdowns are populated dynamically — only available, tested models appe
 
 ## Pricing
 
-| Plan | Price | Concurrent Instances |
-|------|-------|---------------------|
-| Trial | Free (14 days) | 1 |
-| Developer | £19.99/month | 2 |
-| Team | £74.99/month | 10 |
-| Enterprise | Contact us | Custom |
+| Plan | Price | Users | Highlights |
+|------|-------|-------|------------|
+| Team | £299/month | Up to 10 | Standard support, all LLM providers, GitHub PR integration, 14-day free trial |
+| Growth | £999/month | Unlimited | Priority support, all LLM providers, GitHub PR integration, 14-day free trial |
+| Enterprise | Custom | Unlimited + SLA | Dedicated success manager, SSO + audit logs, custom routing, security review support, custom terms |
 
 ## Support
 
