@@ -356,7 +356,8 @@ if [ -d "${INSTALL_DIR}" ] && [ -f "${INSTALL_DIR}/docker-compose.yml" ]; then
     fi
 fi
 
-mkdir -p "${INSTALL_DIR}/data"
+mkdir -p "${INSTALL_DIR}/data/sessions" "${INSTALL_DIR}/data/pipelines"
+chown -R 10001:10001 "${INSTALL_DIR}/data"
 
 # --- Port ---
 read -p "$(echo -e "  ${GREEN}→${RESET}  Port ${MUTED}[1230]${RESET}: ")" PORT < /dev/tty
@@ -612,6 +613,7 @@ ${CLI_VOLUMES}
     read_only: true
     tmpfs:
       - /run
+      - /usr/local/etc/haproxy
     cap_drop:
       - ALL
     security_opt:
