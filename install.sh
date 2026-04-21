@@ -6,27 +6,30 @@
 
 set -euo pipefail
 
-# --- ANSI Color Codes ---
+# --- Brand palette (aligned with aiorch.ai) ---
+RESET='\033[0m'
 BOLD='\033[1m'
 DIM='\033[2m'
-RESET='\033[0m'
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
-BLUE='\033[0;34m'
-MAGENTA='\033[0;35m'
-CYAN='\033[0;36m'
-WHITE='\033[1;37m'
-BG_BLUE='\033[44m'
-BG_MAGENTA='\033[45m'
 
-# --- Helper functions ---
-ok()    { echo -e "  ${GREEN}[OK]${RESET}    $*"; }
-warn()  { echo -e "  ${YELLOW}[WARN]${RESET}  $*"; }
-err()   { echo -e "  ${RED}[ERROR]${RESET} $*"; }
-info()  { echo -e "  ${CYAN}[INFO]${RESET}  $*"; }
-step()  { echo -e "\n  ${BOLD}${BLUE}$*${RESET}"; }
-ask()   { echo -en "  ${WHITE}$*${RESET}" ; }
+# Primary accent ~ #00ff87
+GREEN='\033[38;5;48m'
+GREEN_BOLD='\033[1;38;5;48m'
+
+# Negative / warning
+ORANGE='\033[38;5;208m'
+YELLOW='\033[38;5;214m'
+RED='\033[38;5;203m'
+
+# Utility
+CYAN='\033[38;5;87m'
+WHITE='\033[1;37m'
+MUTED='\033[38;5;242m'    # ~ #5a5a70
+MUTED2='\033[38;5;238m'   # ~ #3a3a50
+
+# NO_COLOR / non-TTY fallback — disable everything if output isn't a color terminal
+if [ -n "${NO_COLOR:-}" ] || [ ! -t 1 ]; then
+    RESET= BOLD= DIM= GREEN= GREEN_BOLD= ORANGE= YELLOW= RED= CYAN= WHITE= MUTED= MUTED2=
+fi
 
 # Get terminal width via /dev/tty (works even when piped through curl | bash)
 COLS=$(stty size </dev/tty 2>/dev/null | cut -d' ' -f2)
@@ -34,34 +37,53 @@ COLS=$(stty size </dev/tty 2>/dev/null | cut -d' ' -f2)
 [ -z "$COLS" ] && COLS=80
 [ "$COLS" -lt 50 ] && COLS=50
 
-# Print a full-width colored line (edge-to-edge, no indent)
-banner_line() {
-    local text="${1:-}"
-    local bg="${2:-$BG_BLUE}"
-    printf "${bg}${WHITE}${BOLD}%-${COLS}s${RESET}\n" "$text"
+# --- Helper functions ---
+ok()    { echo -e "  ${GREEN}✓${RESET}  $*"; }
+warn()  { echo -e "  ${YELLOW}⚡${RESET}  $*"; }
+err()   { echo -e "  ${RED}✗${RESET}  $*"; }
+info()  { echo -e "  ${CYAN}◆${RESET}  $*"; }
+skip()  { echo -e "  ${MUTED}○  $*${RESET}"; }
+next()  { echo -e "  ${GREEN}→${RESET}  $*"; }
+ask()   { echo -en "  ${WHITE}$*${RESET}"; }
+
+STEP_COUNTER=0
+step() {
+    STEP_COUNTER=$((STEP_COUNTER + 1))
+    local num
+    num=$(printf "%02d" "$STEP_COUNTER")
+    local label
+    label="$(echo "$*" | tr '[:lower:]' '[:upper:]')"
+    local rule_width=$(( COLS > 72 ? 72 : COLS - 4 ))
+    [ "$rule_width" -lt 20 ] && rule_width=20
+    local rule
+    rule=$(printf '─%.0s' $(seq 1 "$rule_width"))
+    echo ""
+    echo -e "${MUTED2}${rule}${RESET}"
+    echo -e "  ${GREEN}${num}${RESET}  ${BOLD}${WHITE}${label}${RESET}"
+    echo ""
 }
 
-# --- Full-width Banner ---
+# --- Top marker — mirrors the nav bar on aiorch.ai ---
 echo ""
-banner_line ""
-banner_line ""
-banner_line "     █████╗ ██╗ ██████╗ ██████╗  ██████╗██╗  ██╗"
-banner_line "    ██╔══██╗██║██╔═══██╗██╔══██╗██╔════╝██║  ██║"
-banner_line "    ███████║██║██║   ██║██████╔╝██║     ███████║"
-banner_line "    ██╔══██║██║██║   ██║██╔══██╗██║     ██╔══██║"
-banner_line "    ██║  ██║██║╚██████╔╝██║  ██║╚██████╗██║  ██║"
-banner_line "    ╚═╝  ╚═╝╚═╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝"
-banner_line ""
-banner_line "    AI Code Orchestration"
-banner_line "    https://aiorch.ai"
-banner_line ""
+echo -e "  ${GREEN}●${RESET}  ${BOLD}${WHITE}AIORCH${RESET}  ${MUTED}installer${RESET}"
+echo ""
+
+# --- ASCII wordmark, brand green, no background ---
+echo -e "${GREEN_BOLD}     █████╗ ██╗ ██████╗ ██████╗  ██████╗██╗  ██╗${RESET}"
+echo -e "${GREEN_BOLD}    ██╔══██╗██║██╔═══██╗██╔══██╗██╔════╝██║  ██║${RESET}"
+echo -e "${GREEN_BOLD}    ███████║██║██║   ██║██████╔╝██║     ███████║${RESET}"
+echo -e "${GREEN_BOLD}    ██╔══██║██║██║   ██║██╔══██╗██║     ██╔══██║${RESET}"
+echo -e "${GREEN_BOLD}    ██║  ██║██║╚██████╔╝██║  ██║╚██████╗██║  ██║${RESET}"
+echo -e "${GREEN_BOLD}    ╚═╝  ╚═╝╚═╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝${RESET}"
+echo ""
+echo -e "    ${MUTED}MULTI-AGENT CODE ORCHESTRATION · BYOK · NO TOKEN MARKUP${RESET}"
+echo -e "    ${DIM}${GREEN}https://aiorch.ai${RESET}"
 echo ""
 
 # =============================================================================
 # Section 1: Prerequisites
 # =============================================================================
-step "Checking prerequisites..."
-echo ""
+step "Prerequisites"
 
 # --- Check Docker ---
 if ! command -v docker &>/dev/null; then
@@ -72,7 +94,7 @@ if ! command -v docker &>/dev/null; then
     echo ""
     echo -e "    After installing, run this script again."
     echo ""
-    read -p "  Press Enter to exit..." < /dev/tty
+    read -p "$(echo -e "  ${MUTED}Press Enter to exit…${RESET}")" < /dev/tty
     exit 1
 fi
 ok "Docker $(docker --version | grep -oP '\d+\.\d+\.\d+')"
@@ -81,7 +103,7 @@ ok "Docker $(docker --version | grep -oP '\d+\.\d+\.\d+')"
 if ! docker compose version &>/dev/null 2>&1; then
     err "Docker Compose is required but not installed."
     echo -e "    Install: ${CYAN}apt install docker-compose-plugin${RESET}"
-    read -p "  Press Enter to exit..." < /dev/tty
+    read -p "$(echo -e "  ${MUTED}Press Enter to exit…${RESET}")" < /dev/tty
     exit 1
 fi
 ok "Docker Compose $(docker compose version --short)"
@@ -92,20 +114,18 @@ if command -v systemctl &>/dev/null; then
         ok "Docker is enabled to start on boot"
     else
         warn "Docker is NOT enabled to start on boot."
-        echo -e "    The orchestrator won't auto-start after a reboot."
-        echo -e "    Fix: ${CYAN}sudo systemctl enable docker${RESET}"
+        echo -e "      ${DIM}The orchestrator won't auto-start after a reboot.${RESET}"
+        echo -e "      ${DIM}Fix: ${CYAN}sudo systemctl enable docker${RESET}"
     fi
 fi
 
 # =============================================================================
-# Section 2: CLI Agent Selection
+# Section 2: CLI Agent Setup
 # =============================================================================
 step "CLI Agent Setup"
-echo ""
 echo -e "  AIORCH can use CLI-based AI agents for code tasks."
 echo -e "  Select which CLI agents to configure. Each detected on"
 echo -e "  the host will be mounted into the container."
-echo -e "  ${DIM}(API-based providers like OpenAI and Ollama are configured later in Settings.)${RESET}"
 echo ""
 
 # --- Detect / select Claude CLI ---
@@ -121,11 +141,10 @@ if command -v claude &>/dev/null; then
         CLAUDE_CONFIG_PATH="${HOME}/.claude"
     fi
 else
-    echo -en "  ${YELLOW}●${RESET} Claude CLI not found. "
-    echo -e "${DIM}(Anthropic — Claude Opus, Sonnet, Haiku)${RESET}"
+    echo -e "  ${MUTED}○${RESET}  Claude CLI  ${DIM}(Anthropic — Claude Opus, Sonnet, Haiku)${RESET}"
     echo ""
-    echo -e "    Install Claude CLI:  ${CYAN}curl -fsSL https://claude.ai/install.sh | bash${RESET}"
-    echo -e "    Then authenticate:   ${CYAN}claude${RESET}"
+    echo -e "      Install:       ${CYAN}curl -fsSL https://claude.ai/install.sh | bash${RESET}"
+    echo -e "      Authenticate:  ${CYAN}claude${RESET}"
     echo ""
     read -p "  Would you like to install Claude CLI now? (y/N): " INSTALL_CLAUDE_NOW < /dev/tty
     if [ "${INSTALL_CLAUDE_NOW}" = "y" ] || [ "${INSTALL_CLAUDE_NOW}" = "Y" ]; then
@@ -184,11 +203,10 @@ if command -v kimi &>/dev/null; then
         KIMI_CONFIG_PATH="${HOME}/.kimi"
     fi
 else
-    echo -en "  ${YELLOW}●${RESET} Kimi CLI not found. "
-    echo -e "${DIM}(Moonshot AI — Kimi K2)${RESET}"
+    echo -e "  ${MUTED}○${RESET}  Kimi CLI  ${DIM}(Moonshot AI — Kimi K2)${RESET}"
     echo ""
-    echo -e "    Install Kimi CLI:    ${CYAN}pip install kimi-cli${RESET}"
-    echo -e "    Then authenticate:   ${CYAN}kimi login${RESET}"
+    echo -e "      Install:       ${CYAN}pip install kimi-cli${RESET}"
+    echo -e "      Authenticate:  ${CYAN}kimi login${RESET}"
     echo ""
     read -p "  Would you like to install Kimi CLI now? (y/N): " INSTALL_KIMI_NOW < /dev/tty
     if [ "${INSTALL_KIMI_NOW}" = "y" ] || [ "${INSTALL_KIMI_NOW}" = "Y" ]; then
@@ -243,11 +261,10 @@ if command -v codex &>/dev/null; then
         CODEX_CONFIG_PATH="${HOME}/.codex"
     fi
 else
-    echo -en "  ${YELLOW}●${RESET} Codex CLI not found. "
-    echo -e "${DIM}(OpenAI — Codex)${RESET}"
+    echo -e "  ${MUTED}○${RESET}  Codex CLI  ${DIM}(OpenAI — Codex)${RESET}"
     echo ""
-    echo -e "    Install Codex CLI:   ${CYAN}npm install -g @openai/codex${RESET}"
-    echo -e "    Then authenticate:   ${CYAN}codex login${RESET}"
+    echo -e "      Install:       ${CYAN}npm install -g @openai/codex${RESET}"
+    echo -e "      Authenticate:  ${CYAN}codex login${RESET}"
     echo ""
     read -p "  Would you like to install Codex CLI now? (y/N): " INSTALL_CODEX_NOW < /dev/tty
     if [ "${INSTALL_CODEX_NOW}" = "y" ] || [ "${INSTALL_CODEX_NOW}" = "Y" ]; then
@@ -295,33 +312,30 @@ fi
 
 # --- CLI summary ---
 echo ""
-step "CLI Agent Summary"
-echo ""
 if [ -n "${CLAUDE_CLI_PATH}" ]; then
-    echo -e "  ${GREEN}✓${RESET} Claude CLI  ${DIM}→ ${CLAUDE_CLI_PATH}${RESET}"
+    ok "Claude CLI   ${DIM}→ ${CLAUDE_CLI_PATH}${RESET}"
 else
-    echo -e "  ${DIM}○ Claude CLI  → skipped${RESET}"
+    skip "Claude CLI   → skipped"
 fi
 if [ -n "${KIMI_CLI_PATH}" ]; then
-    echo -e "  ${GREEN}✓${RESET} Kimi CLI    ${DIM}→ ${KIMI_CLI_PATH}${RESET}"
+    ok "Kimi CLI     ${DIM}→ ${KIMI_CLI_PATH}${RESET}"
 else
-    echo -e "  ${DIM}○ Kimi CLI    → skipped${RESET}"
+    skip "Kimi CLI     → skipped"
 fi
 if [ -n "${CODEX_CLI_PATH}" ]; then
-    echo -e "  ${GREEN}✓${RESET} Codex CLI   ${DIM}→ ${CODEX_CLI_PATH}${RESET}"
+    ok "Codex CLI    ${DIM}→ ${CODEX_CLI_PATH}${RESET}"
 else
-    echo -e "  ${DIM}○ Codex CLI   → skipped${RESET}"
+    skip "Codex CLI    → skipped"
 fi
-echo -e "  ${DIM}(API providers: OpenAI, Ollama — configure in Settings after install)${RESET}"
+echo -e "  ${DIM}Other providers (OpenAI, Gemini, Ollama) — configure in Settings.${RESET} ${GREEN}BYOK, zero markup.${RESET}"
 
 # =============================================================================
 # Section 3: Installation Configuration
 # =============================================================================
 step "Installation Configuration"
-echo ""
 
 # --- Install directory ---
-read -p "  Install directory [/opt/aiorch]: " INSTALL_DIR < /dev/tty
+read -p "$(echo -e "  ${GREEN}→${RESET}  Install directory ${MUTED}[/opt/aiorch]${RESET}: ")" INSTALL_DIR < /dev/tty
 INSTALL_DIR=${INSTALL_DIR:-/opt/aiorch}
 
 if [ -d "${INSTALL_DIR}" ] && [ -f "${INSTALL_DIR}/docker-compose.yml" ]; then
@@ -336,25 +350,25 @@ fi
 mkdir -p "${INSTALL_DIR}/data"
 
 # --- Port ---
-read -p "  Port [1230]: " PORT < /dev/tty
+read -p "$(echo -e "  ${GREEN}→${RESET}  Port ${MUTED}[1230]${RESET}: ")" PORT < /dev/tty
 PORT=${PORT:-1230}
 
 # --- License key ---
 echo ""
-read -sp "  License key (Enter for 14-day trial): " LICENSE_KEY < /dev/tty
+read -sp "$(echo -e "  ${GREEN}→${RESET}  License key ${MUTED}(Enter for 14-day trial)${RESET}: ")" LICENSE_KEY < /dev/tty
 echo ""
 
 # --- License server URL ---
 LICENSE_URL="https://license.aiorch.ai"
 if [ -n "${LICENSE_KEY}" ]; then
-    read -p "  License server URL [${LICENSE_URL}]: " CUSTOM_LICENSE_URL < /dev/tty
+    read -p "$(echo -e "  ${GREEN}→${RESET}  License server URL ${MUTED}[${LICENSE_URL}]${RESET}: ")" CUSTOM_LICENSE_URL < /dev/tty
     LICENSE_URL=${CUSTOM_LICENSE_URL:-${LICENSE_URL}}
 fi
 
 # --- Docker image ---
 REGISTRY="aiorch/orchestrator"
 IMAGE_TAG="latest"
-read -p "  Docker image [${REGISTRY}:${IMAGE_TAG}]: " CUSTOM_IMAGE < /dev/tty
+read -p "$(echo -e "  ${GREEN}→${RESET}  Docker image ${MUTED}[${REGISTRY}:${IMAGE_TAG}]${RESET}: ")" CUSTOM_IMAGE < /dev/tty
 if [ -n "${CUSTOM_IMAGE}" ]; then
     REGISTRY="${CUSTOM_IMAGE%%:*}"
     IMAGE_TAG="${CUSTOM_IMAGE##*:}"
@@ -365,7 +379,7 @@ fi
 
 # --- Pull image ---
 echo ""
-info "Pulling image: ${CYAN}${REGISTRY}:${IMAGE_TAG}${RESET}"
+info "Pulling image ${GREEN}→${RESET} ${CYAN}${REGISTRY}:${IMAGE_TAG}${RESET}"
 docker pull "${REGISTRY}:${IMAGE_TAG}"
 
 # --- Generate session secret ---
@@ -381,12 +395,12 @@ fi
 # =============================================================================
 # Section 4: Generate .env
 # =============================================================================
-step "Writing configuration..."
-echo ""
+step "Writing configuration"
 
 cat > "${INSTALL_DIR}/.env" << ENVEOF
-# AIORCH v3 — Generated by install.sh
-# Modify values below as needed
+# AIORCH · Generated by install.sh
+# Multi-agent code orchestration · BYOK · No token markup
+# Your keys. Your cost. Zero middleman.
 
 # Server
 ORCH_HOST=0.0.0.0
@@ -407,7 +421,7 @@ ORCH_DEFAULT_MODEL=opus
 ORCH_DEFAULT_PLANNING_MODEL=
 ORCH_DEFAULT_REVIEW_MODEL=
 
-# Provider API keys
+# Provider API keys — BYOK, you pay providers directly at your negotiated rate
 ORCH_OPENAI_API_KEY=
 ORCH_OLLAMA_BASE_URL=http://localhost:11434
 ORCH_OPENAI_BASE_URL=https://api.openai.com/v1
@@ -456,13 +470,11 @@ ok "Environment config → ${INSTALL_DIR}/.env"
 # =============================================================================
 # Section 5: Project Directories
 # =============================================================================
-echo ""
 step "Project Directories"
-echo ""
 echo -e "  Agents need access to your code repos via volume mounts."
 echo -e "  Default mounts: ${BOLD}/home${RESET}, ${BOLD}/opt${RESET}, ${BOLD}/tmp${RESET}"
 echo ""
-read -p "  Extra directories (comma-separated, or Enter to skip): " EXTRA_DIRS < /dev/tty
+read -p "$(echo -e "  ${GREEN}→${RESET}  Extra directories ${MUTED}(comma-separated, or Enter to skip)${RESET}: ")" EXTRA_DIRS < /dev/tty
 
 PROJECT_MOUNTS="      - /home:/home
       - /opt:/opt
@@ -482,6 +494,7 @@ fi
 # =============================================================================
 # Section 6: Generate docker-compose.yml
 # =============================================================================
+step "Docker Compose"
 
 # Build CLI volume mounts dynamically
 CLI_VOLUMES=""
@@ -607,65 +620,68 @@ ok "Docker Compose config → ${INSTALL_DIR}/docker-compose.yml"
 # =============================================================================
 # Section 7: Start
 # =============================================================================
-echo ""
-step "Starting AIORCH..."
+step "Starting AIORCH"
 cd "${INSTALL_DIR}"
 docker compose up -d
 
 # =============================================================================
 # Section 8: Post-install summary
 # =============================================================================
+step "Summary"
+
+rule=$(printf '─%.0s' $(seq 1 72))
+echo -e "${GREEN}${rule}${RESET}"
+echo -e "  ${GREEN}●${RESET}  ${BOLD}${WHITE}AIORCH IS RUNNING${RESET}   ${MUTED}first PR in ~15 min${RESET}"
+echo -e "${GREEN}${rule}${RESET}"
 echo ""
-banner_line "" "$BG_MAGENTA"
-banner_line "    ✓ AIORCH is running!" "$BG_MAGENTA"
-banner_line "" "$BG_MAGENTA"
+echo -e "  ${BOLD}Dashboard${RESET}   ${GREEN}http://localhost:${PORT}${RESET}"
+echo -e "  ${BOLD}Data${RESET}        ${MUTED}${INSTALL_DIR}/data${RESET}"
+echo -e "  ${BOLD}Config${RESET}      ${MUTED}${INSTALL_DIR}/.env${RESET}"
 echo ""
-echo -e "  ${BOLD}Dashboard${RESET}    http://localhost:${PORT}"
-echo -e "  ${BOLD}Data${RESET}         ${INSTALL_DIR}/data"
-echo -e "  ${BOLD}Config${RESET}       ${INSTALL_DIR}/.env"
-echo ""
-echo -e "  ${BOLD}First step:${RESET}  Visit ${CYAN}/settings${RESET} to set your"
-echo -e "               master password and configure API keys."
+next "${BOLD}Next:${RESET} visit ${CYAN}/settings${RESET} — set master password and configure API keys."
+echo -e "      ${DIM}Your keys. Your cost. Zero middleman.${RESET}"
 echo ""
 
-# CLI status in post-install
+# --- CLI status ---
 CLI_CONFIGURED=0
 if [ -n "${CLAUDE_CLI_PATH}" ]; then
-    echo -e "  ${GREEN}✓${RESET} Claude CLI mounted — run ${CYAN}claude${RESET} on host to authenticate"
+    next "Claude CLI mounted — run ${CYAN}claude${RESET} on host to authenticate"
     CLI_CONFIGURED=1
 fi
 if [ -n "${KIMI_CLI_PATH}" ]; then
-    echo -e "  ${GREEN}✓${RESET} Kimi CLI mounted   — run ${CYAN}kimi login${RESET} on host to authenticate"
+    next "Kimi CLI mounted   — run ${CYAN}kimi login${RESET} on host to authenticate"
     CLI_CONFIGURED=1
 fi
 if [ -n "${CODEX_CLI_PATH}" ]; then
-    echo -e "  ${GREEN}✓${RESET} Codex CLI mounted  — run ${CYAN}codex login${RESET} on host to authenticate"
+    next "Codex CLI mounted  — run ${CYAN}codex login${RESET} on host to authenticate"
     CLI_CONFIGURED=1
 fi
 if [ ${CLI_CONFIGURED} -eq 0 ]; then
-    warn "No CLI agents configured."
-    echo -e "    Install any CLI agent on the host, then re-run the installer"
-    echo -e "    or manually update ${CYAN}${INSTALL_DIR}/docker-compose.yml${RESET}"
+    skip "No CLI agents configured"
+    echo -e "      ${DIM}Install any CLI on the host and re-run, or edit ${INSTALL_DIR}/docker-compose.yml${RESET}"
 fi
 
 echo ""
+
+# --- License status ---
 if [ -n "${LICENSE_KEY}" ]; then
-    echo -e "  ${GREEN}●${RESET} License: configured"
+    echo -e "  ${GREEN}●${RESET}  License: ${BOLD}configured${RESET}"
 else
-    echo -e "  ${YELLOW}●${RESET} License: ${BOLD}14-day trial${RESET} active"
+    echo -e "  ${YELLOW}●${RESET}  License: ${BOLD}14-day trial${RESET} active"
 fi
 
+# --- Docker autostart warning ---
 if command -v systemctl &>/dev/null && ! systemctl is-enabled docker &>/dev/null; then
     echo ""
     warn "Docker won't start on boot."
-    echo -e "    Run: ${CYAN}sudo systemctl enable docker${RESET}"
+    echo -e "      ${DIM}Run: ${CYAN}sudo systemctl enable docker${RESET}"
 fi
 
+# --- Manage commands ---
 echo ""
-echo -e "  ${BOLD}Manage:${RESET}"
-echo -e "    ${CYAN}cd ${INSTALL_DIR}${RESET}"
-echo -e "    ${DIM}docker compose logs -f${RESET}                       ${DIM}# View logs${RESET}"
-echo -e "    ${DIM}docker compose restart${RESET}                       ${DIM}# Restart${RESET}"
-echo -e "    ${DIM}docker compose down${RESET}                          ${DIM}# Stop${RESET}"
-echo -e "    ${DIM}docker compose pull && docker compose up -d${RESET}  ${DIM}# Update${RESET}"
+echo -e "  ${BOLD}MANAGE${RESET}   ${MUTED}cd ${INSTALL_DIR}${RESET}"
+echo -e "    ${DIM}docker compose logs -f${RESET}                        ${MUTED}# view logs${RESET}"
+echo -e "    ${DIM}docker compose restart${RESET}                        ${MUTED}# restart${RESET}"
+echo -e "    ${DIM}docker compose down${RESET}                           ${MUTED}# stop${RESET}"
+echo -e "    ${DIM}docker compose pull && docker compose up -d${RESET}   ${MUTED}# update${RESET}"
 echo ""
