@@ -473,19 +473,19 @@ ok "Environment config → ${INSTALL_DIR}/.env"
 # =============================================================================
 step "Project Directories"
 echo -e "  Agents need access to your code repos via volume mounts."
-echo -e "  Default mounts: ${BOLD}/home${RESET}, ${BOLD}/opt${RESET}, ${BOLD}/tmp${RESET}"
+echo -e "  Default mounts: ${BOLD}/home${RESET}, ${BOLD}/opt${RESET}"
+echo -e "  ${DIM}(Container has its own /tmp via tmpfs — host /tmp not mounted.)${RESET}"
 echo ""
 read -p "$(echo -e "  ${GREEN}→${RESET}  Extra directories ${MUTED}(comma-separated, or Enter to skip)${RESET}: ")" EXTRA_DIRS < /dev/tty
 
 PROJECT_MOUNTS="      - /home:/home
-      - /opt:/opt
-      - /tmp:/tmp"
+      - /opt:/opt"
 
 if [ -n "${EXTRA_DIRS}" ]; then
     IFS=',' read -ra DIRS <<< "${EXTRA_DIRS}"
     for d in "${DIRS[@]}"; do
         d="$(echo "${d}" | xargs)"
-        if [ -n "${d}" ] && [ "${d}" != "/home" ] && [ "${d}" != "/opt" ] && [ "${d}" != "/tmp" ]; then
+        if [ -n "${d}" ] && [ "${d}" != "/home" ] && [ "${d}" != "/opt" ]; then
             PROJECT_MOUNTS="${PROJECT_MOUNTS}
       - ${d}:${d}"
         fi
