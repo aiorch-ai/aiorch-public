@@ -271,40 +271,12 @@ else
     echo ""
     read -p "$(echo -e "  ${GREEN}→${RESET}  Install Codex CLI now? ${MUTED}(y/N)${RESET}: ")" INSTALL_CODEX_NOW < /dev/tty
     if [ "${INSTALL_CODEX_NOW}" = "y" ] || [ "${INSTALL_CODEX_NOW}" = "Y" ]; then
-        # Ensure npm is available
         if ! command -v npm &>/dev/null; then
-            warn "npm not found — Node.js is required for Codex CLI."
-            if command -v apt-get &>/dev/null; then
-                info "Installing Node.js via NodeSource..."
-                if curl -fsSL https://deb.nodesource.com/setup_22.x | bash - >/dev/null 2>&1 \
-                   && apt-get install -y -qq nodejs >/dev/null 2>&1; then
-                    ok "Node.js $(node --version 2>/dev/null) installed"
-                else
-                    err "Failed to install Node.js. Install manually:"
-                    echo -e "      ${CYAN}curl -fsSL https://deb.nodesource.com/setup_22.x | bash -${RESET}"
-                    echo -e "      ${CYAN}apt-get install -y nodejs${RESET}"
-                fi
-            elif command -v dnf &>/dev/null; then
-                info "Installing Node.js via dnf..."
-                if dnf install -y -q nodejs npm >/dev/null 2>&1; then
-                    ok "Node.js $(node --version 2>/dev/null) installed"
-                else
-                    err "Failed to install Node.js. Install manually:"
-                    echo -e "      ${CYAN}dnf install -y nodejs npm${RESET}"
-                fi
-            elif command -v yum &>/dev/null; then
-                info "Installing Node.js via yum..."
-                if yum install -y -q nodejs npm >/dev/null 2>&1; then
-                    ok "Node.js $(node --version 2>/dev/null) installed"
-                else
-                    err "Failed to install Node.js. Install manually:"
-                    echo -e "      ${CYAN}yum install -y nodejs npm${RESET}"
-                fi
-            else
-                err "Could not detect package manager. Install Node.js manually, then re-run."
-            fi
-        fi
-        if command -v npm &>/dev/null; then
+            err "npm not found — Node.js is required for Codex CLI."
+            echo -e "      Install Node.js first, then re-run:"
+            echo -e "      ${CYAN}curl -fsSL https://deb.nodesource.com/setup_22.x | bash -${RESET}"
+            echo -e "      ${CYAN}apt-get install -y nodejs${RESET}"
+        else
             info "Installing Codex CLI..."
             if npm install -g @openai/codex 2>/dev/null; then
                 if command -v codex &>/dev/null; then
