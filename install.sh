@@ -354,6 +354,8 @@ if [ -d "${INSTALL_DIR}" ] && [ -f "${INSTALL_DIR}/docker-compose.yml" ]; then
         info "Aborting. Existing installation preserved."
         exit 0
     fi
+    info "Stopping existing containers..."
+    docker compose -f "${INSTALL_DIR}/docker-compose.yml" down 2>/dev/null || true
 fi
 
 mkdir -p "${INSTALL_DIR}/data/sessions" "${INSTALL_DIR}/data/pipelines"
