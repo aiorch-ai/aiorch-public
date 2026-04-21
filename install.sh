@@ -53,7 +53,7 @@ step() {
     num=$(printf "%02d" "$STEP_COUNTER")
     local label
     label="$(echo "$*" | tr '[:lower:]' '[:upper:]')"
-    local rule_width=$(( COLS > 72 ? 72 : COLS - 4 ))
+    local rule_width=$(( COLS > 100 ? 100 : COLS - 4 ))
     [ "$rule_width" -lt 20 ] && rule_width=20
     local rule
     rule=$(printf '─%.0s' $(seq 1 "$rule_width"))
@@ -77,6 +77,7 @@ echo -e "${GREEN_BOLD}    ██║  ██║██║╚██████╔�
 echo -e "${GREEN_BOLD}    ╚═╝  ╚═╝╚═╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝${RESET}"
 echo ""
 echo -e "    ${MUTED}MULTI-AGENT CODE ORCHESTRATION · BYOK · NO TOKEN MARKUP${RESET}"
+echo -e "    ${DIM}${WHITE}Wake up to a PR you can actually merge${RESET}"
 echo -e "    ${DIM}${GREEN}https://aiorch.ai${RESET}"
 echo ""
 
@@ -97,7 +98,7 @@ if ! command -v docker &>/dev/null; then
     read -p "$(echo -e "  ${MUTED}Press Enter to exit…${RESET}")" < /dev/tty
     exit 1
 fi
-ok "Docker $(docker --version | grep -oP '\d+\.\d+\.\d+')"
+ok "Docker ${DIM}$(docker --version | grep -oP '\d+\.\d+\.\d+')${RESET}"
 
 # --- Check Docker Compose ---
 if ! docker compose version &>/dev/null 2>&1; then
@@ -106,7 +107,7 @@ if ! docker compose version &>/dev/null 2>&1; then
     read -p "$(echo -e "  ${MUTED}Press Enter to exit…${RESET}")" < /dev/tty
     exit 1
 fi
-ok "Docker Compose $(docker compose version --short)"
+ok "Docker Compose ${DIM}$(docker compose version --short)${RESET}"
 
 # --- Check Docker starts on boot ---
 if command -v systemctl &>/dev/null; then
@@ -146,7 +147,7 @@ else
     echo -e "      Install:       ${CYAN}curl -fsSL https://claude.ai/install.sh | bash${RESET}"
     echo -e "      Authenticate:  ${CYAN}claude${RESET}"
     echo ""
-    read -p "  Would you like to install Claude CLI now? (y/N): " INSTALL_CLAUDE_NOW < /dev/tty
+    read -p "$(echo -e "  Would you like to install Claude CLI now? ${MUTED}(y/N)${RESET}: ")" INSTALL_CLAUDE_NOW < /dev/tty
     if [ "${INSTALL_CLAUDE_NOW}" = "y" ] || [ "${INSTALL_CLAUDE_NOW}" = "Y" ]; then
         info "Installing Claude CLI..."
         if curl -fsSL https://claude.ai/install.sh | bash; then
@@ -160,7 +161,7 @@ else
                 info "Run ${CYAN}claude${RESET} after setup to authenticate."
             else
                 warn "Claude CLI installer ran but binary not found in PATH."
-                read -p "  Path to claude binary (or Enter to skip): " CLAUDE_CLI_PATH < /dev/tty
+                read -p "$(echo -e "  Path to claude binary ${MUTED}(or Enter to skip)${RESET}: ")" CLAUDE_CLI_PATH < /dev/tty
                 if [ -n "${CLAUDE_CLI_PATH}" ]; then
                     if [ ! -f "${CLAUDE_CLI_PATH}" ]; then
                         err "File not found: ${CLAUDE_CLI_PATH}"
@@ -174,7 +175,7 @@ else
             warn "Claude CLI installation failed. You can install it manually later."
         fi
     else
-        read -p "  Path to claude binary (or Enter to skip): " CLAUDE_CLI_PATH < /dev/tty
+        read -p "$(echo -e "  Path to claude binary ${MUTED}(or Enter to skip)${RESET}: ")" CLAUDE_CLI_PATH < /dev/tty
         if [ -n "${CLAUDE_CLI_PATH}" ]; then
             if [ ! -f "${CLAUDE_CLI_PATH}" ]; then
                 err "File not found: ${CLAUDE_CLI_PATH}"
@@ -208,7 +209,7 @@ else
     echo -e "      Install:       ${CYAN}pip install kimi-cli${RESET}"
     echo -e "      Authenticate:  ${CYAN}kimi login${RESET}"
     echo ""
-    read -p "  Would you like to install Kimi CLI now? (y/N): " INSTALL_KIMI_NOW < /dev/tty
+    read -p "$(echo -e "  Would you like to install Kimi CLI now? ${MUTED}(y/N)${RESET}: ")" INSTALL_KIMI_NOW < /dev/tty
     if [ "${INSTALL_KIMI_NOW}" = "y" ] || [ "${INSTALL_KIMI_NOW}" = "Y" ]; then
         info "Installing Kimi CLI..."
         if pip install kimi-cli 2>/dev/null || pip3 install kimi-cli 2>/dev/null; then
@@ -220,7 +221,7 @@ else
                 info "Run ${CYAN}kimi login${RESET} after setup to authenticate."
             else
                 warn "Kimi CLI installed but binary not found in PATH."
-                read -p "  Path to kimi binary (or Enter to skip): " KIMI_CLI_PATH < /dev/tty
+                read -p "$(echo -e "  Path to kimi binary ${MUTED}(or Enter to skip)${RESET}: ")" KIMI_CLI_PATH < /dev/tty
                 if [ -n "${KIMI_CLI_PATH}" ] && [ ! -f "${KIMI_CLI_PATH}" ]; then
                     err "File not found: ${KIMI_CLI_PATH}"
                     KIMI_CLI_PATH=""
@@ -232,7 +233,7 @@ else
             warn "Kimi CLI installation failed. You can install it manually later."
         fi
     else
-        read -p "  Path to kimi binary (or Enter to skip): " KIMI_CLI_PATH < /dev/tty
+        read -p "$(echo -e "  Path to kimi binary ${MUTED}(or Enter to skip)${RESET}: ")" KIMI_CLI_PATH < /dev/tty
         if [ -n "${KIMI_CLI_PATH}" ]; then
             if [ ! -f "${KIMI_CLI_PATH}" ]; then
                 err "File not found: ${KIMI_CLI_PATH}"
@@ -266,7 +267,7 @@ else
     echo -e "      Install:       ${CYAN}npm install -g @openai/codex${RESET}"
     echo -e "      Authenticate:  ${CYAN}codex login${RESET}"
     echo ""
-    read -p "  Would you like to install Codex CLI now? (y/N): " INSTALL_CODEX_NOW < /dev/tty
+    read -p "$(echo -e "  Would you like to install Codex CLI now? ${MUTED}(y/N)${RESET}: ")" INSTALL_CODEX_NOW < /dev/tty
     if [ "${INSTALL_CODEX_NOW}" = "y" ] || [ "${INSTALL_CODEX_NOW}" = "Y" ]; then
         if ! command -v npm &>/dev/null; then
             warn "npm not found. Install Node.js first, then run:"
@@ -282,7 +283,7 @@ else
                     info "Run ${CYAN}codex login${RESET} after setup to authenticate."
                 else
                     warn "Codex CLI installed but binary not found in PATH."
-                    read -p "  Path to codex binary (or Enter to skip): " CODEX_CLI_PATH < /dev/tty
+                    read -p "$(echo -e "  Path to codex binary ${MUTED}(or Enter to skip)${RESET}: ")" CODEX_CLI_PATH < /dev/tty
                     if [ -n "${CODEX_CLI_PATH}" ] && [ ! -f "${CODEX_CLI_PATH}" ]; then
                         err "File not found: ${CODEX_CLI_PATH}"
                         CODEX_CLI_PATH=""
@@ -295,7 +296,7 @@ else
             fi
         fi
     else
-        read -p "  Path to codex binary (or Enter to skip): " CODEX_CLI_PATH < /dev/tty
+        read -p "$(echo -e "  Path to codex binary ${MUTED}(or Enter to skip)${RESET}: ")" CODEX_CLI_PATH < /dev/tty
         if [ -n "${CODEX_CLI_PATH}" ]; then
             if [ ! -f "${CODEX_CLI_PATH}" ]; then
                 err "File not found: ${CODEX_CLI_PATH}"
@@ -340,7 +341,7 @@ INSTALL_DIR=${INSTALL_DIR:-/opt/aiorch}
 
 if [ -d "${INSTALL_DIR}" ] && [ -f "${INSTALL_DIR}/docker-compose.yml" ]; then
     warn "Existing installation found at ${INSTALL_DIR}"
-    read -p "  Overwrite configuration? (y/N): " OVERWRITE < /dev/tty
+    read -p "$(echo -e "  Overwrite configuration? ${MUTED}(y/N)${RESET}: ")" OVERWRITE < /dev/tty
     if [ "${OVERWRITE}" != "y" ] && [ "${OVERWRITE}" != "Y" ]; then
         info "Aborting. Existing installation preserved."
         exit 0
@@ -629,7 +630,9 @@ docker compose up -d
 # =============================================================================
 step "Summary"
 
-rule=$(printf '─%.0s' $(seq 1 72))
+local_rule_width=$(( COLS > 100 ? 100 : COLS - 4 ))
+[ "$local_rule_width" -lt 20 ] && local_rule_width=20
+rule=$(printf '─%.0s' $(seq 1 "$local_rule_width"))
 echo -e "${GREEN}${rule}${RESET}"
 echo -e "  ${GREEN}●${RESET}  ${BOLD}${WHITE}AIORCH IS RUNNING${RESET}   ${MUTED}first PR in ~15 min${RESET}"
 echo -e "${GREEN}${rule}${RESET}"
