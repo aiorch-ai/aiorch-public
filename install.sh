@@ -28,23 +28,33 @@ info()  { echo -e "  ${CYAN}[INFO]${RESET}  $*"; }
 step()  { echo -e "\n  ${BOLD}${BLUE}$*${RESET}"; }
 ask()   { echo -en "  ${WHITE}$*${RESET}" ; }
 
-# Get terminal width (default 60 if unavailable)
-COLS=$(tput cols 2>/dev/null || echo 60)
+# Get terminal width via /dev/tty (works even when piped through curl | bash)
+COLS=$(stty size </dev/tty 2>/dev/null | cut -d' ' -f2)
+[ -z "$COLS" ] && COLS=$(tput cols 2>/dev/null)
+[ -z "$COLS" ] && COLS=80
 [ "$COLS" -lt 50 ] && COLS=50
 
-# Draw a colored horizontal rule
-hr() {
-    local char="${1:-─}"
-    printf '  %s\n' "$(printf "%${COLS}s" | tr ' ' "$char")" | head -c $((COLS + 4))
-    echo ""
+# Print a full-width colored line (edge-to-edge, no indent)
+banner_line() {
+    local text="${1:-}"
+    local bg="${2:-$BG_BLUE}"
+    printf "${bg}${WHITE}${BOLD}%-${COLS}s${RESET}\n" "$text"
 }
 
 # --- Full-width Banner ---
 echo ""
-echo -e "  ${BG_BLUE}${WHITE}${BOLD}$(printf "%-${COLS}s" "")${RESET}"
-echo -e "  ${BG_BLUE}${WHITE}${BOLD}$(printf "%-${COLS}s" "   AIORCH — AI Code Orchestration")${RESET}"
-echo -e "  ${BG_BLUE}${WHITE}${BOLD}$(printf "%-${COLS}s" "   https://aiorch.ai")${RESET}"
-echo -e "  ${BG_BLUE}${WHITE}${BOLD}$(printf "%-${COLS}s" "")${RESET}"
+banner_line ""
+banner_line ""
+banner_line "     █████╗ ██╗ ██████╗ ██████╗  ██████╗██╗  ██╗"
+banner_line "    ██╔══██╗██║██╔═══██╗██╔══██╗██╔════╝██║  ██║"
+banner_line "    ███████║██║██║   ██║██████╔╝██║     ███████║"
+banner_line "    ██╔══██║██║██║   ██║██╔══██╗██║     ██╔══██║"
+banner_line "    ██║  ██║██║╚██████╔╝██║  ██║╚██████╗██║  ██║"
+banner_line "    ╚═╝  ╚═╝╚═╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝"
+banner_line ""
+banner_line "    AI Code Orchestration"
+banner_line "    https://aiorch.ai"
+banner_line ""
 echo ""
 
 # =============================================================================
@@ -606,9 +616,9 @@ docker compose up -d
 # Section 8: Post-install summary
 # =============================================================================
 echo ""
-echo -e "  ${BG_MAGENTA}${WHITE}${BOLD}$(printf "%-${COLS}s" "")${RESET}"
-echo -e "  ${BG_MAGENTA}${WHITE}${BOLD}$(printf "%-${COLS}s" "   ✓ AIORCH is running!")${RESET}"
-echo -e "  ${BG_MAGENTA}${WHITE}${BOLD}$(printf "%-${COLS}s" "")${RESET}"
+banner_line "" "$BG_MAGENTA"
+banner_line "    ✓ AIORCH is running!" "$BG_MAGENTA"
+banner_line "" "$BG_MAGENTA"
 echo ""
 echo -e "  ${BOLD}Dashboard${RESET}    http://localhost:${PORT}"
 echo -e "  ${BOLD}Data${RESET}         ${INSTALL_DIR}/data"
