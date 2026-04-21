@@ -150,7 +150,7 @@ else
     read -p "$(echo -e "  ${GREEN}→${RESET}  Install Claude CLI now? ${MUTED}(y/N)${RESET}: ")" INSTALL_CLAUDE_NOW < /dev/tty
     if [ "${INSTALL_CLAUDE_NOW}" = "y" ] || [ "${INSTALL_CLAUDE_NOW}" = "Y" ]; then
         info "Installing Claude CLI..."
-        if curl -fsSL https://claude.ai/install.sh | bash; then
+        if (cd /tmp && curl -fsSL https://claude.ai/install.sh | bash); then
             # Re-detect after installation
             export PATH="${HOME}/.claude/bin:${HOME}/.local/bin:${PATH}"
             if command -v claude &>/dev/null; then
@@ -212,7 +212,7 @@ else
     read -p "$(echo -e "  ${GREEN}→${RESET}  Install Kimi CLI now? ${MUTED}(y/N)${RESET}: ")" INSTALL_KIMI_NOW < /dev/tty
     if [ "${INSTALL_KIMI_NOW}" = "y" ] || [ "${INSTALL_KIMI_NOW}" = "Y" ]; then
         info "Installing Kimi CLI..."
-        if curl -LsSf https://code.kimi.com/install.sh | bash; then
+        if (cd /tmp && curl -LsSf https://code.kimi.com/install.sh | bash); then
             # Re-detect after installation
             export PATH="${HOME}/.local/bin:${HOME}/.kimi/bin:${PATH}"
             if command -v kimi &>/dev/null; then
@@ -278,7 +278,7 @@ else
             echo -e "      ${CYAN}apt-get install -y nodejs${RESET}"
         else
             info "Installing Codex CLI..."
-            if npm install -g @openai/codex 2>/dev/null; then
+            if (cd /tmp && npm install -g @openai/codex 2>/dev/null); then
                 if command -v codex &>/dev/null; then
                     CODEX_CLI_PATH="$(command -v codex)"
                     ok "Codex CLI installed: ${CODEX_CLI_PATH}"
