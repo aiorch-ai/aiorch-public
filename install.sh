@@ -529,6 +529,9 @@ fi
 if [ -n "${CLAUDE_CONFIG_PATH}" ]; then
     add_cli_volume "      - ${CLAUDE_CONFIG_PATH}:/root/.claude:ro"
 fi
+if [ -f "${HOME}/.claude.json" ]; then
+    add_cli_volume "      - ${HOME}/.claude.json:/app/.claude.json:ro"
+fi
 
 # Kimi CLI mounts
 if [ -n "${KIMI_CLI_PATH}" ]; then
