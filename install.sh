@@ -471,6 +471,10 @@ ORCH_TOOL_CMD_OUTPUT_CAP=10240
 ORCH_TOOL_MAX_CONSECUTIVE_ERRORS=3
 ORCH_TOOL_LOOP_TEMPERATURE=0.3
 
+# Debug logging (system-wide structured JSONL for remote support)
+ORCH_DEBUG_LOG_LEVEL=INFO
+ORCH_DEBUG_LOG_RETENTION_HOURS=72
+
 # Docker distribution
 ORCH_DOCKER_REGISTRY=${REGISTRY}
 ORCH_IMAGE_TAG=${IMAGE_TAG}
@@ -522,40 +526,34 @@ ${mount_line}"
     fi
 }
 
-# Claude CLI mounts
+# CLI binaries — direct mount, read-only
 if [ -n "${CLAUDE_CLI_PATH}" ]; then
     add_cli_volume "      - ${CLAUDE_CLI_PATH}:/usr/local/bin/claude:ro"
 fi
-if [ -n "${CLAUDE_CONFIG_PATH}" ]; then
-    add_cli_volume "      - ${CLAUDE_CONFIG_PATH}:/app/.claude:ro"
-    # Why chmod 644: The container runs as appuser (UID 10001), which differs
-    # from your host UID. Claude CLI creates these files with 600 (owner-only),
-    # so the container process can't read them through the read-only mount.
-    # 644 makes them world-readable on the host so any UID — including the
-    # container's appuser — can read them. The files are still protected by
-    # filesystem access and the mount is read-only (:ro), so the container
-    # cannot modify them.
-    chmod -f 644 "${CLAUDE_CONFIG_PATH}/.credentials.json" 2>/dev/null || true
-fi
-if [ -f "${HOME}/.claude.json" ]; then
-    chmod -f 644 "${HOME}/.claude.json" 2>/dev/null || true
-    add_cli_volume "      - ${HOME}/.claude.json:/app/.claude.json:ro"
-fi
-
-# Kimi CLI mounts
 if [ -n "${KIMI_CLI_PATH}" ]; then
     add_cli_volume "      - ${KIMI_CLI_PATH}:/usr/local/bin/kimi:ro"
 fi
-if [ -n "${KIMI_CONFIG_PATH}" ]; then
-    add_cli_volume "      - ${KIMI_CONFIG_PATH}:/root/.kimi:ro"
-fi
-
-# Codex CLI mounts
 if [ -n "${CODEX_CLI_PATH}" ]; then
     add_cli_volume "      - ${CODEX_CLI_PATH}:/usr/local/bin/codex:ro"
 fi
+
+# CLI config dirs — mounted read-only to /mnt/*-config staging paths.
+# The entrypoint copies credentials into writable tmpfs at /app/.*
+# so the CLIs can refresh OAuth tokens at runtime. This avoids:
+#   - permission issues (host files are root:600, container runs as UID 10001)
+#   - read-only mount blocking token refresh writes
+#   - fragile chmod hacks that break on re-authentication
+if [ -n "${CLAUDE_CONFIG_PATH}" ]; then
+    add_cli_volume "      - ${CLAUDE_CONFIG_PATH}:/mnt/claude-config:ro"
+fi
+if [ -f "${HOME}/.claude.json" ]; then
+    add_cli_volume "      - ${HOME}/.claude.json:/app/.claude.json:ro"
+fi
+if [ -n "${KIMI_CONFIG_PATH}" ]; then
+    add_cli_volume "      - ${KIMI_CONFIG_PATH}:/mnt/kimi-config:ro"
+fi
 if [ -n "${CODEX_CONFIG_PATH}" ]; then
-    add_cli_volume "      - ${CODEX_CONFIG_PATH}:/root/.codex:ro"
+    add_cli_volume "      - ${CODEX_CONFIG_PATH}:/mnt/codex-config:ro"
 fi
 
 cat > "${INSTALL_DIR}/docker-compose.yml" << DEOF
@@ -589,10 +587,17 @@ ${CLI_VOLUMES}
     read_only: true
     tmpfs:
       - /tmp:size=256M
+      - /app/.claude:size=2M
+      - /app/.kimi:size=2M
+      - /app/.codex:size=2M
     cap_drop:
       - ALL
     cap_add:
       - NET_BIND_SERVICE
+      - CHOWN
+      - SETUID
+      - SETGID
+      - DAC_READ_SEARCH
     security_opt:
       - no-new-privileges:true
     healthcheck:
