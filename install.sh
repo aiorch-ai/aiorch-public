@@ -528,9 +528,13 @@ if [ -n "${CLAUDE_CLI_PATH}" ]; then
 fi
 if [ -n "${CLAUDE_CONFIG_PATH}" ]; then
     add_cli_volume "      - ${CLAUDE_CONFIG_PATH}:/app/.claude:ro"
-    # Container runs as appuser (UID 10001) — Claude CLI needs to read
-    # credentials and config. Files default to 600 (owner-only) which
-    # blocks reads by non-root users inside the container.
+    # Why chmod 644: The container runs as appuser (UID 10001), which differs
+    # from your host UID. Claude CLI creates these files with 600 (owner-only),
+    # so the container process can't read them through the read-only mount.
+    # 644 makes them world-readable on the host so any UID — including the
+    # container's appuser — can read them. The files are still protected by
+    # filesystem access and the mount is read-only (:ro), so the container
+    # cannot modify them.
     chmod -f 644 "${CLAUDE_CONFIG_PATH}/.credentials.json" 2>/dev/null || true
 fi
 if [ -f "${HOME}/.claude.json" ]; then
