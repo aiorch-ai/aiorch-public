@@ -527,9 +527,14 @@ if [ -n "${CLAUDE_CLI_PATH}" ]; then
     add_cli_volume "      - ${CLAUDE_CLI_PATH}:/usr/local/bin/claude:ro"
 fi
 if [ -n "${CLAUDE_CONFIG_PATH}" ]; then
-    add_cli_volume "      - ${CLAUDE_CONFIG_PATH}:/root/.claude:ro"
+    add_cli_volume "      - ${CLAUDE_CONFIG_PATH}:/app/.claude:ro"
+    # Container runs as appuser (UID 10001) — Claude CLI needs to read
+    # credentials and config. Files default to 600 (owner-only) which
+    # blocks reads by non-root users inside the container.
+    chmod -f 644 "${CLAUDE_CONFIG_PATH}/.credentials.json" 2>/dev/null || true
 fi
 if [ -f "${HOME}/.claude.json" ]; then
+    chmod -f 644 "${HOME}/.claude.json" 2>/dev/null || true
     add_cli_volume "      - ${HOME}/.claude.json:/app/.claude.json:ro"
 fi
 
