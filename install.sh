@@ -135,16 +135,12 @@ echo ""
 
 # --- Detect / select Claude CLI ---
 CLAUDE_CLI_PATH=""
-CLAUDE_CONFIG_PATH=""
 INSTALL_CLAUDE_CHOICE="n"
 
 if command -v claude &>/dev/null; then
     CLAUDE_CLI_PATH="$(command -v claude)"
     ok "Claude CLI found: ${CLAUDE_CLI_PATH}"
     INSTALL_CLAUDE_CHOICE="y"
-    if [ -d "${HOME}/.claude" ]; then
-        CLAUDE_CONFIG_PATH="${HOME}/.claude"
-    fi
 else
     echo -e "  ${MUTED}○${RESET}  Claude CLI  ${DIM}(Anthropic — Claude Opus, Sonnet, Haiku)${RESET}"
     echo ""
@@ -189,24 +185,17 @@ else
             fi
         fi
     fi
-    if [ -n "${CLAUDE_CLI_PATH}" ] && [ -d "${HOME}/.claude" ]; then
-        CLAUDE_CONFIG_PATH="${HOME}/.claude"
-    fi
 fi
 echo ""
 
 # --- Detect / select Kimi CLI ---
 KIMI_CLI_PATH=""
-KIMI_CONFIG_PATH=""
 INSTALL_KIMI_CHOICE="n"
 
 if command -v kimi &>/dev/null; then
     KIMI_CLI_PATH="$(command -v kimi)"
     ok "Kimi CLI found: ${KIMI_CLI_PATH}"
     INSTALL_KIMI_CHOICE="y"
-    if [ -d "${HOME}/.kimi" ]; then
-        KIMI_CONFIG_PATH="${HOME}/.kimi"
-    fi
 else
     echo -e "  ${MUTED}○${RESET}  Kimi CLI  ${DIM}(Moonshot AI — Kimi K2)${RESET}"
     echo ""
@@ -249,24 +238,17 @@ else
             fi
         fi
     fi
-    if [ -n "${KIMI_CLI_PATH}" ] && [ -d "${HOME}/.kimi" ]; then
-        KIMI_CONFIG_PATH="${HOME}/.kimi"
-    fi
 fi
 echo ""
 
 # --- Detect / select Codex CLI ---
 CODEX_CLI_PATH=""
-CODEX_CONFIG_PATH=""
 INSTALL_CODEX_CHOICE="n"
 
 if command -v codex &>/dev/null; then
     CODEX_CLI_PATH="$(command -v codex)"
     ok "Codex CLI found: ${CODEX_CLI_PATH}"
     INSTALL_CODEX_CHOICE="y"
-    if [ -d "${HOME}/.codex" ]; then
-        CODEX_CONFIG_PATH="${HOME}/.codex"
-    fi
 else
     echo -e "  ${MUTED}○${RESET}  Codex CLI  ${DIM}(OpenAI — Codex)${RESET}"
     echo ""
@@ -314,9 +296,6 @@ else
             fi
         fi
     fi
-    if [ -n "${CODEX_CLI_PATH}" ] && [ -d "${HOME}/.codex" ]; then
-        CODEX_CONFIG_PATH="${HOME}/.codex"
-    fi
 fi
 
 # --- CLI summary ---
@@ -358,8 +337,8 @@ if [ -d "${INSTALL_DIR}" ] && [ -f "${INSTALL_DIR}/docker-compose.yml" ]; then
     docker compose -f "${INSTALL_DIR}/docker-compose.yml" down 2>/dev/null || true
 fi
 
-# Data dirs must be owned by UID 10001 (container appuser).
-# chown to a different UID requires root, so sudo is needed when not root.
+# Data dirs must be writable by the container process (runs as the host user's UID).
+# chown requires root, so sudo is needed when not root.
 _sudo=""
 if [ "$(id -u)" -ne 0 ]; then
     if ! command -v sudo &>/dev/null; then
@@ -373,11 +352,7 @@ if [ "$(id -u)" -ne 0 ]; then
 fi
 
 ${_sudo} mkdir -p "${INSTALL_DIR}/data/sessions" "${INSTALL_DIR}/data/pipelines"
-${_sudo} chown -R 10001:10001 "${INSTALL_DIR}/data"
-# Ensure running user can write .env and docker-compose.yml to install dir
-if [ -n "${_sudo}" ]; then
-    ${_sudo} chown "$(id -u):$(id -g)" "${INSTALL_DIR}"
-fi
+${_sudo} chown -R "$(id -u):$(id -g)" "${INSTALL_DIR}"
 
 # --- Port ---
 read -p "$(echo -e "  ${GREEN}→${RESET}  Port ${MUTED}[1230]${RESET}: ")" PORT < /dev/tty
@@ -493,6 +468,9 @@ ORCH_TOOL_LOOP_TEMPERATURE=0.3
 ORCH_DEBUG_LOG_LEVEL=INFO
 ORCH_DEBUG_LOG_RETENTION_HOURS=72
 
+# Host user home directory (zero-copy CLI credential discovery)
+ORCH_HOST_HOME=${HOME}
+
 # Docker distribution
 ORCH_DOCKER_REGISTRY=${REGISTRY}
 ORCH_IMAGE_TAG=${IMAGE_TAG}
@@ -539,7 +517,7 @@ add_cli_volume() {
         CLI_VOLUMES="${CLI_VOLUMES}
 ${mount_line}"
     else
-        CLI_VOLUMES="      # CLI agent binaries and auth configs
+        CLI_VOLUMES="      # CLI agent binaries (credentials discovered via ORCH_HOST_HOME)
 ${mount_line}"
     fi
 }
@@ -553,25 +531,6 @@ if [ -n "${KIMI_CLI_PATH}" ]; then
 fi
 if [ -n "${CODEX_CLI_PATH}" ]; then
     add_cli_volume "      - ${CODEX_CLI_PATH}:/usr/local/bin/codex:ro"
-fi
-
-# CLI config dirs — mounted read-only to /mnt/*-config staging paths.
-# The entrypoint copies credentials into writable tmpfs at /app/.*
-# so the CLIs can refresh OAuth tokens at runtime. This avoids:
-#   - permission issues (host files are root:600, container runs as UID 10001)
-#   - read-only mount blocking token refresh writes
-#   - fragile chmod hacks that break on re-authentication
-if [ -n "${CLAUDE_CONFIG_PATH}" ]; then
-    add_cli_volume "      - ${CLAUDE_CONFIG_PATH}:/mnt/claude-config:ro"
-fi
-if [ -f "${HOME}/.claude.json" ]; then
-    add_cli_volume "      - ${HOME}/.claude.json:/mnt/claude-json:ro"
-fi
-if [ -n "${KIMI_CONFIG_PATH}" ]; then
-    add_cli_volume "      - ${KIMI_CONFIG_PATH}:/mnt/kimi-config:ro"
-fi
-if [ -n "${CODEX_CONFIG_PATH}" ]; then
-    add_cli_volume "      - ${CODEX_CONFIG_PATH}:/mnt/codex-config:ro"
 fi
 
 cat > "${INSTALL_DIR}/docker-compose.yml" << DEOF
@@ -597,6 +556,7 @@ ${CLI_VOLUMES}
       - ORCH_DATA_DIR=/opt/aiorch/data
       - PYTHONPATH=/app
       - DOCKER_HOST=tcp://docker-proxy:2375
+      - ORCH_HOST_HOME=${HOME}
     depends_on:
       docker-proxy:
         condition: service_started
@@ -605,9 +565,6 @@ ${CLI_VOLUMES}
     read_only: true
     tmpfs:
       - /tmp:size=256M
-      - /app/.claude:size=2M
-      - /app/.kimi:size=2M
-      - /app/.codex:size=2M
     cap_drop:
       - ALL
     cap_add:
@@ -615,7 +572,6 @@ ${CLI_VOLUMES}
       - CHOWN
       - SETUID
       - SETGID
-      - DAC_READ_SEARCH
     security_opt:
       - no-new-privileges:true
     healthcheck:
@@ -647,10 +603,8 @@ ${CLI_VOLUMES}
       CONFIGS: 0
       DISTRIBUTION: 0
       SYSTEM: 0
-    read_only: true
     tmpfs:
       - /run
-      - /usr/local/etc/haproxy
     cap_drop:
       - ALL
     security_opt:
