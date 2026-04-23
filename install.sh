@@ -104,6 +104,19 @@ if ! command -v docker &>/dev/null; then
 fi
 ok "Docker ${DIM}$(docker --version | grep -oP '\d+\.\d+\.\d+')${RESET}"
 
+# --- Check Docker daemon access ---
+if ! docker info &>/dev/null 2>&1; then
+    err "Cannot connect to the Docker daemon."
+    echo ""
+    echo -e "    ${DIM}If Docker is running, your user may not have permission.${RESET}"
+    echo -e "    ${DIM}Add yourself to the docker group and re-login:${RESET}"
+    echo -e "      ${CYAN}sudo usermod -aG docker \$USER${RESET}"
+    echo -e "      ${DIM}Then log out and back in, or run: ${CYAN}newgrp docker${RESET}"
+    echo ""
+    read -p "$(echo -e "  ${MUTED}Press Enter to exit…${RESET}")" < /dev/tty
+    exit 1
+fi
+
 # --- Check Docker Compose ---
 if ! docker compose version &>/dev/null 2>&1; then
     err "Docker Compose is required but not installed."
@@ -349,6 +362,7 @@ if [ "$(id -u)" -ne 0 ]; then
     fi
     _sudo="sudo"
     info "Elevated privileges required for ${INSTALL_DIR}"
+    echo -e "      ${DIM}To install without sudo, re-run and set the directory to a path you own (e.g. ~/aiorch)${RESET}"
 fi
 
 ${_sudo} mkdir -p "${INSTALL_DIR}/data/sessions" "${INSTALL_DIR}/data/pipelines"
@@ -569,6 +583,7 @@ ${CLI_VOLUMES}
       - ALL
     cap_add:
       - NET_BIND_SERVICE
+      # CHOWN/SETUID/SETGID: required by entrypoint to drop privileges — do not remove
       - CHOWN
       - SETUID
       - SETGID
