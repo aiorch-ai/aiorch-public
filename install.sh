@@ -358,8 +358,26 @@ if [ -d "${INSTALL_DIR}" ] && [ -f "${INSTALL_DIR}/docker-compose.yml" ]; then
     docker compose -f "${INSTALL_DIR}/docker-compose.yml" down 2>/dev/null || true
 fi
 
-mkdir -p "${INSTALL_DIR}/data/sessions" "${INSTALL_DIR}/data/pipelines"
-chown -R 10001:10001 "${INSTALL_DIR}/data"
+# Data dirs must be owned by UID 10001 (container appuser).
+# chown to a different UID requires root, so sudo is needed when not root.
+_sudo=""
+if [ "$(id -u)" -ne 0 ]; then
+    if ! command -v sudo &>/dev/null; then
+        err "Root privileges required to create ${INSTALL_DIR} and set ownership."
+        echo -e "    ${DIM}Re-run as root:${RESET}"
+        echo -e "    ${CYAN}sudo bash -c \"\$(curl -fsSL https://aiorch.ai/install.sh)\"${RESET}"
+        exit 1
+    fi
+    _sudo="sudo"
+    info "Elevated privileges required for ${INSTALL_DIR}"
+fi
+
+${_sudo} mkdir -p "${INSTALL_DIR}/data/sessions" "${INSTALL_DIR}/data/pipelines"
+${_sudo} chown -R 10001:10001 "${INSTALL_DIR}/data"
+# Ensure running user can write .env and docker-compose.yml to install dir
+if [ -n "${_sudo}" ]; then
+    ${_sudo} chown "$(id -u):$(id -g)" "${INSTALL_DIR}"
+fi
 
 # --- Port ---
 read -p "$(echo -e "  ${GREEN}→${RESET}  Port ${MUTED}[1230]${RESET}: ")" PORT < /dev/tty
@@ -547,7 +565,7 @@ if [ -n "${CLAUDE_CONFIG_PATH}" ]; then
     add_cli_volume "      - ${CLAUDE_CONFIG_PATH}:/mnt/claude-config:ro"
 fi
 if [ -f "${HOME}/.claude.json" ]; then
-    add_cli_volume "      - ${HOME}/.claude.json:/app/.claude.json:ro"
+    add_cli_volume "      - ${HOME}/.claude.json:/mnt/claude-json:ro"
 fi
 if [ -n "${KIMI_CONFIG_PATH}" ]; then
     add_cli_volume "      - ${KIMI_CONFIG_PATH}:/mnt/kimi-config:ro"
