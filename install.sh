@@ -503,8 +503,8 @@ echo -e "  ${DIM}(Container has its own /tmp via tmpfs — host /tmp not mounted
 echo ""
 read -p "$(echo -e "  ${GREEN}→${RESET}  Extra directories ${MUTED}(comma-separated, or Enter to skip)${RESET}: ")" EXTRA_DIRS < /dev/tty
 
-PROJECT_MOUNTS="      - /home:/home
-      - /opt:/opt"
+PROJECT_MOUNTS="      - /home:/home:z
+      - /opt:/opt:z"
 
 if [ -n "${EXTRA_DIRS}" ]; then
     IFS=',' read -ra DIRS <<< "${EXTRA_DIRS}"
@@ -512,7 +512,7 @@ if [ -n "${EXTRA_DIRS}" ]; then
         d="$(echo "${d}" | xargs)"
         if [ -n "${d}" ] && [ "${d}" != "/home" ] && [ "${d}" != "/opt" ]; then
             PROJECT_MOUNTS="${PROJECT_MOUNTS}
-      - ${d}:${d}"
+      - ${d}:${d}:z"
         fi
     done
 fi
@@ -538,13 +538,13 @@ ${mount_line}"
 
 # CLI binaries — direct mount, read-only
 if [ -n "${CLAUDE_CLI_PATH}" ]; then
-    add_cli_volume "      - ${CLAUDE_CLI_PATH}:/usr/local/bin/claude:ro"
+    add_cli_volume "      - ${CLAUDE_CLI_PATH}:/usr/local/bin/claude:ro,z"
 fi
 if [ -n "${KIMI_CLI_PATH}" ]; then
-    add_cli_volume "      - ${KIMI_CLI_PATH}:/usr/local/bin/kimi:ro"
+    add_cli_volume "      - ${KIMI_CLI_PATH}:/usr/local/bin/kimi:ro,z"
 fi
 if [ -n "${CODEX_CLI_PATH}" ]; then
-    add_cli_volume "      - ${CODEX_CLI_PATH}:/usr/local/bin/codex:ro"
+    add_cli_volume "      - ${CODEX_CLI_PATH}:/usr/local/bin/codex:ro,z"
 fi
 
 cat > "${INSTALL_DIR}/docker-compose.yml" << DEOF
@@ -555,9 +555,9 @@ services:
       - "${PORT}:${PORT}"
     volumes:
       # Persistent data
-      - ./data:/opt/aiorch/data
+      - ./data:/opt/aiorch/data:z
       # Compose project dir — needed for self-restart when adding project dirs
-      - .:/opt/aiorch/compose
+      - .:/opt/aiorch/compose:z
       # Project directories — agents access your code through these mounts
 ${PROJECT_MOUNTS}
 ${CLI_VOLUMES}
@@ -598,7 +598,7 @@ ${CLI_VOLUMES}
   docker-proxy:
     image: tecnativa/docker-socket-proxy:0.3
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro,z
     environment:
       CONTAINERS: 1
       SERVICES: 1
