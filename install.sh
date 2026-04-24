@@ -522,30 +522,19 @@ fi
 # =============================================================================
 step "Docker Compose"
 
-# Build CLI volume mounts dynamically
-CLI_VOLUMES=""
 
-add_cli_volume() {
-    local mount_line="$1"
-    if [ -n "${CLI_VOLUMES}" ]; then
-        CLI_VOLUMES="${CLI_VOLUMES}
-${mount_line}"
-    else
-        CLI_VOLUMES="      # CLI agent binaries (credentials discovered via ORCH_HOST_HOME)
-${mount_line}"
+# CLI binaries are discovered via /home:/home mount + PATH
+# Build extra PATH entries from detected CLI locations
+CLI_EXTRA_PATH=""
+for cli_path in "${CLAUDE_CLI_PATH}" "${KIMI_CLI_PATH}" "${CODEX_CLI_PATH}"; do
+    if [ -n "${cli_path}" ]; then
+        cli_dir="$(cd "$(dirname "$(readlink -f "${cli_path}")")" && pwd)"
+        case ":${CLI_EXTRA_PATH}:" in
+            *":${cli_dir}:"*) ;;
+            *) CLI_EXTRA_PATH="${CLI_EXTRA_PATH:+${CLI_EXTRA_PATH}:}${cli_dir}" ;;
+        esac
     fi
-}
-
-# CLI binaries — direct mount, read-only
-if [ -n "${CLAUDE_CLI_PATH}" ]; then
-    add_cli_volume "      - ${CLAUDE_CLI_PATH}:/usr/local/bin/claude:ro,z"
-fi
-if [ -n "${KIMI_CLI_PATH}" ]; then
-    add_cli_volume "      - ${KIMI_CLI_PATH}:/usr/local/bin/kimi:ro,z"
-fi
-if [ -n "${CODEX_CLI_PATH}" ]; then
-    add_cli_volume "      - ${CODEX_CLI_PATH}:/usr/local/bin/codex:ro,z"
-fi
+done
 
 cat > "${INSTALL_DIR}/docker-compose.yml" << DEOF
 services:
@@ -560,7 +549,7 @@ services:
       - .:/opt/aiorch/compose:z
       # Project directories — agents access your code through these mounts
 ${PROJECT_MOUNTS}
-${CLI_VOLUMES}
+      # CLI binaries discovered via /home:/home + PATH
     env_file:
       - .env
     environment:
@@ -571,6 +560,7 @@ ${CLI_VOLUMES}
       - PYTHONPATH=/app
       - DOCKER_HOST=tcp://docker-proxy:2375
       - ORCH_HOST_HOME=${HOME}
+      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${CLI_EXTRA_PATH}
     depends_on:
       docker-proxy:
         condition: service_started
@@ -589,6 +579,11 @@ ${CLI_VOLUMES}
       - SETGID
     security_opt:
       - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "3"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:${PORT}/health"]
       interval: 30s
@@ -625,6 +620,11 @@ ${CLI_VOLUMES}
     security_opt:
       - no-new-privileges:true
     restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:2375/_ping || exit 1"]
       interval: 30s
