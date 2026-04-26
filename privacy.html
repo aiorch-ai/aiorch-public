@@ -6,151 +6,144 @@
 <title>Privacy Policy — aiorch.ai</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@300;400;500;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@300;400;450;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #050507;
-    --surface: #0c0c10;
-    --surface2: #121218;
-    --border: #1e1e28;
-    --border2: #2a2a38;
-    --green: #00ff87;
-    --green-dim: rgba(0,255,135,0.12);
-    --green-glow: rgba(0,255,135,0.35);
-    --orange: #ff4d1c;
-    --text: #efefef;
-    --muted: #5a5a70;
-    --muted2: #3a3a50;
-    --white: #ffffff;
+    --ink-0: #0a0a0c;
+    --ink-1: #111114;
+    --ink-2: #17171b;
+    --ink-3: #1d1d22;
+    --ink-4: #26262d;
+    --line:  rgba(255,255,255,0.06);
+    --line-2:rgba(255,255,255,0.10);
+    --fg:    #ecece8;
+    --fg-2:  #bdbdb6;
+    --fg-3:  #8a8a84;
+    --fg-4:  #5a5a56;
+    --accent: #d9a45c;
+    --accent-soft: rgba(217,164,92,0.12);
+    --accent-line: rgba(217,164,92,0.28);
+    --serif: 'Instrument Serif', Georgia, serif;
+    --sans:  'Inter Tight', system-ui, sans-serif;
+    --mono:  'JetBrains Mono', monospace;
+    --radius: 6px;
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
+  html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
   body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Outfit', sans-serif;
-    font-weight: 300;
-    line-height: 1.6;
+    background: var(--ink-0);
+    color: var(--fg-2);
+    font-family: var(--sans);
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.55;
+    letter-spacing: -0.005em;
     overflow-x: hidden;
   }
 
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.4;
-  }
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: var(--accent); color: var(--ink-0); }
 
-  ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--ink-0); }
+  ::-webkit-scrollbar-thumb { background: var(--ink-3); border-radius: 10px; border: 2px solid var(--ink-0); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--ink-4); }
 
-  .grid-bg {
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(var(--border) 1px, transparent 1px),
-      linear-gradient(90deg, var(--border) 1px, transparent 1px);
-    background-size: 60px 60px;
-    opacity: 0.3;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* ── NAV ── */
+  /* -- NAV -- */
   nav {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+    top: 0; left: 0; right: 0;
     z-index: 100;
-    padding: 20px 48px;
+    padding: 16px 48px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: rgba(5,5,7,0.97);
-    backdrop-filter: blur(8px);
-    border-bottom: 1px solid rgba(30,30,40,0.8);
+    background: color-mix(in srgb, var(--ink-0) 94%, transparent);
+    backdrop-filter: saturate(140%) blur(12px);
+    -webkit-backdrop-filter: saturate(140%) blur(12px);
+    border-bottom: 1px solid var(--line);
   }
 
-  .nav-logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 28px;
-    letter-spacing: 3px;
-    color: var(--white);
-    text-decoration: none;
-    display: flex;
+  .brand {
+    display: inline-flex;
     align-items: center;
     gap: 10px;
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+    color: var(--fg);
+    text-decoration: none;
   }
 
-  .nav-logo .dot {
-    width: 8px;
-    height: 8px;
-    background: var(--green);
-    border-radius: 50%;
-    box-shadow: 0 0 12px var(--green-glow);
+  .brand-mark {
+    width: 22px; height: 22px;
+    display: inline-block;
+  }
+
+  .brand-mark svg {
+    width: 100%; height: 100%; display: block;
   }
 
   .nav-back {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--fg-3);
     text-decoration: none;
     transition: color 0.2s;
   }
 
-  .nav-back:hover { color: var(--text); }
+  .nav-back:hover { color: var(--fg); }
 
-  /* ── LEGAL CONTENT ── */
+  /* -- LEGAL CONTENT -- */
   .legal-page {
     position: relative;
-    z-index: 1;
     max-width: 800px;
     margin: 0 auto;
     padding: 140px 48px 80px;
   }
 
   .legal-tag {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--mono);
     font-size: 11px;
-    letter-spacing: 3px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--green);
+    color: var(--accent);
     margin-bottom: 16px;
   }
 
   .legal-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(40px, 4vw, 64px);
-    line-height: 0.95;
-    letter-spacing: 2px;
-    color: var(--white);
+    font-family: var(--serif);
+    font-size: clamp(40px, 4.4vw, 64px);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    color: var(--fg);
+    font-weight: 400;
     margin-bottom: 16px;
   }
 
   .legal-updated {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--mono);
     font-size: 11px;
-    color: var(--muted);
+    color: var(--fg-4);
+    letter-spacing: 0.02em;
     margin-bottom: 48px;
   }
 
   .legal-page h2 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 28px;
-    letter-spacing: 2px;
-    color: var(--white);
+    font-family: var(--sans);
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    color: var(--fg);
     margin: 48px 0 16px;
     padding-top: 16px;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--line);
   }
 
   .legal-page h2:first-of-type {
@@ -160,7 +153,7 @@
   }
 
   .legal-page p {
-    color: var(--text);
+    color: var(--fg-2);
     font-size: 15px;
     line-height: 1.8;
     margin-bottom: 16px;
@@ -168,17 +161,19 @@
 
   .legal-page ul {
     margin: 0 0 16px 24px;
-    color: var(--text);
+    color: var(--fg-2);
     font-size: 15px;
     line-height: 1.8;
+    list-style: disc;
   }
 
   .legal-page li { margin-bottom: 8px; }
+  .legal-page li::marker { color: var(--fg-4); }
 
-  .legal-page strong { color: var(--white); font-weight: 500; }
+  .legal-page strong { color: var(--fg); font-weight: 500; }
 
   .legal-page a {
-    color: var(--green);
+    color: var(--accent);
     text-decoration: none;
     transition: opacity 0.2s;
   }
@@ -188,57 +183,62 @@
   .legal-company {
     margin-top: 48px;
     padding: 24px;
-    border: 1px solid var(--border);
-    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--ink-1);
     font-size: 14px;
     line-height: 1.8;
-    color: var(--muted);
+    color: var(--fg-3);
   }
 
-  .legal-company strong { color: var(--text); }
+  .legal-company strong { color: var(--fg-2); }
 
-  /* ── FOOTER ── */
+  /* -- FOOTER -- */
   footer {
-    position: relative;
-    z-index: 1;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid var(--line);
     padding: 48px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 24px;
   }
 
-  .footer-logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 24px;
-    letter-spacing: 3px;
-    color: var(--muted2);
+  .footer-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--fg-4);
+    text-decoration: none;
   }
+
+  .footer-brand .brand-mark { width: 18px; height: 18px; }
 
   .footer-links {
     display: flex;
-    gap: 32px;
+    gap: 28px;
     list-style: none;
   }
 
   .footer-links a {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 1px;
-    color: var(--muted);
+    font-size: 13px;
+    color: var(--fg-3);
     text-decoration: none;
     transition: color 0.2s;
   }
 
-  .footer-links a:hover { color: var(--text); }
+  .footer-links a:hover { color: var(--fg); }
 
   .footer-note {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    color: var(--muted2);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-4);
+    letter-spacing: 0.02em;
   }
 
-  @media (max-width: 900px) {
+  @media (max-width: 960px) {
     nav { padding: 16px 24px; }
     .legal-page { padding: 120px 24px 60px; }
     footer { flex-direction: column; gap: 24px; text-align: center; padding: 32px 24px; }
@@ -248,11 +248,20 @@
 </head>
 <body>
 
-<div class="grid-bg"></div>
-
 <nav>
-  <a href="index.html" class="nav-logo"><span class="dot"></span>AIORCH.AI</a>
-  <a href="index.html" class="nav-back">Back to Home</a>
+  <a href="index.html" class="brand">
+    <span class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <circle cx="12" cy="12" r="2.5" fill="currentColor" stroke="none"/>
+        <circle cx="12" cy="12" r="6"/>
+        <circle cx="12" cy="12" r="10" opacity="0.4"/>
+        <line x1="12" y1="2" x2="12" y2="22" opacity="0.25"/>
+        <line x1="2" y1="12" x2="22" y2="12" opacity="0.25"/>
+      </svg>
+    </span>
+    aiorch
+  </a>
+  <a href="index.html" class="nav-back">&larr; Back</a>
 </nav>
 
 <div class="legal-page">
@@ -343,7 +352,18 @@
 </div>
 
 <footer>
-  <div class="footer-logo">AIORCH.AI</div>
+  <a href="index.html" class="footer-brand">
+    <span class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <circle cx="12" cy="12" r="2.5" fill="currentColor" stroke="none"/>
+        <circle cx="12" cy="12" r="6"/>
+        <circle cx="12" cy="12" r="10" opacity="0.4"/>
+        <line x1="12" y1="2" x2="12" y2="22" opacity="0.25"/>
+        <line x1="2" y1="12" x2="22" y2="12" opacity="0.25"/>
+      </svg>
+    </span>
+    aiorch
+  </a>
   <ul class="footer-links">
     <li><a href="privacy.html">Privacy</a></li>
     <li><a href="terms.html">Terms</a></li>
