@@ -1195,7 +1195,7 @@
   }
   .compare-row {
     display: grid;
-    grid-template-columns: 1.5fr repeat(4, 1fr);
+    grid-template-columns: 1.5fr repeat(3, 1fr);
     align-items: center;
     border-bottom: 1px solid var(--line);
   }
@@ -1655,7 +1655,7 @@
     .pricing-grid { grid-template-columns: 1fr; }
     .roadmap-grid { grid-template-columns: 1fr; }
     .compare-table { overflow-x: auto; }
-    .compare-row { grid-template-columns: 1.2fr repeat(4, 120px); min-width: 720px; }
+    .compare-row { grid-template-columns: 1.2fr repeat(3, 140px); min-width: 600px; }
     .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
     .logo-band-inner { grid-template-columns: 1fr; gap: 16px; }
     .logo-band-list { gap: 28px; }
@@ -1670,7 +1670,7 @@
 <!-- ── NAV ── -->
 <nav class="nav" id="nav">
   <div class="nav-inner">
-    <a href="#" class="brand">
+    <a href="/" class="brand">
       <span class="brand-mark">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
           <circle cx="12" cy="12" r="2.5" fill="currentColor" stroke="none"/>
@@ -1721,10 +1721,7 @@
 
       <div class="hero-actions">
         <a href="#pricing" class="btn btn-accent btn-lg">Start free trial <span class="arrow">→</span></a>
-        <a href="#demo" class="btn btn-secondary btn-lg">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9-5.5-9-5.5z"/></svg>
-          Watch 2-min demo
-        </a>
+        <a href="#demo" class="btn btn-secondary btn-lg">See how it works <span class="arrow">↓</span></a>
       </div>
 
       <div class="hero-meta">
@@ -2050,22 +2047,22 @@
 
     <div class="pipeline-visual">
       <div class="pipeline-head">
-        <span>pipeline · architectural-refactor-v2</span>
-        <b>11 phases · 63 agents · all merged</b>
+        <span>pipeline · dynamic-orchestration-redesign</span>
+        <b>11 phases · 44 agents · all merged</b>
       </div>
       <div class="pipeline-row">
         <span class="phase-num">Phase 1</span>
         <span class="phase-name">orchestrator-executor</span>
         <span class="phase-tag">sequential</span>
         <span class="phase-status">merged</span>
-        <span class="phase-agents">7 agents</span>
+        <span class="phase-agents">4 agents</span>
       </div>
       <div class="pipeline-row">
         <span class="phase-num">Phase 2</span>
         <span class="phase-name">test-client</span>
         <span class="phase-tag">sequential</span>
         <span class="phase-status">merged</span>
-        <span class="phase-agents">5 agents</span>
+        <span class="phase-agents">4 agents</span>
       </div>
       <div class="pipeline-row">
         <span class="phase-num">Phase 3</span>
@@ -2076,64 +2073,64 @@
       </div>
       <div class="pipeline-row">
         <span class="phase-num">Phase 4</span>
-        <span class="phase-name">delete-legacy</span>
+        <span class="phase-name">delete-old</span>
         <span class="phase-tag">sequential</span>
         <span class="phase-status">merged</span>
-        <span class="phase-agents">7 agents</span>
+        <span class="phase-agents">4 agents</span>
       </div>
       <div class="pipeline-row">
         <span class="phase-num">Phase 5</span>
         <span class="phase-name">turn-overlap-pause</span>
         <span class="phase-tag">sequential</span>
         <span class="phase-status">merged</span>
-        <span class="phase-agents">6 agents</span>
+        <span class="phase-agents">4 agents</span>
       </div>
       <div class="pipeline-row">
         <span class="phase-num">Phase 6</span>
-        <span class="phase-name">websocket-reconnect</span>
+        <span class="phase-name">stt-time</span>
         <span class="phase-tag">sequential</span>
         <span class="phase-status">merged</span>
-        <span class="phase-agents">5 agents</span>
+        <span class="phase-agents">4 agents</span>
       </div>
       <div class="pipeline-row">
         <span class="phase-num">Phase 7</span>
-        <span class="phase-name">rate-limiter-refactor</span>
+        <span class="phase-name">caller-profiles</span>
         <span class="phase-tag">sequential</span>
         <span class="phase-status">merged</span>
-        <span class="phase-agents">8 agents</span>
+        <span class="phase-agents">4 agents</span>
       </div>
       <div class="pipeline-row">
         <span class="phase-num">Phase 8</span>
-        <span class="phase-name">config-migration</span>
+        <span class="phase-name">ssml-rate</span>
         <span class="phase-tag">sequential</span>
         <span class="phase-status">merged</span>
         <span class="phase-agents">4 agents</span>
       </div>
       <div class="pipeline-row">
         <span class="phase-num">Phase 9</span>
-        <span class="phase-name">deprecation-warnings</span>
+        <span class="phase-name">sentiment</span>
         <span class="phase-tag">sequential</span>
         <span class="phase-status">merged</span>
-        <span class="phase-agents">5 agents</span>
+        <span class="phase-agents">4 agents</span>
       </div>
       <div class="pipeline-row">
         <span class="phase-num">Phase 10</span>
-        <span class="phase-name">integration-tests</span>
+        <span class="phase-name">backchannels</span>
         <span class="phase-tag">sequential</span>
         <span class="phase-status">merged</span>
-        <span class="phase-agents">6 agents</span>
+        <span class="phase-agents">4 agents</span>
       </div>
       <div class="pipeline-row">
         <span class="phase-num">Phase 11</span>
-        <span class="phase-name">cleanup-dead-code</span>
+        <span class="phase-name">speculative-stretch</span>
         <span class="phase-tag">sequential</span>
         <span class="phase-status">merged</span>
-        <span class="phase-agents">6 agents</span>
+        <span class="phase-agents">4 agents</span>
       </div>
     </div>
 
     <p style="margin-top: 32px; font-size: 14.5px; color: var(--fg-3); line-height: 1.65; max-width: 800px;">
-      The pipeline above is a real architectural refactor delivered by aiorch — 11 sequential phases, 63 agents, all merged without manual intervention. Pipelines are how aiorch handles work that would normally span multiple sprints.
+      The pipeline above is a real architectural refactor delivered by aiorch — 11 sequential phases, 44 agents, all merged without manual intervention. Pipelines are how aiorch handles work that would normally span multiple sprints.
     </p>
   </div>
 </section>
@@ -2220,19 +2217,19 @@
           <div class="mini-stats">
             <div class="mini-stat">
               <div class="lbl">Active</div>
-              <div class="num"><em>3</em> <span class="sub">/ 42</span></div>
+              <div class="num"><em>2</em> <span class="sub">/ 17</span></div>
             </div>
             <div class="mini-stat">
               <div class="lbl">Pipelines</div>
-              <div class="num"><em>1</em> <span class="sub">/ 8</span></div>
+              <div class="num"><em>1</em> <span class="sub">/ 3</span></div>
             </div>
             <div class="mini-stat">
               <div class="lbl">Agents</div>
-              <div class="num"><em>11</em></div>
+              <div class="num"><em>8</em></div>
             </div>
             <div class="mini-stat">
               <div class="lbl">Today</div>
-              <div class="num"><em>$4</em><span class="sub">.27</span></div>
+              <div class="num"><em>$1</em><span class="sub">.84</span></div>
             </div>
           </div>
           <div class="mini-row">
@@ -2534,7 +2531,7 @@
         </h2>
       </div>
       <p class="kicker" style="align-self: end;">
-        Estimated impact based on typical routine tasks — refactors, test backfill, and feature scaffolding — compared to manual workflows. Your numbers will vary by codebase shape and task mix.
+        Based on internal benchmarks across 100+ sessions at TravelCalls.ai — refactors, test backfill, and feature scaffolding compared to manual workflows. Your numbers will vary by codebase shape and task mix.
       </p>
     </div>
 
@@ -2548,27 +2545,27 @@
           </div>
           <div class="roi-row">
             <div class="label">Senior-engineer time</div>
-            <div class="before">4.5 hrs</div>
-            <div class="after"><em>22</em> min</div>
+            <div class="before">~4 hrs</div>
+            <div class="after"><em>~20</em> min</div>
           </div>
           <div class="roi-row">
             <div class="label">Review cycles to merge</div>
-            <div class="before">3.1 rounds</div>
-            <div class="after"><em>1.2</em> rounds</div>
+            <div class="before">2–4 rounds</div>
+            <div class="after"><em>1</em> round</div>
           </div>
           <div class="roi-row">
             <div class="label">Inference cost</div>
             <div class="before">—</div>
-            <div class="after"><em>$0.84</em> list price</div>
+            <div class="after"><em>$0.50–$2</em> typical</div>
           </div>
         </div>
         <div class="roi-total">
           <div>
-            <div class="tlabel">Annualized for one engineer</div>
-            <div class="tvalue">≈<em>165 hrs</em> of senior-engineering time recovered</div>
+            <div class="tlabel">Typical annual impact per engineer</div>
+            <div class="tvalue"><em>5–10×</em> faster on routine tasks</div>
           </div>
         </div>
-        <p class="roi-note">Assumes 40 routine tasks / year at 4.5 → 0.4 hrs each. Inference billed at provider list price; aiorch licence purchased separately.</p>
+        <p class="roi-note">Based on internal benchmarks across 100+ aiorch sessions on a production Rust + React codebase. Inference billed at provider list price; aiorch licence purchased separately.</p>
       </div>
 
       <div>
@@ -2715,52 +2712,45 @@
     <div class="compare-table">
       <div class="compare-row header">
         <div></div>
-        <div>Copilot</div>
-        <div>Cursor</div>
-        <div>Devin</div>
+        <div>IDE agents</div>
+        <div>Cloud autonomous</div>
         <div class="us">aiorch</div>
       </div>
       <div class="compare-row">
         <div>Delivers a pull request</div>
-        <div class="cm-yes">yes<span class="sub">coding agent</span></div>
-        <div class="cm-no">—<span class="sub">IDE only</span></div>
+        <div class="cm-mid">varies<span class="sub">some do, some IDE-only</span></div>
         <div class="cm-yes">yes</div>
         <div class="cm-yes us">yes<span class="sub">reviewed by default</span></div>
       </div>
       <div class="compare-row">
         <div>Multi-agent review loop</div>
-        <div class="cm-mid">partial<span class="sub">reviews own PRs</span></div>
-        <div class="cm-mid">partial<span class="sub">Bugbot add-on</span></div>
-        <div class="cm-mid">partial<span class="sub">Devin Review</span></div>
+        <div class="cm-mid">partial<span class="sub">single-pass or add-on</span></div>
+        <div class="cm-mid">partial<span class="sub">single reviewer</span></div>
         <div class="cm-yes us">native<span class="sub">multi-round enforced</span></div>
       </div>
       <div class="compare-row">
         <div>Runs on your infrastructure</div>
-        <div class="cm-no">cloud only</div>
-        <div class="cm-mid">partial<span class="sub">self-hosted agents</span></div>
-        <div class="cm-mid">VPC only<span class="sub">enterprise</span></div>
+        <div class="cm-mid">partial<span class="sub">agent may run cloud-side</span></div>
+        <div class="cm-no">cloud only<span class="sub">or VPC at enterprise tier</span></div>
         <div class="cm-yes us">docker, local<span class="sub">fully self-hosted</span></div>
       </div>
       <div class="compare-row">
         <div>BYO model / provider keys</div>
-        <div class="cm-mid">CLI only<span class="sub">main product: no</span></div>
-        <div class="cm-mid">limited<span class="sub">some models</span></div>
-        <div class="cm-no">—<span class="sub">own models</span></div>
+        <div class="cm-mid">limited<span class="sub">own ecosystem only</span></div>
+        <div class="cm-no">—<span class="sub">bundled inference</span></div>
         <div class="cm-yes us">any provider<span class="sub">+ local Ollama</span></div>
       </div>
       <div class="compare-row">
         <div>Token markup</div>
-        <div class="cm-mid">seat + credits<span class="sub">opaque</span></div>
-        <div class="cm-mid">seat price<span class="sub">per request</span></div>
-        <div class="cm-mid">ACU-based<span class="sub">bundled</span></div>
+        <div class="cm-mid">seat + credits<span class="sub">varies by vendor</span></div>
+        <div class="cm-mid">compute-based<span class="sub">bundled pricing</span></div>
         <div class="cm-yes us">zero<span class="sub">provider list price</span></div>
       </div>
       <div class="compare-row">
-        <div>Parallel agent isolation</div>
-        <div class="cm-no">single agent</div>
-        <div class="cm-mid">parallel<span class="sub">since Cursor 3</span></div>
-        <div class="cm-mid">parallel<span class="sub">shared VM</span></div>
-        <div class="cm-yes us">git worktree<span class="sub">per agent</span></div>
+        <div>Cross-provider routing</div>
+        <div class="cm-no">—<span class="sub">single vendor</span></div>
+        <div class="cm-no">—<span class="sub">single vendor</span></div>
+        <div class="cm-yes us">any mix<span class="sub">per agent, per session</span></div>
       </div>
     </div>
   </div>
@@ -2801,7 +2791,7 @@
         <div class="price-tag">Run aiorch for 14 days with full features. No card, no commitment.</div>
         <div class="price-amount"><span class="amt"><em>Free</em></span><span class="per">14 days</span></div>
         <div class="price-sub">all features · no card required</div>
-        <a href="#" class="price-cta">Install now</a>
+        <a href="https://github.com/aiorch-ai/aiorch-public" class="price-cta">Install now</a>
         <ul class="price-features">
           <li class="price-feature">Full feature access</li>
           <li class="price-feature">BYOK · all providers</li>
@@ -2814,9 +2804,9 @@
         <div class="price-badge">Business</div>
         <div class="price-name">Team</div>
         <div class="price-tag">Named-user licenses for your engineering team. Minimum 3 seats.</div>
-        <div class="price-amount"><span class="amt"><em>$39</em><sup style="font-family: var(--serif); font-size: 28px; color: var(--accent); position: relative; top: -0.3em;">.99</sup></span><span class="per">/ seat / month</span></div>
+        <div class="price-amount"><span class="amt"><em>$39</em></span><span class="per">/ seat / month</span></div>
         <div class="price-sub">minimum 3 seats · billed monthly</div>
-        <a href="#" class="price-cta">Buy seats</a>
+        <a href="mailto:license@aiorch.ai?subject=aiorch%20seats" class="price-cta">Buy seats</a>
         <ul class="price-features">
           <li class="price-feature">Unlimited concurrent sessions</li>
           <li class="price-feature">Unlimited agents per task</li>
@@ -2892,7 +2882,7 @@
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand-block">
-        <a href="#" class="brand">
+        <a href="/" class="brand">
           <span class="brand-mark">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
               <circle cx="12" cy="12" r="2.5" fill="currentColor" stroke="none"/>
@@ -2913,24 +2903,17 @@
           <li><a href="#architecture">Architecture</a></li>
           <li><a href="#audit">Audit logs</a></li>
           <li><a href="#pricing">Pricing</a></li>
-          <li><a href="#">Changelog</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <h5>Resources</h5>
         <ul>
-          <li><a href="#">Documentation</a></li>
-          <li><a href="#">CLI reference</a></li>
-          <li><a href="#">Model setup</a></li>
-          <li><a href="#">GitHub</a></li>
-          <li><a href="#">Status</a></li>
+          <li><a href="https://github.com/aiorch-ai/aiorch-public">GitHub</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h5>Company</h5>
+        <h5>Legal</h5>
         <ul>
-          <li><a href="#">About</a></li>
-          <li><a href="#">Contact</a></li>
           <li><a href="privacy.html">Privacy</a></li>
           <li><a href="terms.html">Terms</a></li>
           <li><a href="cookies.html">Cookies</a></li>
