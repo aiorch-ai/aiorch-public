@@ -1220,7 +1220,103 @@
     letter-spacing: 0.04em;
   }
 
-  /* Testimonial */
+  /* Why autonomous / review layers */
+  .review-layers {
+    padding: 120px 0;
+    border-top: 1px solid var(--line);
+  }
+  .review-layers-grid {
+    margin-top: 56px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .rl-block {
+    padding: 28px 26px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--ink-1);
+  }
+  .rl-block h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--fg);
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .rl-block h4 .rl-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-line);
+    border-radius: 4px;
+    padding: 2px 7px;
+    letter-spacing: 0.04em;
+  }
+  .rl-block p { font-size: 14px; color: var(--fg-3); line-height: 1.65; }
+
+  /* Pipeline orchestration */
+  .pipeline-section {
+    padding: 120px 0;
+    border-top: 1px solid var(--line);
+  }
+  .pipeline-visual {
+    margin-top: 56px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--ink-1);
+  }
+  .pipeline-head {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--line);
+    background: var(--ink-2);
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--fg-3);
+    letter-spacing: 0.06em;
+  }
+  .pipeline-head b { color: var(--fg); font-weight: 500; }
+  .pipeline-row {
+    display: grid;
+    grid-template-columns: 60px 1fr auto auto auto;
+    gap: 16px;
+    padding: 13px 20px;
+    border-bottom: 1px solid var(--line);
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 12.5px;
+  }
+  .pipeline-row:last-child { border-bottom: 0; }
+  .pipeline-row .phase-num { color: var(--fg-4); font-size: 11px; letter-spacing: 0.04em; }
+  .pipeline-row .phase-name { color: var(--fg-2); font-size: 13px; }
+  .pipeline-row .phase-tag {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--fg-4);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 2px 8px;
+  }
+  .pipeline-row .phase-status {
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ok);
+    background: rgba(111,168,138,0.1);
+    border: 1px solid rgba(111,168,138,0.2);
+    border-radius: 4px;
+    padding: 3px 10px;
+    font-weight: 500;
+  }
+  .pipeline-row .phase-agents { color: var(--fg-4); font-size: 11px; text-align: right; min-width: 70px; }
+
+  /* Testimonial / built-in-production */
   .testimonial {
     padding: 120px 0;
     border-top: 1px solid var(--line);
@@ -1229,35 +1325,30 @@
     max-width: 880px;
     margin: 0 auto;
   }
-  .tst-quote {
+  .tst-heading {
     font-family: var(--serif);
     font-weight: 400;
-    font-size: clamp(28px, 3vw, 44px);
-    line-height: 1.2;
+    font-size: clamp(24px, 2.5vw, 36px);
+    line-height: 1.25;
     letter-spacing: -0.015em;
     color: var(--fg);
+    margin-top: 24px;
   }
-  .tst-quote em { color: var(--accent); font-style: italic; }
-  .tst-author {
-    margin-top: 40px;
-    display: grid;
-    grid-template-columns: 48px 1fr;
-    gap: 14px;
-    align-items: center;
+  .tst-heading em { color: var(--accent); font-style: italic; }
+  .tst-body {
+    margin-top: 24px;
+    font-size: 15px;
+    color: var(--fg-3);
+    line-height: 1.65;
+    max-width: 720px;
   }
-  .tst-avatar {
-    width: 48px; height: 48px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--ink-3), var(--ink-2));
-    border: 1px solid var(--line-2);
-    display: inline-flex; align-items: center; justify-content: center;
-    font-family: var(--serif);
-    font-style: italic;
-    font-size: 20px;
-    color: var(--fg-2);
+  .tst-attribution {
+    margin-top: 28px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--fg-4);
+    letter-spacing: 0.03em;
   }
-  .tst-name { font-size: 14.5px; color: var(--fg); font-weight: 550; letter-spacing: -0.01em; }
-  .tst-role { font-size: 12.5px; color: var(--fg-3); margin-top: 2px; }
 
   /* Pricing */
   .pricing {
@@ -1555,6 +1646,9 @@
     .stats-grid { grid-template-columns: 1fr 1fr; gap: 32px 0; }
     .stat { border-left: 0 !important; padding-left: 0 !important; }
     .diff-inner, .local-inner, .byok-inner, .roi-inner, .gov-grid { grid-template-columns: 1fr; gap: 40px; }
+    .review-layers-grid { grid-template-columns: 1fr; }
+    .pipeline-row { grid-template-columns: 50px 1fr auto auto; }
+    .pipeline-row .phase-tag { display: none; }
     .section-heading.with-desc { grid-template-columns: 1fr; gap: 16px; }
     .steps { grid-template-columns: 1fr; gap: 32px; }
     .steps::before { display: none; }
@@ -1906,6 +2000,141 @@
         </p>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ── WHY AUTONOMOUS WORKS HERE ── -->
+<section class="review-layers" id="review-layers">
+  <div class="container">
+    <div class="eyebrow"><span class="dot"></span>Architecture</div>
+    <h2 class="h-xl" style="margin-top: 24px;">
+      Why autonomous works here.<br><em>Three review layers</em>, not one.
+    </h2>
+    <p class="lead" style="margin-top: 24px; max-width: 760px;">
+      Earlier autonomous coding tools failed because one agent's mistakes went unchecked until the user saw a broken PR. aiorch replaces human-in-the-loop intervention with adversarial agents at three independent layers — the same problem, a different solution.
+    </p>
+
+    <div class="review-layers-grid">
+      <div class="rl-block">
+        <h4><span class="rl-num">01</span> Reviewer agent in-loop</h4>
+        <p>A separate agent evaluates each coder's output against the original task specification, requests revisions, and only approves once the work passes. Coders never merge their own code. Most issues are caught and corrected before they leave the agent's branch.</p>
+      </div>
+      <div class="rl-block">
+        <h4><span class="rl-num">02</span> Independent external auditor</h4>
+        <p>A second-pass reviewer with no shared context audits the merged result, identifies issues the in-loop reviewer missed, and performs final cleanup. Independent context is what makes the audit adversarial rather than confirmatory.</p>
+      </div>
+      <div class="rl-block">
+        <h4><span class="rl-num">03</span> Integration verification</h4>
+        <p>Tests run across all merged branches. Conflicts are detected and resolved automatically. The PR only opens if every check passes. If anything fails, the session does not produce a PR — it surfaces the failure for review.</p>
+      </div>
+    </div>
+
+    <p class="mono" style="margin-top: 40px; font-size: 13px; color: var(--accent); letter-spacing: 0.02em; line-height: 1.6;">
+      Three checkpoints between the prompt and the merge button. The user sees only the final result.
+    </p>
+  </div>
+</section>
+
+<!-- ── PIPELINE ORCHESTRATION ── -->
+<section class="pipeline-section" id="pipelines">
+  <div class="container">
+    <div class="section-heading with-desc">
+      <div>
+        <div class="eyebrow"><span class="dot"></span>Pipeline orchestration</div>
+        <h2 class="h-xl" style="margin-top: 20px;">Multi-phase work,<br>not just <em>single tasks</em>.</h2>
+      </div>
+      <p class="kicker" style="align-self: end;">
+        Real engineering work isn't one prompt. It's a sequence of dependent phases — refactor the schema, migrate the callers, update the tests, deprecate the old API. aiorch chains sessions into pipelines that execute sequentially, with each phase handing off cleanly to the next.
+      </p>
+    </div>
+
+    <div class="pipeline-visual">
+      <div class="pipeline-head">
+        <span>pipeline · architectural-refactor-v2</span>
+        <b>11 phases · 63 agents · all merged</b>
+      </div>
+      <div class="pipeline-row">
+        <span class="phase-num">Phase 1</span>
+        <span class="phase-name">orchestrator-executor</span>
+        <span class="phase-tag">sequential</span>
+        <span class="phase-status">merged</span>
+        <span class="phase-agents">7 agents</span>
+      </div>
+      <div class="pipeline-row">
+        <span class="phase-num">Phase 2</span>
+        <span class="phase-name">test-client</span>
+        <span class="phase-tag">sequential</span>
+        <span class="phase-status">merged</span>
+        <span class="phase-agents">5 agents</span>
+      </div>
+      <div class="pipeline-row">
+        <span class="phase-num">Phase 3</span>
+        <span class="phase-name">flip-default</span>
+        <span class="phase-tag">sequential</span>
+        <span class="phase-status">merged</span>
+        <span class="phase-agents">4 agents</span>
+      </div>
+      <div class="pipeline-row">
+        <span class="phase-num">Phase 4</span>
+        <span class="phase-name">delete-legacy</span>
+        <span class="phase-tag">sequential</span>
+        <span class="phase-status">merged</span>
+        <span class="phase-agents">7 agents</span>
+      </div>
+      <div class="pipeline-row">
+        <span class="phase-num">Phase 5</span>
+        <span class="phase-name">turn-overlap-pause</span>
+        <span class="phase-tag">sequential</span>
+        <span class="phase-status">merged</span>
+        <span class="phase-agents">6 agents</span>
+      </div>
+      <div class="pipeline-row">
+        <span class="phase-num">Phase 6</span>
+        <span class="phase-name">websocket-reconnect</span>
+        <span class="phase-tag">sequential</span>
+        <span class="phase-status">merged</span>
+        <span class="phase-agents">5 agents</span>
+      </div>
+      <div class="pipeline-row">
+        <span class="phase-num">Phase 7</span>
+        <span class="phase-name">rate-limiter-refactor</span>
+        <span class="phase-tag">sequential</span>
+        <span class="phase-status">merged</span>
+        <span class="phase-agents">8 agents</span>
+      </div>
+      <div class="pipeline-row">
+        <span class="phase-num">Phase 8</span>
+        <span class="phase-name">config-migration</span>
+        <span class="phase-tag">sequential</span>
+        <span class="phase-status">merged</span>
+        <span class="phase-agents">4 agents</span>
+      </div>
+      <div class="pipeline-row">
+        <span class="phase-num">Phase 9</span>
+        <span class="phase-name">deprecation-warnings</span>
+        <span class="phase-tag">sequential</span>
+        <span class="phase-status">merged</span>
+        <span class="phase-agents">5 agents</span>
+      </div>
+      <div class="pipeline-row">
+        <span class="phase-num">Phase 10</span>
+        <span class="phase-name">integration-tests</span>
+        <span class="phase-tag">sequential</span>
+        <span class="phase-status">merged</span>
+        <span class="phase-agents">6 agents</span>
+      </div>
+      <div class="pipeline-row">
+        <span class="phase-num">Phase 11</span>
+        <span class="phase-name">cleanup-dead-code</span>
+        <span class="phase-tag">sequential</span>
+        <span class="phase-status">merged</span>
+        <span class="phase-agents">6 agents</span>
+      </div>
+    </div>
+
+    <p style="margin-top: 32px; font-size: 14.5px; color: var(--fg-3); line-height: 1.65; max-width: 800px;">
+      The pipeline above is a real architectural refactor delivered by aiorch — 11 sequential phases, 63 agents, all merged without manual intervention. Pipelines are how aiorch handles work that would normally span multiple sprints.
+    </p>
   </div>
 </section>
 
@@ -2537,17 +2766,18 @@
   </div>
 </section>
 
-<!-- ── BUILT BY FOUNDERS ── -->
+<!-- ── BUILT IN PRODUCTION ── -->
 <section class="testimonial">
   <div class="container">
     <div class="tst-inner">
-      <div class="eyebrow" style="justify-content: center;"><span class="dot"></span>Transparency</div>
-      <p class="tst-quote" style="margin-top: 24px;">
-        Built and <em>battle-tested</em> while shipping a production AI platform.
+      <div class="eyebrow"><span class="dot"></span>Built in production</div>
+      <p class="tst-heading">
+        aiorch was built while shipping a <em>Rust + React</em> production AI platform.
       </p>
-      <p class="kicker" style="margin-top: 24px; max-width: 720px; margin-left: auto; margin-right: auto; text-align: center;">
-        aiorch was built by founders who use it daily. It was developed and stress-tested while shipping <a href="https://travelcalls.ai" style="color: var(--accent); border-bottom: 1px solid var(--accent-line); padding-bottom: 1px;">TravelCalls.ai</a> — a Rust + React AI communication platform with voice, email, and case-management pipelines. The orchestrator ran hundreds of sessions against a real production codebase before we offered it to anyone else.
+      <p class="tst-body">
+        We needed an orchestration tool that could deliver multi-phase refactors without supervision while we focused on customer-facing work. Nothing on the market did that the way we needed, so we built aiorch. Every feature on this page exists because we used it ourselves first.
       </p>
+      <p class="tst-attribution">— internal use case, not a paid endorsement</p>
     </div>
   </div>
 </section>
