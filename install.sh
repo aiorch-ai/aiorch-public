@@ -35,12 +35,6 @@ if [ -n "${NO_COLOR:-}" ] || [ ! -t 1 ]; then
     RESET= BOLD= DIM= GREEN= GREEN_BOLD= ORANGE= YELLOW= RED= CYAN= WHITE= MUTED= MUTED2=
 fi
 
-# Get terminal width via /dev/tty (works even when piped through curl | bash)
-COLS=$(stty size </dev/tty 2>/dev/null | cut -d' ' -f2)
-[ -z "$COLS" ] && COLS=$(tput cols 2>/dev/null)
-[ -z "$COLS" ] && COLS=80
-[ "$COLS" -lt 50 ] && COLS=50
-
 # --- Helper functions ---
 ok()    { echo -e "  ${GREEN}✓${RESET}  $*"; }
 warn()  { echo -e "  ${YELLOW}⚡${RESET}  $*"; }
@@ -49,6 +43,39 @@ info()  { echo -e "  ${CYAN}◆${RESET}  $*"; }
 skip()  { echo -e "  ${MUTED}○  $*${RESET}"; }
 next()  { echo -e "  ${GREEN}→${RESET}  $*"; }
 ask()   { echo -en "  ${WHITE}$*${RESET}"; }
+
+# --- Verify /dev/tty is openable BEFORE any other check that touches it ---
+# install.sh reads from /dev/tty for prompts so it can stay interactive when
+# piped via `curl ... | bash`. Some invocation patterns strip the controlling
+# terminal (`su - user -c '...'`, ssh without -t, cron, systemd ExecStart);
+# in those cases the prompts would die with a cryptic
+# "/dev/tty: No such device or address" mid-script. Detect that up front and
+# explain the fix.
+#
+# The brace-block wrapper around the redirect is what swallows bash's
+# redirect-failure stderr — `2>/dev/null` on the colon command alone wouldn't
+# catch it, because bash prints the redirect error before the command's own
+# stderr is set up.
+if ! { : < /dev/tty; } 2>/dev/null; then
+    echo ""
+    err "Cannot read from /dev/tty — no controlling terminal."
+    echo ""
+    echo -e "    ${DIM}The installer needs an interactive terminal for prompts."
+    echo -e "    Some shell invocations strip the controlling tty:${RESET}"
+    echo ""
+    echo -e "      ${CYAN}su - <user> -c '...'${RESET}     ${DIM}→ use ${CYAN}sudo -iu <user> --${RESET}${DIM} instead${RESET}"
+    echo -e "      ${CYAN}ssh host '...'${RESET}            ${DIM}→ add ${CYAN}-t${RESET}${DIM}: ${CYAN}ssh -t host '...'${RESET}"
+    echo -e "      ${CYAN}cron${RESET}, ${CYAN}systemd ExecStart${RESET}     ${DIM}→ not supported (interactive only)${RESET}"
+    echo ""
+    exit 1
+fi
+
+# Get terminal width via /dev/tty (works when piped via curl|bash). Safe to
+# touch /dev/tty here — the pre-flight above guaranteed it's openable.
+COLS=$({ stty size </dev/tty | cut -d' ' -f2; } 2>/dev/null)
+[ -z "$COLS" ] && COLS=$(tput cols 2>/dev/null || true)
+[ -z "$COLS" ] && COLS=80
+[ "$COLS" -lt 50 ] && COLS=50
 
 STEP_COUNTER=0
 step() {
@@ -127,7 +154,7 @@ if [ "$(id -u)" = "0" ]; then
     _step_n=$((_step_n + 1))
     echo ""
     echo -e "      ${BOLD}${_step_n}.${RESET} Re-run the installer as that user:"
-    echo -e "         ${CYAN}su - aiorch -c 'curl -fsSL https://aiorch.ai/install.sh | bash'${RESET}"
+    echo -e "         ${CYAN}sudo -iu aiorch -- bash -c 'curl -fsSL https://aiorch.ai/install.sh | bash'${RESET}"
     echo ""
     echo -e "    ${DIM}If you genuinely need to run as root (e.g. an air-gapped"
     echo -e "    appliance), set ${CYAN}AIORCH_ALLOW_ROOT=1${RESET}${DIM} and re-run. You"
