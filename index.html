@@ -1476,6 +1476,133 @@
   .pricing-foot a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-line); padding-bottom: 1px; }
   .pricing-foot a:hover { color: var(--fg); border-bottom-color: var(--fg); }
 
+  /* Pricing — billing toggle + quantity */
+  .billing-toggle {
+    display: inline-flex;
+    align-self: flex-start;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 3px;
+    margin-bottom: 18px;
+    background: var(--ink-0);
+  }
+  .bt-opt {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 999px;
+    color: var(--fg-3);
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    transition: color .18s, background .18s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .bt-opt:hover { color: var(--fg); }
+  .bt-opt.is-active {
+    background: var(--accent);
+    color: var(--ink-0);
+  }
+  .bt-opt.is-active:hover { color: var(--ink-0); }
+  .bt-save {
+    font-size: 9.5px;
+    letter-spacing: 0.05em;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid var(--accent-line);
+  }
+  .bt-opt.is-active .bt-save {
+    background: rgba(0, 0, 0, 0.18);
+    color: var(--ink-0);
+    border-color: rgba(0, 0, 0, 0.25);
+  }
+
+  .qty-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .qty-label {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+  }
+  .qty-stepper {
+    display: inline-flex;
+    align-items: stretch;
+    border: 1px solid var(--line-2);
+    border-radius: 7px;
+    overflow: hidden;
+    background: var(--ink-0);
+  }
+  .qty-btn {
+    width: 36px;
+    border: 0;
+    background: var(--ink-1);
+    color: var(--fg-2);
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+  }
+  .qty-btn:hover:not(:disabled) { background: var(--ink-2); color: var(--fg); }
+  .qty-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+  .qty-input {
+    width: 56px;
+    border: 0;
+    border-left: 1px solid var(--line);
+    border-right: 1px solid var(--line);
+    background: var(--ink-0);
+    color: var(--fg);
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 14px;
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+  .qty-input:focus { outline: none; background: var(--ink-1); }
+  .qty-input::-webkit-outer-spin-button,
+  .qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .price-total {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 0 16px;
+    border-top: 1px dashed var(--line);
+    border-bottom: 1px dashed var(--line);
+    margin: 6px 0 22px;
+  }
+  .pt-label {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--fg-3);
+  }
+  .pt-val {
+    font-family: var(--serif);
+    font-size: 28px;
+    color: var(--fg);
+    letter-spacing: -0.015em;
+  }
+  .pt-val em { font-style: italic; color: var(--accent); }
+  .pt-per { font-family: var(--mono); font-size: 12px; color: var(--fg-3); margin-left: 4px; letter-spacing: 0.04em; }
+
   /* Roadmap */
   .roadmap {
     padding: 100px 0 120px;
@@ -2782,13 +2909,34 @@
         </ul>
       </div>
 
-      <div class="price-card featured">
+      <div class="price-card featured" data-pricing-card>
         <div class="price-badge">Business</div>
         <div class="price-name">Team</div>
         <div class="price-tag">Named-user licenses for your engineering team. Minimum 3 seats.</div>
-        <div class="price-amount"><span class="amt"><em>$39</em></span><span class="per">/ seat / month</span></div>
-        <div class="price-sub">minimum 3 seats · billed monthly</div>
-        <a href="mailto:license@aiorch.ai?subject=aiorch%20seats" class="price-cta">Buy seats</a>
+
+        <div class="billing-toggle" role="tablist" aria-label="Billing period">
+          <button type="button" class="bt-opt is-active" data-billing="monthly" role="tab" aria-selected="true">Monthly</button>
+          <button type="button" class="bt-opt" data-billing="annual" role="tab" aria-selected="false">Annual <span class="bt-save">save 2 months</span></button>
+        </div>
+
+        <div class="price-amount"><span class="amt"><em>$<span data-price-per-seat>39</span></em></span><span class="per">/ seat / <span data-price-period>month</span></span></div>
+        <div class="price-sub" data-price-note>billed monthly · minimum 3 seats</div>
+
+        <div class="qty-row">
+          <span class="qty-label">Seats</span>
+          <div class="qty-stepper">
+            <button type="button" class="qty-btn" data-qty-act="dec" aria-label="Decrease seats">−</button>
+            <input class="qty-input" data-qty-input type="number" min="3" step="1" value="3" inputmode="numeric" aria-label="Seat quantity"/>
+            <button type="button" class="qty-btn" data-qty-act="inc" aria-label="Increase seats">+</button>
+          </div>
+        </div>
+
+        <div class="price-total">
+          <span class="pt-label">Total</span>
+          <span class="pt-val"><em>$<span data-total>117</span></em><span class="pt-per">/ <span data-total-period>month</span></span></span>
+        </div>
+
+        <a class="price-cta" data-checkout href="#" target="_blank" rel="noopener">Buy seats</a>
         <ul class="price-features">
           <li class="price-feature">Unlimited concurrent sessions</li>
           <li class="price-feature">Unlimited agents per task</li>
@@ -2934,6 +3082,78 @@
     lbl.style.color = 'var(--accent)';
     setTimeout(() => { lbl.textContent = prev; lbl.style.color = ''; }, 1600);
   }
+
+  // Pricing — billing toggle + quantity selector
+  (() => {
+    const PRICING = {
+      minQty: 3,
+      monthly: {
+        url: 'https://aiorch.lemonsqueezy.com/checkout/buy/aab01f11-5e06-4912-9f1d-3e1e7ccd41f3',
+        perSeat: 39,
+        period: 'month',
+        note: 'billed monthly · minimum 3 seats',
+      },
+      annual: {
+        url: 'https://aiorch.lemonsqueezy.com/checkout/buy/e4d5859b-2c58-4170-b825-41014e65307a',
+        perSeat: 39 * 10, // 2 months off → 10 months at the monthly rate
+        period: 'year',
+        note: 'billed annually · 2 months free · minimum 3 seats',
+      },
+    };
+
+    const card = document.querySelector('[data-pricing-card]');
+    if (!card) return;
+    const $ = (sel) => card.querySelector(sel);
+    const fmt = (n) => n.toLocaleString('en-US');
+    const state = { billing: 'monthly', qty: PRICING.minQty };
+
+    const input = $('[data-qty-input]');
+    const decBtn = card.querySelector('[data-qty-act="dec"]');
+
+    function render({ syncInput = true } = {}) {
+      const cfg = PRICING[state.billing];
+      $('[data-price-per-seat]').textContent = cfg.perSeat;
+      $('[data-price-period]').textContent = cfg.period;
+      $('[data-price-note]').textContent = cfg.note;
+      $('[data-total]').textContent = fmt(cfg.perSeat * state.qty);
+      $('[data-total-period]').textContent = cfg.period;
+      $('[data-checkout]').href = `${cfg.url}?quantity=${state.qty}`;
+      card.querySelectorAll('.bt-opt').forEach(b => {
+        const active = b.dataset.billing === state.billing;
+        b.classList.toggle('is-active', active);
+        b.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      decBtn.disabled = state.qty <= PRICING.minQty;
+      if (syncInput && input.value !== String(state.qty)) input.value = state.qty;
+    }
+
+    card.querySelectorAll('.bt-opt').forEach(b => {
+      b.addEventListener('click', () => { state.billing = b.dataset.billing; render(); });
+    });
+    card.querySelectorAll('[data-qty-act]').forEach(b => {
+      b.addEventListener('click', () => {
+        const delta = b.dataset.qtyAct === 'inc' ? 1 : -1;
+        state.qty = Math.max(PRICING.minQty, state.qty + delta);
+        render();
+      });
+    });
+    // While typing: only commit to state if >= minQty; don't fight the user's caret.
+    input.addEventListener('input', () => {
+      const v = parseInt(input.value, 10);
+      if (Number.isFinite(v) && v >= PRICING.minQty) {
+        state.qty = v;
+        render({ syncInput: false });
+      }
+    });
+    // On blur: clamp anything below the minimum back up to it.
+    input.addEventListener('blur', () => {
+      const v = parseInt(input.value, 10);
+      state.qty = Number.isFinite(v) && v >= PRICING.minQty ? v : PRICING.minQty;
+      render();
+    });
+
+    render();
+  })();
 </script>
 </body>
 </html>
