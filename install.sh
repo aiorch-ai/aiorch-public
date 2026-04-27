@@ -639,15 +639,19 @@ step "Docker Compose"
 # bind-mounted host path. /home, /opt, and (for non-/home users) ${HOME} are
 # mounted; everything else — /usr/*, /lib/*, /bin, /sbin — is the container's
 # OWN filesystem and would be shadowed by a host-side path of the same name.
-# Walk the realpath of each detected CLI, warn on system paths that won't
-# work from the container, and only contribute reachable dirs to PATH.
+# We use the directory of the symlink (or hard path) returned by
+# `command -v` — NOT `readlink -f` — because Anthropic's claude installer
+# creates ~/.local/bin/claude as a symlink whose target is named after the
+# version (e.g. ~/.local/share/claude/versions/2.1.119, not …/claude).
+# Resolving the symlink points the container at a directory that doesn't
+# contain a file named "claude". The unresolved symlink dir does.
 CLI_EXTRA_PATH=""
 _cli_unreachable_warned=0
 for cli_label_path in "Claude:${CLAUDE_CLI_PATH}" "Kimi:${KIMI_CLI_PATH}" "Codex:${CODEX_CLI_PATH}"; do
     cli_label="${cli_label_path%%:*}"
     cli_path="${cli_label_path#*:}"
     [ -z "${cli_path}" ] && continue
-    cli_dir="$(cd "$(dirname "$(readlink -f "${cli_path}")")" && pwd)"
+    cli_dir="$(cd "$(dirname "${cli_path}")" && pwd)"
 
     # Reject system paths that won't be visible inside the container.
     case "${cli_dir}" in
