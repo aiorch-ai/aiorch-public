@@ -133,6 +133,14 @@ if [ "$(id -u)" = "0" ]; then
     echo -e "    container runtime does not isolate against this — it runs"
     echo -e "    as your host UID, so root install ⇒ root container.${RESET}"
     echo ""
+    echo -e "    ${DIM}Note: a non-root user in the ${CYAN}docker${RESET}${DIM} group still has effective"
+    echo -e "    root via the Docker socket (${CYAN}docker run -v /:/host …${RESET}${DIM}). For maximum"
+    echo -e "    isolation, run Docker rootless: ${CYAN}https://docs.docker.com/engine/security/rootless/${RESET}"
+    echo -e "    ${DIM}Non-root with docker group is still strictly safer than root install:"
+    echo -e "    the agent process itself doesn't start with root, accidental damage from"
+    echo -e "    non-malicious code is contained, and audit trails distinguish agent"
+    echo -e "    activity from root activity.${RESET}"
+    echo ""
     # Detect whether Docker is already installed so the remediation steps
     # are presented in the correct order. On a fresh VM the user typically
     # has neither Docker nor the docker group yet — `usermod -aG docker`
@@ -166,12 +174,21 @@ if [ "$(id -u)" = "0" ]; then
         fi
     done < /etc/passwd
 
-    # If SUDO_USER didn't set _detected_user but there's exactly one
-    # candidate, use that.
+    # If SUDO_USER didn't set _detected_user, prefer users already in the
+    # docker group — on Hetzner / DigitalOcean / cloud-init images there's
+    # often a `ubuntu` or `deploy` user pre-configured for docker access,
+    # and suggesting that user is way better UX than telling them to create
+    # a redundant `aiorch` user. If exactly one docker-group member exists,
+    # use them. Otherwise fall back to "exactly one regular user" heuristic.
     if [ -z "${_detected_user}" ]; then
-        _n_candidates=$(echo "${_candidate_users}" | wc -w)
-        if [ "${_n_candidates}" = "1" ]; then
-            _detected_user="${_candidate_users}"
+        _n_in_docker=$(echo "${_candidate_in_docker}" | wc -w)
+        if [ "${_n_in_docker}" = "1" ]; then
+            _detected_user="${_candidate_in_docker}"
+        else
+            _n_candidates=$(echo "${_candidate_users}" | wc -w)
+            if [ "${_n_candidates}" = "1" ]; then
+                _detected_user="${_candidate_users}"
+            fi
         fi
     fi
 
@@ -210,6 +227,11 @@ if [ "$(id -u)" = "0" ]; then
         echo -e "      ${BOLD}${_step_n}.${RESET} Re-run the installer as your chosen user"
         echo -e "         ${MUTED}(replace ${CYAN}${_user}${RESET}${MUTED} below if you picked someone else)${RESET}:"
         echo -e "         ${CYAN}sudo -iu ${_user} -- bash -c 'curl -fsSL https://aiorch.ai/install.sh | bash'${RESET}"
+        if [ "${_in_docker}" = "0" ]; then
+            echo -e "         ${MUTED}(${CYAN}sudo -iu${RESET}${MUTED} starts a fresh login shell so the new docker group${RESET}"
+            echo -e "         ${MUTED}membership takes effect. If you instead try to run the installer in${RESET}"
+            echo -e "         ${MUTED}an already-open shell of ${CYAN}${_user}${RESET}${MUTED}, you'll need ${CYAN}newgrp docker${RESET}${MUTED} first.)${RESET}"
+        fi
         echo ""
     elif [ -n "${_candidate_users}" ]; then
         # Multiple candidates with no clear pick — list them all.
