@@ -412,8 +412,16 @@ echo -e "  ${DIM}Other providers (OpenAI, Gemini, Ollama) — configure in Setti
 step "Installation Configuration"
 
 # --- Install directory ---
-read -p "$(echo -e "  ${GREEN}→${RESET}  Install directory ${MUTED}[/opt/aiorch]${RESET}: ")" INSTALL_DIR < /dev/tty
-INSTALL_DIR=${INSTALL_DIR:-/opt/aiorch}
+# Default to a path under the user's HOME so the install is fully unprivileged
+# (no sudo, no password). Users who want a system-wide install can type
+# /opt/aiorch (or any other root-owned path) explicitly — the sudo branch
+# below will handle that case.
+_default_install_dir="${HOME}/aiorch"
+read -p "$(echo -e "  ${GREEN}→${RESET}  Install directory ${MUTED}[${_default_install_dir}]${RESET}: ")" INSTALL_DIR < /dev/tty
+INSTALL_DIR=${INSTALL_DIR:-${_default_install_dir}}
+# Expand a leading tilde the user may have typed literally — `read` does not
+# perform tilde expansion.
+INSTALL_DIR="${INSTALL_DIR/#\~/$HOME}"
 
 if [ -d "${INSTALL_DIR}" ] && [ -f "${INSTALL_DIR}/docker-compose.yml" ]; then
     warn "Existing installation found at ${INSTALL_DIR}"
@@ -427,18 +435,29 @@ if [ -d "${INSTALL_DIR}" ] && [ -f "${INSTALL_DIR}/docker-compose.yml" ]; then
 fi
 
 # Data dirs must be writable by the container process (runs as the host user's UID).
-# chown requires root, so sudo is needed when not root.
+# Only require sudo when the chosen INSTALL_DIR is actually rooted somewhere the
+# current user can't write — otherwise an unprivileged user installing under
+# their own HOME doesn't need sudo at all.
+_existing_parent="${INSTALL_DIR}"
+while [ ! -d "${_existing_parent}" ]; do
+    _existing_parent="$(dirname "${_existing_parent}")"
+done
+
 _sudo=""
-if [ "$(id -u)" -ne 0 ]; then
+if [ ! -w "${_existing_parent}" ] && [ "$(id -u)" -ne 0 ]; then
     if ! command -v sudo &>/dev/null; then
-        err "Root privileges required to create ${INSTALL_DIR} and set ownership."
-        echo -e "    ${DIM}Re-run as root:${RESET}"
-        echo -e "    ${CYAN}sudo bash -c \"\$(curl -fsSL https://aiorch.ai/install.sh)\"${RESET}"
+        err "Root privileges required to create ${INSTALL_DIR}, but sudo is not installed."
+        echo -e "    ${DIM}Either install sudo, or re-run and choose a directory you own:${RESET}"
+        echo -e "    ${CYAN}\$HOME/aiorch${RESET}"
         exit 1
     fi
+    info "Elevated privileges required for ${INSTALL_DIR} (writing under ${_existing_parent})"
+    echo -e "      ${DIM}To install without sudo, Ctrl+C and re-run with a path under your HOME${RESET}"
+    echo -e "      ${DIM}(e.g. ${CYAN}\$HOME/aiorch${RESET}${DIM} — that's the default if you just hit Enter).${RESET}"
+    if ! sudo -n true 2>/dev/null; then
+        echo -e "      ${DIM}You'll be prompted for the sudo password for user ${CYAN}$(id -un)${RESET}${DIM}.${RESET}"
+    fi
     _sudo="sudo"
-    info "Elevated privileges required for ${INSTALL_DIR}"
-    echo -e "      ${DIM}To install without sudo, re-run and set the directory to a path you own (e.g. ~/aiorch)${RESET}"
 fi
 
 ${_sudo} mkdir -p "${INSTALL_DIR}/data/sessions" "${INSTALL_DIR}/data/pipelines"
