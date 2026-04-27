@@ -138,6 +138,43 @@ if [ "$(id -u)" = "0" ]; then
     # has neither Docker nor the docker group yet — `usermod -aG docker`
     # fails until Docker has been installed, so the install step must come
     # first.
+    # Detect existing non-root candidates so we can render a copy-paste-ready
+    # command for the user's actual situation rather than a generic placeholder.
+    _detected_user=""           # set when we have a clear single best guess
+    _candidate_users=""         # whitespace-separated list of plausible users
+    _candidate_in_docker=""     # whitespace-separated subset that's in docker grp
+
+    # Signal #1: came in via sudo. SUDO_USER is the original user — by far
+    # the most reliable hint about whose box this actually is.
+    if [ -n "${SUDO_USER:-}" ] && [ "${SUDO_USER}" != "root" ] && id "${SUDO_USER}" &>/dev/null; then
+        _detected_user="${SUDO_USER}"
+    fi
+
+    # Signal #2: enumerate regular users (UID >= 1000, < 65534, real shell).
+    # nobody is UID 65534 on most distros and is excluded.
+    while IFS=: read -r _u _ _uid _ _ _home _shell; do
+        case "${_shell}" in
+            */bash|*/zsh|*/sh|*/fish|*/dash) ;;
+            *) continue ;;
+        esac
+        [ "${_uid}" -ge 1000 ] && [ "${_uid}" -lt 65534 ] || continue
+        [ -d "${_home}" ] || continue
+        _candidate_users="${_candidate_users}${_candidate_users:+ }${_u}"
+        # docker group membership — only meaningful if docker is installed
+        if id -nG "${_u}" 2>/dev/null | tr ' ' '\n' | grep -qx docker; then
+            _candidate_in_docker="${_candidate_in_docker}${_candidate_in_docker:+ }${_u}"
+        fi
+    done < /etc/passwd
+
+    # If SUDO_USER didn't set _detected_user but there's exactly one
+    # candidate, use that.
+    if [ -z "${_detected_user}" ]; then
+        _n_candidates=$(echo "${_candidate_users}" | wc -w)
+        if [ "${_n_candidates}" = "1" ]; then
+            _detected_user="${_candidate_users}"
+        fi
+    fi
+
     _step_n=1
     echo -e "    ${WHITE}Run these steps to set up properly:${RESET}"
     echo ""
@@ -148,23 +185,45 @@ if [ "$(id -u)" = "0" ]; then
         _step_n=$((_step_n + 1))
         echo ""
     fi
-    echo -e "      ${BOLD}${_step_n}.${RESET} Pick a non-root user. AIORCH installs scoped to that user's"
-    echo -e "         home — its CLI installs (Claude, Kimi, Codex), credentials,"
-    echo -e "         and project files all live under ${CYAN}\$HOME${RESET}."
-    echo ""
-    echo -e "         ${WHITE}If you already have a regular user${RESET} ${MUTED}(e.g. ${CYAN}alice${RESET}${MUTED})${RESET}, just"
-    echo -e "         add them to the docker group:"
-    echo -e "         ${CYAN}usermod -aG docker alice${RESET}"
-    echo ""
-    echo -e "         ${WHITE}Otherwise, create a dedicated user${RESET}:"
-    echo -e "         ${CYAN}useradd -m -s /bin/bash aiorch${RESET}"
-    echo -e "         ${CYAN}usermod -aG docker aiorch${RESET}"
-    _step_n=$((_step_n + 1))
-    echo ""
-    echo -e "      ${BOLD}${_step_n}.${RESET} Re-run the installer as that user (replace ${CYAN}<user>${RESET} with"
-    echo -e "         the username you chose above):"
-    echo -e "         ${CYAN}sudo -iu <user> -- bash -c 'curl -fsSL https://aiorch.ai/install.sh | bash'${RESET}"
-    echo ""
+
+    if [ -n "${_detected_user}" ]; then
+        # We know who the user probably is. Render a single concrete command.
+        _user="${_detected_user}"
+        _in_docker=0
+        if echo " ${_candidate_in_docker} " | grep -q " ${_user} "; then
+            _in_docker=1
+        fi
+        echo -e "      ${BOLD}${_step_n}.${RESET} Detected non-root user: ${CYAN}${_user}${RESET}"
+        if [ "${_in_docker}" = "0" ]; then
+            echo -e "         Add them to the docker group first:"
+            echo -e "         ${CYAN}usermod -aG docker ${_user}${RESET}"
+            echo ""
+        fi
+        _step_n=$((_step_n + 1))
+        echo -e "      ${BOLD}${_step_n}.${RESET} Re-run the installer as that user:"
+        echo -e "         ${CYAN}sudo -iu ${_user} -- bash -c 'curl -fsSL https://aiorch.ai/install.sh | bash'${RESET}"
+        echo ""
+    elif [ -n "${_candidate_users}" ]; then
+        # Multiple candidates — list them, pick one.
+        echo -e "      ${BOLD}${_step_n}.${RESET} Existing non-root users on this host: ${CYAN}${_candidate_users}${RESET}"
+        echo -e "         Pick one (or create a new ${CYAN}aiorch${RESET} user) and ensure it's in the docker group:"
+        echo -e "         ${CYAN}usermod -aG docker <user>${RESET}     ${MUTED}# only if not already${RESET}"
+        _step_n=$((_step_n + 1))
+        echo ""
+        echo -e "      ${BOLD}${_step_n}.${RESET} Re-run the installer as that user:"
+        echo -e "         ${CYAN}sudo -iu <user> -- bash -c 'curl -fsSL https://aiorch.ai/install.sh | bash'${RESET}"
+        echo ""
+    else
+        # No usable existing user. Show the create-from-scratch path.
+        echo -e "      ${BOLD}${_step_n}.${RESET} No existing non-root user found. Create one:"
+        echo -e "         ${CYAN}useradd -m -s /bin/bash aiorch${RESET}"
+        echo -e "         ${CYAN}usermod -aG docker aiorch${RESET}"
+        _step_n=$((_step_n + 1))
+        echo ""
+        echo -e "      ${BOLD}${_step_n}.${RESET} Re-run the installer as that user:"
+        echo -e "         ${CYAN}sudo -iu aiorch -- bash -c 'curl -fsSL https://aiorch.ai/install.sh | bash'${RESET}"
+        echo ""
+    fi
     echo -e "    ${DIM}If you genuinely need to run as root (e.g. an air-gapped"
     echo -e "    appliance), set ${CYAN}AIORCH_ALLOW_ROOT=1${RESET}${DIM} and re-run. You"
     echo -e "    accept the security implications by doing so.${RESET}"
