@@ -412,54 +412,50 @@ echo ""
 CODEX_CLI_PATH=""
 INSTALL_CODEX_CHOICE="n"
 
+# Codex is bundled in the orchestrator image starting with 3.9.31. The host
+# CLI is now an OPTIONAL OVERRIDE for users who want a newer version than
+# what's bundled — host wins because the container PATH puts host bin dirs
+# first. Most customers can skip this section entirely.
 if command -v codex &>/dev/null; then
     CODEX_CLI_PATH="$(command -v codex)"
-    ok "Codex CLI found: ${CODEX_CLI_PATH}"
+    ok "Codex CLI found on host: ${CODEX_CLI_PATH} ${DIM}(will override bundled version)${RESET}"
     INSTALL_CODEX_CHOICE="y"
 else
-    echo -e "  ${MUTED}○${RESET}  Codex CLI  ${DIM}(OpenAI — Codex)${RESET}"
+    echo -e "  ${GREEN}✓${RESET}  Codex CLI  ${DIM}(OpenAI — bundled in image, ready to use)${RESET}"
     echo ""
-    echo -e "      Install:       ${CYAN}npm install -g @openai/codex${RESET}"
-    echo -e "      Authenticate:  ${CYAN}codex login${RESET}"
+    echo -e "      ${DIM}Codex ships with AIORCH and works out of the box once you${RESET}"
+    echo -e "      ${DIM}authenticate inside the container: ${CYAN}docker exec -it aiorch-orchestrator-1 codex login${RESET}"
     echo ""
-    read -p "$(echo -e "  ${GREEN}→${RESET}  Install Codex CLI now? ${MUTED}(y/N)${RESET}: ")" INSTALL_CODEX_NOW < /dev/tty
+    echo -e "      ${DIM}Optional: install a host Codex CLI to override the bundled${RESET}"
+    echo -e "      ${DIM}version (useful if you want a newer release than the image has).${RESET}"
+    echo ""
+    read -p "$(echo -e "  ${GREEN}→${RESET}  Install host Codex CLI override? ${MUTED}(y/N)${RESET}: ")" INSTALL_CODEX_NOW < /dev/tty
     if [ "${INSTALL_CODEX_NOW}" = "y" ] || [ "${INSTALL_CODEX_NOW}" = "Y" ]; then
         if ! command -v npm &>/dev/null; then
-            err "npm not found — Node.js is required for Codex CLI."
-            echo -e "      Install Node.js first, then re-run:"
-            echo -e "      ${CYAN}curl -fsSL https://deb.nodesource.com/setup_22.x | bash -${RESET}"
-            echo -e "      ${CYAN}apt-get install -y nodejs${RESET}"
+            warn "npm not found on host — cannot install override here."
+            echo -e "      ${DIM}You can either:${RESET}"
+            echo -e "      ${DIM}  - skip this and use the bundled Codex (recommended)${RESET}"
+            echo -e "      ${DIM}  - install Node.js first, then re-run this installer:${RESET}"
+            echo -e "        ${CYAN}curl -fsSL https://deb.nodesource.com/setup_22.x | sudo bash -${RESET}"
+            echo -e "        ${CYAN}sudo apt-get install -y nodejs${RESET}"
         else
-            info "Installing Codex CLI..."
-            if npm install -g @openai/codex 2>/dev/null; then
-                if command -v codex &>/dev/null; then
-                    CODEX_CLI_PATH="$(command -v codex)"
-                    ok "Codex CLI installed: ${CODEX_CLI_PATH}"
+            info "Installing Codex CLI override under \$HOME/.local..."
+            mkdir -p "${HOME}/.local/lib" "${HOME}/.local/bin"
+            # `-g --prefix DIR` = global-style install (creates bin symlinks)
+            # but rooted at DIR instead of /usr/local. No sudo, no system pollution.
+            if npm install -g --prefix "${HOME}/.local" @openai/codex 2>&1 | grep -vE "^npm warn" || true; then
+                if [ -x "${HOME}/.local/bin/codex" ]; then
+                    CODEX_CLI_PATH="${HOME}/.local/bin/codex"
+                    ok "Codex CLI override installed: ${CODEX_CLI_PATH}"
                     INSTALL_CODEX_CHOICE="y"
                     echo ""
                     info "Run ${CYAN}codex login${RESET} after setup to authenticate."
                 else
-                    warn "Codex CLI installed but binary not found in PATH."
-                    read -p "$(echo -e "  ${GREEN}→${RESET}  Path to codex binary ${MUTED}(or Enter to skip)${RESET}: ")" CODEX_CLI_PATH < /dev/tty
-                    if [ -n "${CODEX_CLI_PATH}" ] && [ ! -f "${CODEX_CLI_PATH}" ]; then
-                        err "File not found: ${CODEX_CLI_PATH}"
-                        CODEX_CLI_PATH=""
-                    elif [ -n "${CODEX_CLI_PATH}" ]; then
-                        INSTALL_CODEX_CHOICE="y"
-                    fi
+                    warn "npm reported success but ${HOME}/.local/bin/codex was not created."
+                    echo -e "      ${DIM}Falling back to the bundled version. You can investigate later.${RESET}"
                 fi
             else
-                warn "Codex CLI installation failed. You can install it manually later."
-            fi
-        fi
-    else
-        read -p "$(echo -e "  ${GREEN}→${RESET}  Path to codex binary ${MUTED}(or Enter to skip)${RESET}: ")" CODEX_CLI_PATH < /dev/tty
-        if [ -n "${CODEX_CLI_PATH}" ]; then
-            if [ ! -f "${CODEX_CLI_PATH}" ]; then
-                err "File not found: ${CODEX_CLI_PATH}"
-                CODEX_CLI_PATH=""
-            else
-                INSTALL_CODEX_CHOICE="y"
+                warn "Codex CLI override install failed. Falling back to the bundled version."
             fi
         fi
     fi
@@ -792,7 +788,9 @@ ${PROJECT_MOUNTS}
       - PYTHONPATH=/app
       - DOCKER_HOST=tcp://docker-proxy:2375
       - ORCH_HOST_HOME=${HOME}
-      - PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${CLI_EXTRA_PATH}
+      # Host CLI dirs come FIRST so a host install (e.g. \$HOME/.local/bin/codex)
+      # overrides the bundled version inside the image. Order: host > bundled.
+      - PATH=${CLI_EXTRA_PATH}${CLI_EXTRA_PATH:+:}/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
     depends_on:
       docker-proxy:
         condition: service_started
