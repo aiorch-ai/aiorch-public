@@ -134,12 +134,13 @@ if [ "$(id -u)" = "0" ]; then
     echo -e "    as your host UID, so root install ⇒ root container.${RESET}"
     echo ""
     echo -e "    ${DIM}Note: a non-root user in the ${CYAN}docker${RESET}${DIM} group still has effective"
-    echo -e "    root via the Docker socket (${CYAN}docker run -v /:/host …${RESET}${DIM}). For maximum"
-    echo -e "    isolation, run Docker rootless: ${CYAN}https://docs.docker.com/engine/security/rootless/${RESET}"
-    echo -e "    ${DIM}Non-root with docker group is still strictly safer than root install:"
-    echo -e "    the agent process itself doesn't start with root, accidental damage from"
-    echo -e "    non-malicious code is contained, and audit trails distinguish agent"
-    echo -e "    activity from root activity.${RESET}"
+    echo -e "    root via the Docker socket (${CYAN}docker run -v /:/host …${RESET}${DIM}) — but it's"
+    echo -e "    strictly safer than installing as root. The agent process itself"
+    echo -e "    doesn't start with root, accidental damage is contained, and"
+    echo -e "    audit trails distinguish agent activity from root.${RESET}"
+    echo ""
+    echo -e "    ${DIM}For maximum isolation, run Docker rootless:"
+    echo -e "    ${CYAN}https://docs.docker.com/engine/security/rootless/${RESET}"
     echo ""
     # Detect whether Docker is already installed so the remediation steps
     # are presented in the correct order. On a fresh VM the user typically
@@ -193,7 +194,7 @@ if [ "$(id -u)" = "0" ]; then
     fi
 
     _step_n=1
-    echo -e "    ${WHITE}Run these steps to set up properly:${RESET}"
+    echo -e "    ${WHITE}Setup steps:${RESET}"
     echo ""
     if ! command -v docker &>/dev/null; then
         echo -e "      ${BOLD}${_step_n}.${RESET} Install Docker (creates the ${CYAN}docker${RESET} group):"
