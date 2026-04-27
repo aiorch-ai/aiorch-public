@@ -443,7 +443,10 @@ else
             mkdir -p "${HOME}/.local/lib" "${HOME}/.local/bin"
             # `-g --prefix DIR` = global-style install (creates bin symlinks)
             # but rooted at DIR instead of /usr/local. No sudo, no system pollution.
-            if npm install -g --prefix "${HOME}/.local" @openai/codex 2>&1 | grep -vE "^npm warn" || true; then
+            # NOTE: do NOT pipe through grep with `|| true` — pipefail + ||true
+            # makes the `if` always-true and we'd treat npm failures as success.
+            # Show npm output verbatim; warnings are useful for support.
+            if npm install -g --prefix "${HOME}/.local" @openai/codex; then
                 if [ -x "${HOME}/.local/bin/codex" ]; then
                     CODEX_CLI_PATH="${HOME}/.local/bin/codex"
                     ok "Codex CLI override installed: ${CODEX_CLI_PATH}"
