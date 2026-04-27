@@ -187,27 +187,36 @@ if [ "$(id -u)" = "0" ]; then
     fi
 
     if [ -n "${_detected_user}" ]; then
-        # We know who the user probably is. Render a single concrete command.
+        # We have a strong guess. Render it as a SUGGESTION, not a directive,
+        # and make clear the user can pick someone else.
         _user="${_detected_user}"
         _in_docker=0
         if echo " ${_candidate_in_docker} " | grep -q " ${_user} "; then
             _in_docker=1
         fi
-        echo -e "      ${BOLD}${_step_n}.${RESET} Detected non-root user: ${CYAN}${_user}${RESET}"
-        if [ "${_in_docker}" = "0" ]; then
-            echo -e "         Add them to the docker group first:"
-            echo -e "         ${CYAN}usermod -aG docker ${_user}${RESET}"
-            echo ""
+        echo -e "      ${BOLD}${_step_n}.${RESET} Pick a non-root user. Suggested: ${CYAN}${_user}${RESET}"
+        # Mention other candidates if any exist beyond the suggested one.
+        _other_users=$(echo " ${_candidate_users} " | sed "s/ ${_user} / /" | tr -s ' ' | sed 's/^ //;s/ $//')
+        if [ -n "${_other_users}" ]; then
+            echo -e "         ${MUTED}Other users on this host: ${_other_users}${RESET}"
         fi
+        if [ "${_in_docker}" = "0" ]; then
+            echo -e "         If you go with ${CYAN}${_user}${RESET}, add them to the docker group first:"
+            echo -e "         ${CYAN}usermod -aG docker ${_user}${RESET}"
+        fi
+        echo -e "         ${MUTED}Or create a fresh user: ${CYAN}useradd -m -s /bin/bash <name> && usermod -aG docker <name>${RESET}"
         _step_n=$((_step_n + 1))
-        echo -e "      ${BOLD}${_step_n}.${RESET} Re-run the installer as that user:"
+        echo ""
+        echo -e "      ${BOLD}${_step_n}.${RESET} Re-run the installer as your chosen user"
+        echo -e "         ${MUTED}(replace ${CYAN}${_user}${RESET}${MUTED} below if you picked someone else)${RESET}:"
         echo -e "         ${CYAN}sudo -iu ${_user} -- bash -c 'curl -fsSL https://aiorch.ai/install.sh | bash'${RESET}"
         echo ""
     elif [ -n "${_candidate_users}" ]; then
-        # Multiple candidates — list them, pick one.
-        echo -e "      ${BOLD}${_step_n}.${RESET} Existing non-root users on this host: ${CYAN}${_candidate_users}${RESET}"
-        echo -e "         Pick one (or create a new ${CYAN}aiorch${RESET} user) and ensure it's in the docker group:"
+        # Multiple candidates with no clear pick — list them all.
+        echo -e "      ${BOLD}${_step_n}.${RESET} Pick a non-root user. Available: ${CYAN}${_candidate_users}${RESET}"
+        echo -e "         Make sure they're in the docker group (or create a fresh user):"
         echo -e "         ${CYAN}usermod -aG docker <user>${RESET}     ${MUTED}# only if not already${RESET}"
+        echo -e "         ${MUTED}Or create a fresh user: ${CYAN}useradd -m -s /bin/bash <name> && usermod -aG docker <name>${RESET}"
         _step_n=$((_step_n + 1))
         echo ""
         echo -e "      ${BOLD}${_step_n}.${RESET} Re-run the installer as that user:"
@@ -218,6 +227,7 @@ if [ "$(id -u)" = "0" ]; then
         echo -e "      ${BOLD}${_step_n}.${RESET} No existing non-root user found. Create one:"
         echo -e "         ${CYAN}useradd -m -s /bin/bash aiorch${RESET}"
         echo -e "         ${CYAN}usermod -aG docker aiorch${RESET}"
+        echo -e "         ${MUTED}(any name works — replace ${CYAN}aiorch${RESET}${MUTED} with your preferred username)${RESET}"
         _step_n=$((_step_n + 1))
         echo ""
         echo -e "      ${BOLD}${_step_n}.${RESET} Re-run the installer as that user:"
