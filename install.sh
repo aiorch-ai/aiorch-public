@@ -90,6 +90,38 @@ echo ""
 # =============================================================================
 step "Prerequisites"
 
+# --- Refuse to run as root ---
+# AIORCH executes AI-generated code with the privileges of the host user.
+# Running as root would give those agents read access to SSH keys, the
+# package manager, /etc, every other user's home, and so on. The container
+# runtime does not protect against this — entrypoint.sh runs as the host
+# UID via setpriv, so root install ⇒ container processes run as root.
+if [ "$(id -u)" = "0" ]; then
+    err "Running this installer as root is not supported."
+    echo ""
+    echo -e "    ${DIM}AIORCH runs AI agents that execute arbitrary code with"
+    echo -e "    the same privileges as the host user. As root, those agents"
+    echo -e "    could read SSH keys, modify system files, install packages,"
+    echo -e "    and access every other user's data on this machine. The"
+    echo -e "    container runtime does not isolate against this — it runs"
+    echo -e "    as your host UID, so root install ⇒ root container.${RESET}"
+    echo ""
+    echo -e "    ${WHITE}Create a dedicated non-root user and re-run:${RESET}"
+    echo ""
+    echo -e "      ${CYAN}useradd -m -s /bin/bash aiorch${RESET}"
+    echo -e "      ${CYAN}usermod -aG docker aiorch${RESET}"
+    echo -e "      ${CYAN}su - aiorch -c 'curl -fsSL https://aiorch.ai/install.sh | bash'${RESET}"
+    echo ""
+    echo -e "    ${DIM}If you genuinely need to run as root (e.g. an air-gapped"
+    echo -e "    appliance), set ${CYAN}AIORCH_ALLOW_ROOT=1${RESET}${DIM} and re-run. You"
+    echo -e "    accept the security implications by doing so.${RESET}"
+    echo ""
+    if [ "${AIORCH_ALLOW_ROOT:-0}" != "1" ]; then
+        exit 1
+    fi
+    warn "AIORCH_ALLOW_ROOT=1 — proceeding as root at your own risk."
+fi
+
 # --- Check Docker ---
 if ! command -v docker &>/dev/null; then
     err "Docker is required but not installed."
@@ -506,6 +538,23 @@ read -p "$(echo -e "  ${GREEN}→${RESET}  Extra directories ${MUTED}(comma-sepa
 PROJECT_MOUNTS="      - /home:/home:z
       - /opt:/opt:z"
 
+# If the user's HOME isn't already covered by the default mounts (e.g.
+# /Users/foo on Mac, /local/home/foo with LDAP-mounted homes, /data/users/foo
+# on custom Linux setups, /root when AIORCH_ALLOW_ROOT=1), bind-mount that
+# specific user's HOME so CLI binaries and credentials under it are reachable
+# from inside the container. We mount the user's HOME only — not the parent
+# directory — to limit blast radius if the container is ever compromised.
+case "${HOME}" in
+    /home/*|/opt/*) ;;  # already covered by the default mounts
+    /|"")
+        warn "HOME is unset or '/'; CLI binary discovery may fail." ;;
+    *)
+        PROJECT_MOUNTS="${PROJECT_MOUNTS}
+      - ${HOME}:${HOME}:z"
+        ok "Mounting your HOME (${HOME}) for CLI binaries and credentials"
+        ;;
+esac
+
 if [ -n "${EXTRA_DIRS}" ]; then
     IFS=',' read -ra DIRS <<< "${EXTRA_DIRS}"
     for d in "${DIRS[@]}"; do
@@ -523,18 +572,56 @@ fi
 step "Docker Compose"
 
 
-# CLI binaries are discovered via /home:/home mount + PATH
-# Build extra PATH entries from detected CLI locations
+# CLI binaries are reachable from the container only if they live under a
+# bind-mounted host path. /home, /opt, and (for non-/home users) ${HOME} are
+# mounted; everything else — /usr/*, /lib/*, /bin, /sbin — is the container's
+# OWN filesystem and would be shadowed by a host-side path of the same name.
+# Walk the realpath of each detected CLI, warn on system paths that won't
+# work from the container, and only contribute reachable dirs to PATH.
 CLI_EXTRA_PATH=""
-for cli_path in "${CLAUDE_CLI_PATH}" "${KIMI_CLI_PATH}" "${CODEX_CLI_PATH}"; do
-    if [ -n "${cli_path}" ]; then
-        cli_dir="$(cd "$(dirname "$(readlink -f "${cli_path}")")" && pwd)"
-        case ":${CLI_EXTRA_PATH}:" in
-            *":${cli_dir}:"*) ;;
-            *) CLI_EXTRA_PATH="${CLI_EXTRA_PATH:+${CLI_EXTRA_PATH}:}${cli_dir}" ;;
-        esac
-    fi
+_cli_unreachable_warned=0
+for cli_label_path in "Claude:${CLAUDE_CLI_PATH}" "Kimi:${KIMI_CLI_PATH}" "Codex:${CODEX_CLI_PATH}"; do
+    cli_label="${cli_label_path%%:*}"
+    cli_path="${cli_label_path#*:}"
+    [ -z "${cli_path}" ] && continue
+    cli_dir="$(cd "$(dirname "$(readlink -f "${cli_path}")")" && pwd)"
+
+    # Reject system paths that won't be visible inside the container.
+    case "${cli_dir}" in
+        /usr|/usr/*|/bin|/bin/*|/sbin|/sbin/*|/lib|/lib/*|/lib64|/lib64/*)
+            warn "${cli_label} CLI is at ${cli_dir} (system path)."
+            echo -e "      ${DIM}The container has its own filesystem there; this binary won't be reachable.${RESET}"
+            if [ "${cli_label}" = "Codex" ]; then
+                echo -e "      ${DIM}Reinstall per-user: ${CYAN}npm install --prefix ~/.local @openai/codex${RESET}"
+                echo -e "      ${DIM}or rebuild the orchestrator image with INSTALL_CODEX=true.${RESET}"
+            else
+                echo -e "      ${DIM}Reinstall per-user under \$HOME, then re-run this installer.${RESET}"
+            fi
+            _cli_unreachable_warned=1
+            continue ;;
+    esac
+
+    # Reject paths that fall outside any planned bind mount.
+    case "${cli_dir}" in
+        /home/*|/opt/*) ;;
+        ${HOME}/*|${HOME}) ;;
+        *)
+            # Outside default and HOME mounts. Warn and skip — the container
+            # cannot see this directory.
+            warn "${cli_label} CLI at ${cli_dir} is outside the planned mounts."
+            echo -e "      ${DIM}Either move it under \$HOME, or add ${cli_dir} to extra mounts above.${RESET}"
+            _cli_unreachable_warned=1
+            continue ;;
+    esac
+
+    case ":${CLI_EXTRA_PATH}:" in
+        *":${cli_dir}:"*) ;;
+        *) CLI_EXTRA_PATH="${CLI_EXTRA_PATH:+${CLI_EXTRA_PATH}:}${cli_dir}" ;;
+    esac
 done
+if [ "${_cli_unreachable_warned}" = "1" ]; then
+    echo -e "    ${DIM}Setup will continue, but the affected CLIs won't work until fixed.${RESET}"
+fi
 
 cat > "${INSTALL_DIR}/docker-compose.yml" << DEOF
 services:
