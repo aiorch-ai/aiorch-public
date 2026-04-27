@@ -106,11 +106,28 @@ if [ "$(id -u)" = "0" ]; then
     echo -e "    container runtime does not isolate against this — it runs"
     echo -e "    as your host UID, so root install ⇒ root container.${RESET}"
     echo ""
-    echo -e "    ${WHITE}Create a dedicated non-root user and re-run:${RESET}"
+    # Detect whether Docker is already installed so the remediation steps
+    # are presented in the correct order. On a fresh VM the user typically
+    # has neither Docker nor the docker group yet — `usermod -aG docker`
+    # fails until Docker has been installed, so the install step must come
+    # first.
+    _step_n=1
+    echo -e "    ${WHITE}Run these steps to set up properly:${RESET}"
     echo ""
-    echo -e "      ${CYAN}useradd -m -s /bin/bash aiorch${RESET}"
-    echo -e "      ${CYAN}usermod -aG docker aiorch${RESET}"
-    echo -e "      ${CYAN}su - aiorch -c 'curl -fsSL https://aiorch.ai/install.sh | bash'${RESET}"
+    if ! command -v docker &>/dev/null; then
+        echo -e "      ${BOLD}${_step_n}.${RESET} Install Docker (creates the ${CYAN}docker${RESET} group):"
+        echo -e "         ${CYAN}curl -fsSL https://get.docker.com | sh${RESET}"
+        echo -e "         ${CYAN}systemctl enable --now docker${RESET}"
+        _step_n=$((_step_n + 1))
+        echo ""
+    fi
+    echo -e "      ${BOLD}${_step_n}.${RESET} Create a dedicated non-root user and add it to the docker group:"
+    echo -e "         ${CYAN}useradd -m -s /bin/bash aiorch${RESET}"
+    echo -e "         ${CYAN}usermod -aG docker aiorch${RESET}"
+    _step_n=$((_step_n + 1))
+    echo ""
+    echo -e "      ${BOLD}${_step_n}.${RESET} Re-run the installer as that user:"
+    echo -e "         ${CYAN}su - aiorch -c 'curl -fsSL https://aiorch.ai/install.sh | bash'${RESET}"
     echo ""
     echo -e "    ${DIM}If you genuinely need to run as root (e.g. an air-gapped"
     echo -e "    appliance), set ${CYAN}AIORCH_ALLOW_ROOT=1${RESET}${DIM} and re-run. You"
