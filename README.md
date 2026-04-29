@@ -1,30 +1,28 @@
 # AIORCH
 
-**AI agents write, review, and merge your code. You wake up to a PR you can actually merge.**
+**Parallel AI agents that ship _reviewed_ pull requests.**
 
-Give it a task — AIORCH decomposes the work into parallel agents, each in isolated git worktrees. They write code, review each other through adversarial multi-round reviews, pass deterministic quality gates, resolve merge conflicts, and open a GitHub PR. Your keys, your cost, zero middleman.
+AIORCH decomposes a single task across multiple coding agents, makes them review each other's work in rounds, resolves conflicts, and delivers a single GitHub PR ready for human review. Runs entirely on your infrastructure. Your model keys. Your code. Zero markup.
+
+## Why AIORCH
+
+Most coding tools give you code. AIORCH gives you a _reviewed_ PR — so humans review reviewed code, not draft code.
+
+- **Cross-provider routing** — Claude Code only orchestrates Claude. Codex only OpenAI. AIORCH routes per-agent across Claude, OpenAI, Kimi, Codex, and Ollama in a single session.
+- **Three review layers** — an in-loop reviewer agent, an independent external auditor, and integration verification. Three checkpoints between prompt and merge button.
+- **Pipelines, not just tasks** — multi-phase work (refactor schema → migrate callers → update tests → deprecate API). Sessions of 60+ agents across 10+ phases run unattended.
+- **BYOK, zero markup** — bring your own API keys, pay providers directly at list price.
+- **Self-hosted** — Docker container on your infrastructure, no outbound data.
 
 ## How It Works
 
-1. **You describe the task** — "Refactor the auth module and add rate limiting"
-2. **AIORCH decomposes it** — Creates parallel sub-tasks with dependency ordering, classifies each by difficulty
-3. **Smart routing assigns models** — Opus for hard tasks, Sonnet for medium, Haiku for simple — mix providers freely
-4. **Agents work in isolation** — Each agent gets its own git worktree
-5. **Agents review each other** — Automated code review with approve/reject/revise verdicts
-6. **Branches merge automatically** — Conflict resolution with dependency-aware ordering
-7. **You get a PR** — Reviewed, tested, merged code with cost breakdown and agent summary
+Five stages, one command, one PR.
 
-## What Makes This Different
-
-- **Git worktree isolation per agent** — full filesystem isolation, not just branches.
-- **Automatic build artifact cleanup** — Rust `target/`, Node `node_modules/`, Java `build/`, and similar output dirs are removed from each agent's worktree the moment that agent completes review. Prevents disk fill in parallel sessions for compiled languages. Python/PHP users unaffected.
-- **Multi-round adversarial review** — reviewer and coder go back and forth until consensus.
-- **Deterministic quality gates** — compilation, linting, secret scanning run as real checks, not AI prompts.
-- **Smart model routing** — assign the right model per task difficulty, mix Claude + OpenAI + Ollama in one session.
-- **BYOK — zero token markup** — bring your own API keys, pay providers directly at your rate.
-- **Real-time streaming** — watch agents think and code token-by-token.
-- **Full cost visibility** — per-agent cost tracking with measured vs estimated labels.
-- **Self-hosted** — your code never leaves your server.
+1. **Decompose** — Your task is parsed into isolated subtasks with explicit scope and acceptance criteria.
+2. **Fan out** — Each subtask gets its own agent, git worktree, and model. Agents run in parallel, in isolation.
+3. **Review** — A dedicated reviewer agent critiques each output and demands revisions until the work meets spec.
+4. **Merge** — Branches merge into an integration branch. Conflicts resolve programmatically or escalate.
+5. **Deliver** — A single GitHub PR lands with summary, diff stats, agent breakdown, and full event log.
 
 ## Install
 
@@ -36,7 +34,7 @@ Requires Docker. Takes under 5 minutes. Works on Ubuntu 22.04/24.04 and any Linu
 
 The installer:
 - Checks Docker and Docker Compose
-- Pulls the AIORCH image
+- Pulls the AIORCH image (Claude CLI and Codex CLI bundled)
 - Prompts for port, license key, and configuration
 - Generates config and starts the service
 
@@ -44,89 +42,103 @@ Open `http://localhost:1230` to access the dashboard.
 
 ## First Steps
 
-1. Visit `/settings` to set your master password and configure API keys
-2. Click `+ Session` to create your first orchestration session
-3. Enter a task description, select your project directory, choose models
-4. Start the session and watch agents work in real-time
-5. When complete, click "Create GitHub PR" to push results
+1. Visit `/settings` to set your master password and configure API keys.
+2. Click `+ Session` to create your first orchestration session.
+3. Enter a task description, select your project directory, choose models per role.
+4. Start the session and watch agents work in real time.
+5. When complete, click "Create GitHub PR" to push results.
 
 ## Supported Models
 
-| Provider | Models | Agent Work | Planning | Review |
-|----------|--------|:---:|:---:|:---:|
-| **Claude CLI** | Opus, Sonnet, Haiku | Yes | Yes | Yes |
-| **OpenAI** | GPT-5.4/5.2/5.1/5 Pro/Mini/Nano, GPT-4.1, GPT-4o, o4-mini, o3 | Yes | Yes | Yes |
-| **Ollama** | Any tool-capable local model (Qwen 3, Llama 3.3, Mistral, etc.) | Yes* | Yes | Yes |
-| **OpenAI-compatible** | xAI/Grok, Together, Groq, Mistral | Yes | Yes | Yes |
+| Provider | How it runs | Agent work | Planning | Review |
+|---|---|:-:|:-:|:-:|
+| **Claude** | Claude CLI (bundled) | Yes | Yes | Yes |
+| **OpenAI** | API + Codex CLI (bundled) | Yes | Yes | Yes |
+| **Kimi** | API | Yes | Yes | Yes |
+| **Ollama** | Local, any tool-capable model | Yes\* | Yes | Yes |
 
-\* Ollama agent work requires a tool-capable model. Browse models at [ollama.com/search?c=tools](https://ollama.com/search?c=tools)
+\* Ollama agent work requires a tool-capable model. Browse models at [ollama.com/search?c=tools](https://ollama.com/search?c=tools).
 
-Mix models per role: use a cheap model for planning, a strong model for coding, and a balanced model for review.
+Mix models per role: cheap model for planning, strong model for coding, balanced model for review. Model dropdowns are populated dynamically from live provider health probes — only available, tested models appear.
 
 ### Smart Model Routing
 
-Assign different models per agent based on task difficulty. The planning model classifies each sub-task as high, medium, or low difficulty, then each agent runs on the model configured for its tier.
+The planning model classifies each subtask as high, medium, or low difficulty, then each agent runs on the model configured for its tier.
 
-- **High** (architecture, complex algorithms, security) → Opus, GPT-5.4 Pro
+- **High** (architecture, complex algorithms, security) → Opus, GPT-5.5
 - **Medium** (feature implementation, APIs, services) → Sonnet, GPT-5.4
-- **Low** (boilerplate, config, simple tests) → Haiku, GPT-5.4 Mini
+- **Low** (boilerplate, config, simple tests) → Haiku, Ollama local
 
-Mix providers freely — Claude for hard tasks, OpenAI for medium, Ollama for simple. All in one session, running in parallel. Toggle on/off per session via the dashboard.
+Mix providers freely — Claude for hard tasks, OpenAI for medium, Ollama for simple, all in one session running in parallel. Toggle on/off per session via the dashboard.
 
-Model dropdowns are populated dynamically — only available, tested models appear. Adding a new provider (e.g., Kimi K2, Qwen) is a single-file operation via the extensible provider registry.
+## Pipelines
+
+For work that doesn't fit a single task, AIORCH runs **pipelines** — sequential phases where each phase fans out to multiple agents and the next phase waits on the previous. A real session: 11 phases, 61 agents, all merged automatically.
+
+Use it when one prompt isn't enough — schema refactors, multi-service migrations, codebase-wide deprecations.
 
 ## Features
 
-- Smart model routing — difficulty-based model assignment, cross-provider mixing per session
-- Dynamic model catalog — UI auto-discovers available models from live provider health probes
-- Real-time web dashboard with SSE streaming
-- Token-by-token agent output streaming
+- Cross-provider smart routing — difficulty-based model assignment, mix Claude/OpenAI/Kimi/Codex/Ollama in one session
+- Multi-phase pipelines with dependency-aware ordering
+- Three review layers: reviewer agent, external auditor, integration verification
+- Real-time web dashboard with SSE streaming and token-by-token agent output
 - Per-agent cost tracking (measured for API, estimated for CLI, free for Ollama)
-- GitHub PR auto-creation with summary, cost, and diff stats
-- Multi-phase pipelines (sequential and parallel)
-- Shared memory between agents
-- Dependency graphs with topological ordering
-- Secret scanner in pre-review hooks
-- Agent resilience: auto-retry, timeout detection, zombie recovery
-- Automatic worktree disk cleanup for compiled languages (Rust/Java/C++/Node)
-- One-click restart for stuck or failed agents
+- GitHub PR auto-creation with summary, cost breakdown, and diff stats
+- Append-only JSONL audit log per session — every event, on disk
+- Git worktree isolation per agent — full filesystem isolation, not just branches
+- Automatic build artifact cleanup — `target/`, `node_modules/`, `build/`, `.gradle/` removed when agents finish; prevents disk fill in parallel sessions for compiled languages
+- Agent resilience — auto-retry, timeout detection, zombie recovery, one-click restart
 - Diagnostic export for remote support
-- Settings page with master password for API key management
+- Master-password-protected settings page for API key management
 
 ## Security
 
 - **Dashboard authentication** — API key auto-generated on install, required for all API requests
-- **Rate limiting** — 120 requests/minute per IP, configurable via ORCH_RATE_LIMIT_RPM
-- **API keys managed** via master-password-protected settings page
-- **All API responses sanitized** — 9 regex patterns strip secrets from output
-- **Agent subprocesses** run with sensitive env vars removed
+- **Rate limiting** — 120 requests/minute per IP, configurable via `ORCH_RATE_LIMIT_RPM`
+- **API keys at rest** — encrypted with machine-bound Fernet, managed via master-password-protected settings
+- **All API responses sanitized** — regex patterns strip secrets from output
+- **Agent subprocesses** run with sensitive env vars stripped
 - **Tool-use loop sandboxed** — path validation, command blocking, symlink escape prevention
 - **Pre-review hooks** scan for hardcoded secrets in code diffs
-- **Non-root Docker** — license server runs as unprivileged user
+- **Non-root Docker** — services run as unprivileged users
 - **Timing-safe auth** — API key comparison uses constant-time algorithm
 - **Self-hosted** — code and keys stay on your infrastructure
 
 ## Pricing
 
-| Plan | Price | Users | Highlights |
-|------|-------|-------|------------|
-| Team | £299/month | Up to 10 | Standard support, all LLM providers, GitHub PR integration, 14-day free trial |
-| Growth | £999/month | Unlimited | Priority support, all LLM providers, GitHub PR integration, 14-day free trial |
-| Enterprise | Custom | Unlimited + SLA | Dedicated success manager, SSO + audit logs, custom routing, security review support, custom terms |
+Named-user licenses. Each seat is bound to one email and can be installed on unlimited devices by that user.
 
-## Support
+| Plan | Price | Notes |
+|---|---|---|
+| **Free trial** | Free for 14 days | Full features, no card, no commitment |
+| **Team** | $39 / seat / month | Minimum 3 seats. Billed monthly or annually (2 months free with annual) |
+| **Enterprise** | Custom | SSO + audit logs, custom routing, dedicated success manager, custom terms |
 
-- **Email:** support@aiorch.ai
-- **Issues:** Open an issue in this repository
-- **Diagnostics:** Use the "Export Diagnostics" button in the session page to generate a sanitized report
+All inference is billed by your model provider at list price, directly to you. AIORCH adds zero token markup.
+
+See [aiorch.ai/#pricing](https://aiorch.ai/#pricing) for current pricing and to start the trial.
+
+## Roadmap
+
+- **In progress** — Signed event log (hash-chained, SHA-256-signed) for tamper-evident replay
+- **Planned (Q3)** — Policy & model allowlists (YAML for constraining models, repos, branches, spend caps)
+- **Considering** — Multi-user / shared history (would require a hosted backend; single-user by design today)
 
 ## Requirements
 
 - Docker 20.10+
 - Docker Compose v2
-- Claude CLI (for Claude models) — [Install guide](https://docs.anthropic.com/en/docs/claude-code)
-- OpenAI API key (for OpenAI models) — optional
-- Ollama (for local models) — optional
+- API keys for the providers you use (Claude, OpenAI, Kimi)
+- Optional: Ollama for local models
+
+The Claude CLI and Codex CLI are bundled in the AIORCH image — no host install needed.
+
+## Support
+
+- **Email:** support@aiorch.ai
+- **Issues:** Open an issue in this repository
+- **Diagnostics:** Use the "Export Diagnostics" button on the session page to generate a sanitized report
 
 ## Links
 
