@@ -4,6 +4,8 @@
 
 AIORCH decomposes a single task across multiple coding agents, makes them review each other's work in rounds, resolves conflicts, and delivers a single GitHub PR ready for human review. Runs entirely on your infrastructure. Your model keys. Your code. Zero markup.
 
+![AIORCH dashboard — sessions, pipelines, and audit trails at a glance](docs/images/dashboard.png)
+
 ## Why AIORCH
 
 Most coding tools give you code. AIORCH gives you a _reviewed_ PR — so humans review reviewed code, not draft code.
@@ -23,6 +25,8 @@ Five stages, one command, one PR.
 3. **Review** — A dedicated reviewer agent critiques each output and demands revisions until the work meets spec.
 4. **Merge** — Branches merge into an integration branch. Conflicts resolve programmatically or escalate.
 5. **Deliver** — A single GitHub PR lands with summary, diff stats, agent breakdown, and full event log.
+
+![Session detail — agent fleet, per-agent costs, multi-round review verdicts, external audit panel, and a full event timeline](docs/images/session.png)
 
 ## Install
 
@@ -76,6 +80,8 @@ Mix providers freely — Claude for hard tasks, OpenAI for medium, Ollama for si
 For work that doesn't fit a single task, AIORCH runs **pipelines** — sequential phases where each phase fans out to multiple agents and the next phase waits on the previous. A real session: 11 phases, 61 agents, all merged automatically.
 
 Use it when one prompt isn't enough — schema refactors, multi-service migrations, codebase-wide deprecations.
+
+![Pipeline summary — phases with status, mode, role, and the merged GitHub PR badge](docs/images/pipeline_summary.png)
 
 ## Features
 
