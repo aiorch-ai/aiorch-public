@@ -566,6 +566,8 @@ ${_sudo} chown -R "$(id -u):$(id -g)" "${INSTALL_DIR}"
 # --- Port ---
 read -p "$(echo -e "  ${GREEN}→${RESET}  Port ${MUTED}[1230]${RESET}: ")" PORT < /dev/tty
 PORT=${PORT:-1230}
+read -p "$(echo -e "  ${GREEN}→${RESET}  Host interface ${MUTED}[127.0.0.1; use VPN/private IP for remote access]${RESET}: ")" PUBLISH_HOST < /dev/tty
+PUBLISH_HOST=${PUBLISH_HOST:-127.0.0.1}
 
 # --- License key ---
 echo ""
@@ -619,6 +621,7 @@ cat > "${INSTALL_DIR}/.env" << ENVEOF
 # Server
 ORCH_HOST=0.0.0.0
 ORCH_PORT=${PORT}
+ORCH_PUBLISH_HOST=${PUBLISH_HOST}
 ORCH_LOG_LEVEL=INFO
 
 # Authentication (empty = no auth required)
@@ -795,7 +798,7 @@ services:
   orchestrator:
     image: ${REGISTRY}:${IMAGE_TAG}
     ports:
-      - "${PORT}:${PORT}"
+      - "${PUBLISH_HOST}:${PORT}:${PORT}"
     volumes:
       # Persistent data
       - ./data:/opt/aiorch/data:z
