@@ -827,7 +827,7 @@ ${PROJECT_MOUNTS}
     # Runtime security hardening
     read_only: true
     tmpfs:
-      - /tmp:size=256M
+      - /tmp:size=1G
     cap_drop:
       - ALL
     cap_add:
