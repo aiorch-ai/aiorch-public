@@ -11,6 +11,7 @@ AIORCH decomposes a single task across multiple coding agents, makes them review
 Most coding tools give you code. AIORCH gives you a _reviewed_ PR — so humans review reviewed code, not draft code.
 
 - **Cross-provider routing** — Claude Code only orchestrates Claude. Codex only OpenAI. AIORCH routes per-agent across Claude, OpenAI, Kimi, Codex, and Ollama in a single session.
+- **Plan review checkpoint** — after task decomposition, the session pauses so you can inspect, edit, add, or remove agents before a single token is spent on execution. Approve when ready, or reject with feedback to re-plan.
 - **Three review layers** — an in-loop reviewer agent, an independent external auditor, and integration verification. Three checkpoints between prompt and merge button.
 - **Pipelines, not just tasks** — multi-phase work (refactor schema → migrate callers → update tests → deprecate API). Sessions of 60+ agents across 10+ phases run unattended.
 - **BYOK, zero markup** — bring your own API keys, pay providers directly at list price.
@@ -18,13 +19,14 @@ Most coding tools give you code. AIORCH gives you a _reviewed_ PR — so humans 
 
 ## How It Works
 
-Five stages, one command, one PR.
+Six stages, one command, one PR.
 
 1. **Decompose** — Your task is parsed into isolated subtasks with explicit scope and acceptance criteria.
-2. **Fan out** — Each subtask gets its own agent, git worktree, and model. Agents run in parallel, in isolation.
-3. **Review** — A dedicated reviewer agent critiques each output and demands revisions until the work meets spec.
-4. **Merge** — Branches merge into an integration branch. Conflicts resolve programmatically or escalate.
-5. **Deliver** — A single GitHub PR lands with summary, diff stats, agent breakdown, and full event log.
+2. **Review the plan** — The session pauses and presents the agent plan for your approval. Add, remove, or edit agents, rename tasks, adjust dependencies — then approve to continue. Skip this step per-session or globally with `ORCH_AUTO_APPROVE_PLAN`. Pipeline sessions auto-approve for unattended operation.
+3. **Fan out** — Each subtask gets its own agent, git worktree, and model. Agents run in parallel, in isolation.
+4. **Review** — A dedicated reviewer agent critiques each output and demands revisions until the work meets spec.
+5. **Merge** — Branches merge into an integration branch. Conflicts resolve programmatically or escalate.
+6. **Deliver** — A single GitHub PR lands with summary, diff stats, agent breakdown, and full event log.
 
 ![Session detail — agent fleet, per-agent costs, multi-round review verdicts, external audit panel, and a full event timeline](docs/images/session.png)
 
@@ -85,6 +87,7 @@ Use it when one prompt isn't enough — schema refactors, multi-service migratio
 
 ## Features
 
+- Plan review checkpoint — approve, edit, or reject the agent plan before execution begins; reject with feedback to re-plan automatically
 - Cross-provider smart routing — difficulty-based model assignment, mix Claude/OpenAI/Kimi/Codex/Ollama in one session
 - Multi-phase pipelines with dependency-aware ordering
 - Three review layers: reviewer agent, external auditor, integration verification
