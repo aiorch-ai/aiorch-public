@@ -1832,18 +1832,18 @@
       <div class="hero-eyebrow-row">
         <span class="hero-pill">
           <span class="pill-tag">New</span>
-          v3.9 · parallel reviewer agents
+          v3.9 · autonomous engineering pipeline
         </span>
         <span class="eyebrow"><span class="dot"></span>For engineering leaders</span>
       </div>
 
       <h1 class="display">
-        Parallel AI agents<br>
-        that ship <em>reviewed</em> pull&nbsp;requests.
+        Give AiOrch a task.<br>
+        Wake up to a <em>reviewed</em> PR.
       </h1>
 
       <p class="hero-sub">
-        aiorch decomposes a single task across multiple coding agents, makes them review each other's work in rounds, resolves conflicts, and delivers a single GitHub PR ready for human review. <strong>Runs entirely on your infrastructure.</strong> Your model keys. Your code. Zero markup.
+        AiOrch turns Claude Code, Codex and other coding agents into an autonomous engineering pipeline — it plans, decomposes, implements in parallel, has the agents review each other, runs your tests and delivers one verified GitHub PR. <strong>Your engineers review the result — not babysit the agents.</strong> Self-hosted, bring your own models, and <strong>AiOrch never receives your code.</strong>
       </p>
 
       <div class="hero-actions">
@@ -1854,7 +1854,7 @@
       <div class="hero-meta">
         <span class="meta-item"><span class="check">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l3.5 3.5L13 5"/></svg>
-        </span> Self-hosted, no outbound data</span>
+        </span> Self-hosted · AiOrch never receives your code</span>
         <span class="meta-item"><span class="check">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l3.5 3.5L13 5"/></svg>
         </span> BYOK — Claude, OpenAI, Kimi, Codex, Ollama</span>
@@ -2432,7 +2432,7 @@
       <div>
         <div class="eyebrow"><span class="dot"></span>Local-first architecture</div>
         <h2 class="h-xl" style="margin-top: 20px;">
-          Your code <em>never</em> leaves your infrastructure.
+          AiOrch <em>never</em> receives your code.
         </h2>
         <p class="lead" style="margin-top: 24px;">
           aiorch is a docker image you run on your own machine, VM, or build server. The orchestrator, agents, git worktrees, and review loop all execute locally. The only traffic that ever leaves the container is the model API call — to the provider whose key you configured.
@@ -2881,75 +2881,152 @@
   </div>
 </section>
 
+<!-- ── CASE STUDIES ── -->
+<section class="cases" id="cases">
+  <div class="container">
+    <div class="section-heading with-desc">
+      <div>
+        <div class="eyebrow"><span class="dot"></span>Real runs</div>
+        <h2 class="h-xl" style="margin-top: 20px;">Real merges, not a&nbsp;demo.</h2>
+      </div>
+      <p class="kicker" style="align-self: end;">
+        Every card below is an actual aiorch session on a production Rust codebase (the TravelCalls voice-orchestration SDK). Parallel agents implemented, reviewed each other over multiple rounds, resolved conflicts, and merged — autonomously. A human approved the result.
+      </p>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; margin-top: 40px;">
+
+      <!-- Case 1 -->
+      <div style="background: var(--ink-1); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 24px; display: flex; flex-direction: column;">
+        <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--fg-4); text-transform: uppercase;">Phase 3 · legacy router removal</div>
+        <h3 style="font-size: 17px; color: var(--fg); margin: 10px 0 4px; font-weight: 550;">Delete legacy routing engine</h3>
+        <div style="font-family: var(--mono); font-size: 11.5px; color: var(--fg-3);">TravelCalls sdk-core · Rust</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; margin: 22px 0 20px;">
+          <div><div style="font-family: var(--serif); font-size: 30px; color: var(--accent); line-height: 1;">7</div><div style="font-size: 12px; color: var(--fg-3);">parallel agents</div></div>
+          <div><div style="font-family: var(--serif); font-size: 30px; color: var(--fg); line-height: 1;">~1.1<span style="font-size: 15px;">h</span></div><div style="font-size: 12px; color: var(--fg-3);">wall-clock, autonomous</div></div>
+          <div><div style="font-family: var(--serif); font-size: 30px; color: var(--ok); line-height: 1;">2,466</div><div style="font-size: 12px; color: var(--fg-3);">tests passed</div></div>
+          <div><div style="font-family: var(--serif); font-size: 30px; color: var(--fg); line-height: 1;">−3,990</div><div style="font-size: 12px; color: var(--fg-3);">net LOC removed</div></div>
+        </div>
+        <p style="font-size: 13px; color: var(--fg-3); line-height: 1.6; margin-top: auto;">All 7 agent branches approved on the first review round and merged clean (2 pre-existing, unrelated test failures documented off-scope).</p>
+      </div>
+
+      <!-- Case 2 -->
+      <div style="background: var(--ink-1); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 24px; display: flex; flex-direction: column;">
+        <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--fg-4); text-transform: uppercase;">Phase 0c · flow orchestrator</div>
+        <h3 style="font-size: 17px; color: var(--fg); margin: 10px 0 4px; font-weight: 550;">Flow orchestrator + tool executor</h3>
+        <div style="font-family: var(--mono); font-size: 11.5px; color: var(--fg-3);">TravelCalls sdk-core · Rust + Postgres</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; margin: 22px 0 20px;">
+          <div><div style="font-family: var(--serif); font-size: 30px; color: var(--accent); line-height: 1;">8</div><div style="font-size: 12px; color: var(--fg-3);">parallel agents</div></div>
+          <div><div style="font-family: var(--serif); font-size: 30px; color: var(--fg); line-height: 1;">~2.7<span style="font-size: 15px;">h</span></div><div style="font-size: 12px; color: var(--fg-3);">wall-clock, autonomous</div></div>
+          <div><div style="font-family: var(--serif); font-size: 30px; color: var(--fg); line-height: 1;">10</div><div style="font-size: 12px; color: var(--fg-3);">review rounds</div></div>
+          <div><div style="font-family: var(--serif); font-size: 30px; color: var(--ok); line-height: 1;">1</div><div style="font-size: 12px; color: var(--fg-3);">real defect caught</div></div>
+        </div>
+        <p style="font-size: 13px; color: var(--fg-3); line-height: 1.6; margin-top: auto;">Adversarial review caught a double-counted metric before merge — the exact bug a tired human reviewer skims past. Fixed, re-reviewed, then merged (7/7 branches).</p>
+      </div>
+
+      <!-- Case 3 -->
+      <div style="background: var(--ink-1); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 24px; display: flex; flex-direction: column;">
+        <div style="font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; color: var(--fg-4); text-transform: uppercase;">Phase 6.1 · speculative execution</div>
+        <h3 style="font-size: 17px; color: var(--fg); margin: 10px 0 4px; font-weight: 550;">Speculative LLM + grammar</h3>
+        <div style="font-family: var(--mono); font-size: 11.5px; color: var(--fg-3);">TravelCalls sdk-core · Rust + Postgres</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; margin: 22px 0 20px;">
+          <div><div style="font-family: var(--serif); font-size: 30px; color: var(--accent); line-height: 1;">5</div><div style="font-size: 12px; color: var(--fg-3);">parallel agents</div></div>
+          <div><div style="font-family: var(--serif); font-size: 30px; color: var(--fg); line-height: 1;">~1.5<span style="font-size: 15px;">h</span></div><div style="font-size: 12px; color: var(--fg-3);">wall-clock, autonomous</div></div>
+          <div><div style="font-family: var(--serif); font-size: 30px; color: var(--ok); line-height: 1;">70</div><div style="font-size: 12px; color: var(--fg-3);">tests passing</div></div>
+          <div><div style="font-family: var(--serif); font-size: 30px; color: var(--fg); line-height: 1;">4</div><div style="font-size: 12px; color: var(--fg-3);">file conflicts auto-resolved</div></div>
+        </div>
+        <p style="font-size: 13px; color: var(--fg-3); line-height: 1.6; margin-top: auto;">Five agents touched overlapping files; aiorch resolved all four conflicts during integration and merged (5/5 branches) after multi-round review.</p>
+      </div>
+
+    </div>
+    <p class="roi-note" style="margin-top: 24px;">Figures read directly from on-disk session state (agent counts, timings, review rounds, merge results) for three sessions in one multi-phase pipeline. Inference cost is capped per session and billed by your provider — not shown here because it isn't recorded in session state.</p>
+  </div>
+</section>
+
 <!-- ── PRICING ── -->
 <section class="pricing" id="pricing">
   <div class="container">
     <div class="section-heading with-desc">
       <div>
         <div class="eyebrow"><span class="dot"></span>Pricing</div>
-        <h2 class="h-xl" style="margin-top: 20px;">Per seat. Your tokens.</h2>
+        <h2 class="h-xl" style="margin-top: 20px;">Priced per team. Your tokens, billed by your provider.</h2>
       </div>
       <p class="kicker" style="align-self: end;">
-        aiorch is a Docker container that runs on your infrastructure. You pay per seat for the orchestrator. All inference is billed by your model provider at their list price, directly to you.
+        aiorch is a Docker container that runs on your own infrastructure. You pay per team for the orchestrator. All inference is billed by your model provider at their list price, directly to you — zero markup.
       </p>
     </div>
 
-    <div class="pricing-grid" style="max-width: 920px;">
-      <div class="price-card" style="display: flex; flex-direction: column; justify-content: center;">
-        <div class="price-name">Free trial</div>
-        <div class="price-tag">Run aiorch for 14 days with full features. No card, no commitment.</div>
-        <div class="price-amount"><span class="amt"><em>Free</em></span><span class="per">14 days</span></div>
-        <div class="price-sub">all features · no card required</div>
-        <a href="#install" class="price-cta">Install now</a>
-        <ul class="price-features">
-          <li class="price-feature">Full feature access</li>
-          <li class="price-feature">BYOK · all providers</li>
-          <li class="price-feature">Unlimited sessions &amp; agents</li>
-          <li class="price-feature">Converts to paid after 14 days</li>
-        </ul>
-      </div>
-
-      <div class="price-card featured" data-pricing-card>
-        <div class="price-badge">Business</div>
-        <div class="price-name">Team</div>
-        <div class="price-tag">Named-user licenses for your engineering team. Minimum 3 seats.</div>
-
-        <div class="billing-toggle" role="tablist" aria-label="Billing period">
-          <button type="button" class="bt-opt is-active" data-billing="monthly" role="tab" aria-selected="true">Monthly</button>
-          <button type="button" class="bt-opt" data-billing="annual" role="tab" aria-selected="false">Annual <span class="bt-save">save 2 months</span></button>
-        </div>
-
-        <div class="price-amount"><span class="amt"><em>$<span data-price-per-seat>39</span></em></span><span class="per">/ seat / <span data-price-period>month</span></span></div>
-        <div class="price-sub" data-price-note>billed monthly · minimum 3 seats</div>
-
-        <div class="qty-row">
-          <span class="qty-label">Seats</span>
-          <div class="qty-stepper">
-            <button type="button" class="qty-btn" data-qty-act="dec" aria-label="Decrease seats">−</button>
-            <input class="qty-input" data-qty-input type="number" min="3" step="1" value="3" inputmode="numeric" aria-label="Seat quantity"/>
-            <button type="button" class="qty-btn" data-qty-act="inc" aria-label="Increase seats">+</button>
-          </div>
-        </div>
-
-        <div class="price-total">
-          <span class="pt-label">Total</span>
-          <span class="pt-val"><em>$<span data-total>117</span></em><span class="pt-per">/ <span data-total-period>month</span></span></span>
-        </div>
-
-        <a class="price-cta" data-checkout href="#" target="_blank" rel="noopener">Buy seats</a>
-        <ul class="price-features">
-          <li class="price-feature">Unlimited concurrent sessions</li>
-          <li class="price-feature">Unlimited agents per task</li>
-          <li class="price-feature">BYOK · all providers · local models via Ollama</li>
-          <li class="price-feature">Cross-provider smart routing</li>
-          <li class="price-feature">Pipelines with audit phases</li>
-          <li class="price-feature">Diagnostic export &amp; structured logs</li>
-          <li class="price-feature">Email support · priority response</li>
-        </ul>
-      </div>
+    <div style="display: flex; align-items: center; gap: 10px; margin: 22px 0 30px; padding: 12px 16px; border: 1px solid var(--accent-line); background: var(--accent-soft); border-radius: var(--radius); font-family: var(--mono); font-size: 13px; color: var(--fg-2);">
+      <span style="color: var(--accent); font-weight: 600;">Free trial</span>
+      <span style="color: var(--fg-3);">14 days · full features · no card required</span>
     </div>
 
-    <p class="pricing-foot" style="max-width: 720px; margin-left: auto; margin-right: auto;">Named-user licenses. Each seat is bound to one email and can be installed on unlimited devices by that user. No device limits, no concurrent session restrictions. <a href="#audit">See what gets logged →</a></p>
+    <div class="pricing-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 18px; align-items: stretch;">
+
+      <div class="price-card">
+        <div class="price-name">Solo / Developer</div>
+        <div class="price-amount"><span class="amt"><em>$49–79</em></span><span class="per">/mo</span></div>
+        <div class="price-sub">1 operator, self-hosted.</div>
+        <ul class="price-features">
+          <li class="price-feature">Local / self-hosted</li>
+          <li class="price-feature">BYOK, all providers</li>
+          <li class="price-feature">Full orchestration</li>
+          <li class="price-feature">Unlimited agents per task</li>
+        </ul>
+        <a class="price-cta" href="#install">Start free trial</a>
+      </div>
+
+      <div class="price-card featured">
+        <div class="price-badge">Most popular</div>
+        <div class="price-name">Team</div>
+        <div class="price-amount"><span class="amt"><em>$299–499</em></span><span class="per">/mo</span></div>
+        <div class="price-sub">~10 operators.</div>
+        <ul class="price-features">
+          <li class="price-feature">Everything in Solo</li>
+          <li class="price-feature">Unlimited agents</li>
+          <li class="price-feature">Pipelines with audit phases</li>
+          <li class="price-feature">GitHub integration</li>
+          <li class="price-feature">Audit logs &amp; diagnostic export</li>
+          <li class="price-feature">Email support</li>
+        </ul>
+        <a class="price-cta" href="#install">Start free trial</a>
+      </div>
+
+      <div class="price-card">
+        <div class="price-name">Scale</div>
+        <div class="price-amount"><span class="amt"><em>$999–2,500</em></span><span class="per">/mo</span></div>
+        <div class="price-sub">~50 users / larger install.</div>
+        <ul class="price-features">
+          <li class="price-feature">Everything in Team</li>
+          <li class="price-feature">Central policy</li>
+          <li class="price-feature">Shared config</li>
+          <li class="price-feature">Cost controls</li>
+          <li class="price-feature">Priority support</li>
+        </ul>
+        <a class="price-cta" href="#install">Contact sales</a>
+      </div>
+
+      <div class="price-card">
+        <div class="price-name">Enterprise</div>
+        <div class="price-amount"><span class="amt"><em>Custom</em></span></div>
+        <div class="price-sub">Org-wide deployment.</div>
+        <ul class="price-features">
+          <li class="price-feature">SSO</li>
+          <li class="price-feature">RBAC</li>
+          <li class="price-feature">SCIM</li>
+          <li class="price-feature">Policy enforcement</li>
+          <li class="price-feature">Air-gapped / local models</li>
+          <li class="price-feature">Audit &amp; SLA</li>
+          <li class="price-feature">Deployment support</li>
+        </ul>
+        <a class="price-cta" href="#install">Contact sales</a>
+      </div>
+
+    </div>
+
+    <p class="pricing-foot" style="max-width: 720px; margin-left: auto; margin-right: auto;">
+      Pricing presents the new team/orchestrator model. Inference is billed by your model provider at list price, directly to you; the aiorch license is purchased separately. <a href="#audit">See what gets logged →</a>
+    </p>
   </div>
 </section>
 
@@ -2979,11 +3056,11 @@
         <p>Declarative YAML to constrain which models, repos, and branches a session may touch — plus per-session spend caps enforced at the orchestrator. Useful even for a solo user; not yet shipped.</p>
         <span class="road-foot">target · Q3</span>
       </div>
-      <div class="road-card">
-        <span class="road-tag">Considering</span>
-        <h4>Multi-user / shared history</h4>
-        <p>SSO, role-based access, and a shared session history would require a hosted backend. aiorch is single-user by design today; we'd only build this if there's clear demand for a team edition.</p>
-        <span class="road-foot">no commitment</span>
+      <div class="road-card q-later">
+        <span class="road-tag">Planned</span>
+        <h4>Team &amp; enterprise controls</h4>
+        <p>SSO, role-based access, SCIM, and shared session history for multi-operator installs. aiorch runs local-first per operator today; org-wide identity and policy are the next major track behind the Team, Scale, and Enterprise tiers.</p>
+        <span class="road-foot">target · Enterprise track</span>
       </div>
     </div>
   </div>
@@ -3083,77 +3160,11 @@
     setTimeout(() => { lbl.textContent = prev; lbl.style.color = ''; }, 1600);
   }
 
-  // Pricing — billing toggle + quantity selector
-  (() => {
-    const PRICING = {
-      minQty: 3,
-      monthly: {
-        url: 'https://aiorch.lemonsqueezy.com/checkout/buy/98ea7548-a1e6-4781-a550-4ae86d1a7285',
-        perSeat: 39,
-        period: 'month',
-        note: 'billed monthly · minimum 3 seats',
-      },
-      annual: {
-        url: 'https://aiorch.lemonsqueezy.com/checkout/buy/98d0ccef-8e21-4779-8e53-3581ee913023',
-        perSeat: 39 * 10, // 2 months off → 10 months at the monthly rate
-        period: 'year',
-        note: 'billed annually · 2 months free · minimum 3 seats',
-      },
-    };
-
-    const card = document.querySelector('[data-pricing-card]');
-    if (!card) return;
-    const $ = (sel) => card.querySelector(sel);
-    const fmt = (n) => n.toLocaleString('en-US');
-    const state = { billing: 'monthly', qty: PRICING.minQty };
-
-    const input = $('[data-qty-input]');
-    const decBtn = card.querySelector('[data-qty-act="dec"]');
-
-    function render({ syncInput = true } = {}) {
-      const cfg = PRICING[state.billing];
-      $('[data-price-per-seat]').textContent = cfg.perSeat;
-      $('[data-price-period]').textContent = cfg.period;
-      $('[data-price-note]').textContent = cfg.note;
-      $('[data-total]').textContent = fmt(cfg.perSeat * state.qty);
-      $('[data-total-period]').textContent = cfg.period;
-      $('[data-checkout]').href = `${cfg.url}?quantity=${state.qty}`;
-      card.querySelectorAll('.bt-opt').forEach(b => {
-        const active = b.dataset.billing === state.billing;
-        b.classList.toggle('is-active', active);
-        b.setAttribute('aria-selected', active ? 'true' : 'false');
-      });
-      decBtn.disabled = state.qty <= PRICING.minQty;
-      if (syncInput && input.value !== String(state.qty)) input.value = state.qty;
-    }
-
-    card.querySelectorAll('.bt-opt').forEach(b => {
-      b.addEventListener('click', () => { state.billing = b.dataset.billing; render(); });
-    });
-    card.querySelectorAll('[data-qty-act]').forEach(b => {
-      b.addEventListener('click', () => {
-        const delta = b.dataset.qtyAct === 'inc' ? 1 : -1;
-        state.qty = Math.max(PRICING.minQty, state.qty + delta);
-        render();
-      });
-    });
-    // While typing: only commit to state if >= minQty; don't fight the user's caret.
-    input.addEventListener('input', () => {
-      const v = parseInt(input.value, 10);
-      if (Number.isFinite(v) && v >= PRICING.minQty) {
-        state.qty = v;
-        render({ syncInput: false });
-      }
-    });
-    // On blur: clamp anything below the minimum back up to it.
-    input.addEventListener('blur', () => {
-      const v = parseInt(input.value, 10);
-      state.qty = Number.isFinite(v) && v >= PRICING.minQty ? v : PRICING.minQty;
-      render();
-    });
-
-    render();
-  })();
+  // Pricing is presented as static team/orchestrator tiers (see #pricing).
+  // The former per-seat billing toggle + quantity selector + LemonSqueezy
+  // checkout wiring was removed with that change; tier CTAs link to #install.
+  // Checkout/purchase wiring for the new tiers is tracked separately
+  // (license/pricing enforcement issue).
 </script>
 </body>
 </html>
