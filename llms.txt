@@ -1,0 +1,22 @@
+# AiOrch
+
+> AiOrch is a self-hosted autonomous engineering pipeline for coordinating coding agents, reviewing their changes and optionally delivering a GitHub pull request for human review.
+
+Orchestration and session state run on customer infrastructure. Configured inference providers receive task context; GitHub and license validation are separate connections. Audit, test configuration, model routing and PR delivery depend on session settings.
+
+## Documentation
+
+- [Documentation](https://aiorch.ai/docs/): Overview and navigation.
+- [Installation](https://aiorch.ai/docs/getting-started/): Set up the Docker distribution, connect a provider, scope a project and review your first agent plan.
+- [Providers](https://aiorch.ai/docs/providers/): Choose CLI or API providers, test connections and assign models to planning, implementation and review.
+- [Architecture](https://aiorch.ai/docs/architecture/): Understand what stays on your infrastructure, which endpoints receive traffic and where agent permissions matter.
+- [Review & validation](https://aiorch.ai/docs/review-and-validation/): Configure revision rounds, independent audit and repository checks; understand verified and unverified outcomes.
+- [Engineering guide](https://aiorch.ai/guides/parallel-coding-agents/): Scope tasks, order dependencies and review the integrated result when multiple coding agents work on one repository.
+
+## Product and policies
+
+- [Product and pricing](https://aiorch.ai/): Current product scope, published plans and roadmap.
+- [Privacy](https://aiorch.ai/privacy): Service data handling.
+- [Terms](https://aiorch.ai/terms): Software and service terms.
+
+This file is an optional navigation aid. It is not an indexing or ranking requirement. The linked HTML pages are the maintained references.
