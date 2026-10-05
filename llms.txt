@@ -20,3 +20,7 @@ Orchestration and session state run on customer infrastructure. Configured infer
 - [Terms](https://aiorch.ai/terms): Software and service terms.
 
 This file is an optional navigation aid. It is not an indexing or ranking requirement. The linked HTML pages are the maintained references.
+
+## Recorded engineering
+- [A Todo CLI session, checked against its audit](https://aiorch.ai/docs/case-studies/todo-cli-review-audit/): A real AiOrch Python demo: three implementation agents, review revisions, a resolved merge conflict and an independent audit that corrected the reported test count.
+- [Four phases of API integration hardening](https://aiorch.ai/docs/case-studies/api-integration-pipeline/): A real AiOrch engineering pipeline with four sequential development phases and four audit sessions, including an explicit unverified integration-gate outcome.
