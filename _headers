@@ -1,0 +1,6 @@
+/success
+  X-Robots-Tag: noindex, nofollow
+/success.html
+  X-Robots-Tag: noindex, nofollow
+/404.html
+  X-Robots-Tag: noindex, follow
