@@ -7,11 +7,11 @@ Orchestration and session state run on customer infrastructure. Configured infer
 ## Documentation
 
 - [Documentation](https://aiorch.ai/docs/): Overview and navigation.
-- [Installation](https://aiorch.ai/docs/getting-started/): Set up the Docker distribution, connect a provider, scope a project and review your first agent plan.
+- [Installation](https://aiorch.ai/docs/getting-started/): Set up self-hosted coding agent orchestration with Docker; understand local orchestration and cloud/local inference boundaries.
 - [Providers](https://aiorch.ai/docs/providers/): Choose CLI or API providers, test connections and assign models to planning, implementation and review.
 - [Architecture](https://aiorch.ai/docs/architecture/): Understand what stays on your infrastructure, which endpoints receive traffic and where agent permissions matter.
-- [Review & validation](https://aiorch.ai/docs/review-and-validation/): Configure revision rounds, independent audit and repository checks; understand verified and unverified outcomes.
-- [Engineering guide](https://aiorch.ai/guides/parallel-coding-agents/): Scope tasks, order dependencies and review the integrated result when multiple coding agents work on one repository.
+- [Review & validation](https://aiorch.ai/docs/review-and-validation/): Inspect AI code review findings, revisions, independent audit and integrated test evidence before PR delivery.
+- [Engineering guide](https://aiorch.ai/guides/parallel-coding-agents/): Coordinate parallel coding agents and multiple Claude Code agents with git worktrees, dependencies, review and integration evidence.
 
 ## Product and policies
 
