@@ -80,7 +80,7 @@ def resolve(path):
     return None
 
 
-files = [ROOT / name for name in ('index.html', 'privacy.html', 'terms.html', 'cookies.html', 'success.html', '404.html')]
+files = [ROOT / name for name in ('index.html', 'privacy.html', 'terms.html', 'cookies.html', 'eula.html', 'success.html', '404.html')]
 files += sorted((ROOT / 'docs').glob('**/index.html'))
 files += sorted((ROOT / 'guides').glob('**/index.html'))
 pages = {path: Page(path) for path in files}
