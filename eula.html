@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>End User License Agreement — AiOrch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#faf9f6;--surface:#eeeee5;--border:#dedfd6;--border2:#c7cbbb;--green:#9a522e;--text:#252820;--white:#252820;--muted:#687064;--muted2:#687064;color-scheme:light}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth;scroll-padding-top:100px}body{font:16px/1.7 'DM Sans',Arial,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}.grid-bg{display:none}a{color:var(--green);text-decoration:none}a:focus-visible{outline:3px solid var(--green);outline-offset:5px}
+nav{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:20px max(24px,calc((100vw - 1280px)/2));position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--border);z-index:2}.nav-logo{color:var(--text);font-size:27px;letter-spacing:-.065em;font-weight:600;display:flex;align-items:center;gap:9px}.nav-logo .dot{width:18px;height:18px;border-radius:50%;border:1px solid var(--green);box-shadow:inset 0 0 0 4px var(--bg),inset 0 0 0 5px var(--green);background:var(--green)}.nav-back{font-size:13px;color:var(--muted)}
+.legal-page{max-width:800px;margin:auto;padding:65px 24px 80px}.legal-tag{color:var(--green);font-size:11px;text-transform:uppercase;letter-spacing:.13em;font-weight:600;margin-bottom:16px}.legal-title{font-size:clamp(42px,5vw,66px);line-height:1.1;font-weight:500;letter-spacing:-.055em;margin-bottom:20px}.legal-updated{font-size:12px;color:var(--muted);margin-bottom:40px}.legal-page h2{font-size:24px;line-height:1.3;font-weight:500;letter-spacing:-.035em;margin:35px 0 14px;padding-top:20px;border-top:1px solid var(--border)}.legal-page h2:first-of-type{border:0;padding:0}.legal-page p{margin-bottom:16px}.legal-page ul{margin:0 0 20px 22px}.legal-page li{margin:8px 0}.legal-page strong{font-weight:600}.legal-company{background:var(--surface);padding:25px;border-radius:8px;margin-top:40px;font-size:14px;color:var(--muted)}.legal-company strong{color:var(--text)}
+footer{max-width:1280px;margin:auto;border-top:1px solid var(--border);padding:30px 24px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:22px}.footer-logo{font-size:20px;letter-spacing:-.055em;color:var(--text);font-weight:600}.footer-links{display:flex;gap:22px;list-style:none;font-size:12px}.footer-links a,.footer-note{color:var(--muted)}.footer-note{font-size:11px}@media(max-width:540px){nav{padding:17px 20px}.legal-page{padding:40px 20px 60px}.legal-page h2{font-size:23px}.footer-note{width:100%}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+nav .brand{display:inline-flex;align-items:center;gap:10px;font-size:27px;font-weight:600;letter-spacing:-.065em;color:var(--text)}nav .brand-mark{display:block;width:28px;height:28px;color:var(--green)}nav .brand-mark svg{display:block;width:100%;height:100%}
+</style>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23232520'/%3E%3Ccircle cx='32' cy='32' r='20' fill='none' stroke='%23d6a378' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='11' fill='none' stroke='%23d6a378' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='4' fill='%23d6a378'/%3E%3C/svg%3E">
+<meta name="description" content="The AiOrch End User License Agreement: software licence terms, restrictions, intellectual-property and trade-secret protection, watermarking, and trial terms.">
+<!-- site-metadata:start -->
+<link rel="canonical" href="https://aiorch.ai/eula">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AiOrch">
+<meta property="og:title" content="End User License Agreement — AiOrch">
+<meta property="og:description" content="The AiOrch End User License Agreement: software licence terms, restrictions, intellectual-property and trade-secret protection, watermarking, and trial terms.">
+<meta property="og:url" content="https://aiorch.ai/eula">
+<meta property="og:image" content="https://aiorch.ai/assets/aiorch-social.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="AiOrch — self-hosted coding agent orchestration, from plan to reviewed pull request">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Terms of Service — AiOrch">
+<meta name="twitter:description" content="The AiOrch End User License Agreement: software licence terms, restrictions, intellectual-property and trade-secret protection, watermarking, and trial terms.">
+<meta name="twitter:image" content="https://aiorch.ai/assets/aiorch-social.jpg">
+<meta name="twitter:image:alt" content="AiOrch — plan, implement, review, integrate and deliver">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Organization", "@id": "https://aiorch.ai/#organization", "name": "AiOrch", "legalName": "Reisnova Limited", "url": "https://aiorch.ai/", "logo": "https://aiorch.ai/assets/aiorch-mark.svg"}, {"@type": "WebSite", "@id": "https://aiorch.ai/#website", "name": "AiOrch", "url": "https://aiorch.ai/", "publisher": {"@id": "https://aiorch.ai/#organization"}}, {"@type": "WebPage", "@id": "https://aiorch.ai/eula#webpage", "url": "https://aiorch.ai/eula", "name": "End User License Agreement — AiOrch", "inLanguage": "en", "isPartOf": {"@id": "https://aiorch.ai/#website"}}]}</script>
+<!-- site-metadata:end -->
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="brand">
+    <span class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <circle cx="12" cy="12" r="2.5" fill="currentColor" stroke="none"/>
+        <circle cx="12" cy="12" r="6"/>
+        <circle cx="12" cy="12" r="10" opacity="0.4"/>
+        <line x1="12" y1="2" x2="12" y2="22" opacity="0.25"/>
+        <line x1="2" y1="12" x2="22" y2="12" opacity="0.25"/>
+      </svg>
+    </span>
+    aiorch
+  </a>
+  <a href="index.html" class="nav-back">&larr; Back</a>
+</nav>
+
+<div class="legal-page">
+
+  <div class="legal-tag">Legal</div>
+  <h1 class="legal-title">End User License Agreement</h1>
+  <div class="legal-updated">Effective date: 22 October 2026</div>
+
+  <p><strong>Effective Date:</strong> 22 October 2026</p>
+  <p><strong>Product:</strong> AIORCH (aiorch.ai) — a self-hosted, multi-agent software-engineering orchestration engine (the "<strong>Software</strong>").</p>
+  <p><strong>Licensor:</strong> Reisnova Limited, a company registered in England and Wales, trading as “aiorch”, having its principal place of business at 124 City Road, London, EC1V 2NX, England ("<strong>Licensor</strong>", "<strong>we</strong>", "<strong>us</strong>").</p>
+  <p>This End User License Agreement ("<strong>Agreement</strong>") is a binding legal agreement between Licensor and the organization or individual that downloads, installs, activates, or uses the Software ("<strong>Licensee</strong>", "<strong>you</strong>"). By downloading, installing, activating a license key for, or using the Software — including any free trial — you agree to be bound by this Agreement. If you are entering into this Agreement on behalf of a company or other legal entity, you represent that you have authority to bind that entity, and "you" refers to that entity. <strong>If you do not agree, do not download, install, activate, or use the Software.</strong></p>
+  <h2>1. Definitions</h2>
+  <p>1.1. "<strong>Software</strong>" means the AIORCH application distributed by Licensor as one or more container images (including native compiled binaries, encrypted prompt bundles, orchestration and routing logic, and associated files), together with any updates, upgrades, patches, and bug fixes Licensor makes available to you under this Agreement.</p>
+  <p>1.2. "<strong>Documentation</strong>" means the installation, configuration, and operating documentation Licensor makes generally available for the Software.</p>
+  <p>1.3. "<strong>License Key</strong>" means the per-seat credential issued by Licensor that authorizes activation and use of the Software for a defined number of Seats and a defined term.</p>
+  <p>1.4. "<strong>License Server</strong>" means the Licensor-operated service used to validate License Keys through activation and periodic heartbeat checks.</p>
+  <p>1.5. "<strong>Seat</strong>" means a single licensed unit of usage as defined on your order, invoice, or License Key (for example, one named developer or one concurrent user, as specified by Licensor).</p>
+  <p>1.6. "<strong>Trial License</strong>" means a free, time-limited, email-gated evaluation license as described in Section 9.</p>
+  <p>1.7. "<strong>Confidential Materials</strong>" means the Software's prompt templates, orchestration and routing logic, model-selection heuristics, encrypted prompt bundles, non-public Documentation, License Keys, and any other non-public information disclosed by or embodied in the Software, in each case whether or not marked "confidential." Confidential Materials are Licensor trade secrets.</p>
+  <p>1.8. "<strong>Technical Protection Measures</strong>" or "<strong>TPMs</strong>" means the license validation, activation, heartbeat, encryption, compilation, obfuscation, key-management, and watermarking mechanisms that control access to or protect the Software and Confidential Materials.</p>
+  <p>1.9. "<strong>Watermark</strong>" means a unique, per-License identifier (also referred to as a canary) embedded in the prompt bundle and related artifacts of each deployment, used by Licensor to attribute any unauthorized disclosure or leak to a specific License.</p>
+  <p>1.10. "<strong>Customer Content</strong>" means the source code, repositories, prompts, task inputs, diffs, logs, generated artifacts, and other data that you process with the Software on your own infrastructure.</p>
+  <p>1.11. "<strong>Provider</strong>" means a third-party or self-hosted large-language-model service (for example, Anthropic Claude, OpenAI, Kimi, Ollama, or any OpenAI-compatible endpoint) that you configure the Software to call using your own credentials ("<strong>BYOK</strong>" — bring your own key).</p>
+  <h2>2. License Grant</h2>
+  <p>2.1. <strong>Grant.</strong> Subject to your continuous compliance with this Agreement and payment of all applicable fees, Licensor grants you a limited, non-exclusive, non-transferable, non-sublicensable, revocable license, during the applicable license term, to:</p>
+  <ul>
+    <li>(a) install and run the Software on infrastructure that you own or control;</li>
+    <li>(b) use the Software solely for your internal business purposes, up to the number of Seats you have licensed; and</li>
+    <li>(c) make a reasonable number of copies of the Software solely for backup, archival, and disaster-recovery purposes, provided that all proprietary notices are reproduced.</li>
+  </ul>
+  <p>2.2. <strong>Self-hosted model.</strong> The Software is delivered for you to deploy and operate entirely on your own infrastructure. Licensor does not host the Software for you and, except for the License Server, does not operate it on your behalf.</p>
+  <p>2.3. <strong>Reservation of rights.</strong> The Software is <strong>licensed, not sold</strong>. Licensor and its licensors reserve all rights not expressly granted. No rights are granted by implication, estoppel, or otherwise. This Agreement does not transfer any ownership interest in the Software, the Confidential Materials, or any intellectual property.</p>
+  <h2>3. License Activation, Seats, and Heartbeat</h2>
+  <p>3.1. <strong>Activation.</strong> Use of the Software requires a valid License Key and successful activation against the License Server. You authorize the Software to communicate with the License Server for activation and for periodic heartbeat validation.</p>
+  <p>3.2. <strong>Data sent to the License Server.</strong> As described in Section 10, the License Server receives only the information necessary to validate and administer your license — your License Key, a machine or deployment identifier, the Software version, and (for Trial Licenses) the email address used to obtain the trial. It does not receive Customer Content.</p>
+  <p>3.3. <strong>Seat limits.</strong> You may not exceed the number of Seats you have licensed. You are responsible for configuring and monitoring usage so that it stays within your entitlement.</p>
+  <p>3.4. <strong>Effect of failed validation.</strong> If the License Key is invalid, expired, revoked, or cannot be validated within the periods defined by Licensor, the Software may limit, suspend, or disable functionality. You agree not to interfere with, block, spoof, or circumvent activation or heartbeat validation. Any grace-period behavior is a convenience, not a waiver of the license requirement.</p>
+  <h2>4. License Restrictions</h2>
+  <p>You will not, and will not permit or enable any third party (including your personnel, contractors, affiliates, or any automated agent you operate) to:</p>
+  <p>4.1. copy, modify, adapt, translate, or create derivative works of the Software or Documentation, except as expressly permitted in Section 2;</p>
+  <p>4.2. rent, lease, lend, sell, resell, sublicense, distribute, assign, time-share, host as a service, or otherwise make the Software available to any third party, or use the Software to operate a service bureau or offering for the benefit of third parties, except as expressly authorized in writing by Licensor;</p>
+  <p>4.3. <strong>reverse engineer, decompile, disassemble, or otherwise attempt to derive, reconstruct, or discover the source code, prompt templates, orchestration or routing logic, model-selection heuristics, algorithms, or underlying structure of the Software or Confidential Materials</strong>, or decrypt, extract, or expose any encrypted prompt bundle or compiled binary — <strong>except, and only to the extent, that this restriction is expressly prohibited from being enforced by applicable law</strong> (see Section 4.9);</p>
+  <p>4.4. circumvent, disable, bypass, defeat, tamper with, or interfere with any Technical Protection Measure, including license validation, activation, heartbeat, encryption, obfuscation, or key-management mechanisms; or build, distribute, or use any key generator, crack, patch, loader, or similar tool for that purpose;</p>
+  <p>4.5. <strong>remove, alter, obscure, suppress, extract, forge, duplicate, or tamper with any Watermark, canary, license identifier, copyright notice, or other proprietary or attribution marking</strong> embedded in or accompanying the Software or its prompt bundle;</p>
+  <p>4.6. publish, disclose, post, transmit, or otherwise make available to any third party any Confidential Materials, including by extracting prompt templates or orchestration logic from a running deployment;</p>
+  <p>4.7. use the Software in violation of any applicable law or regulation, or to develop, train, benchmark, or improve any product or service that is competitive with the Software, or to otherwise misappropriate Licensor's trade secrets;</p>
+  <p>4.8. access or use the Software in order to monitor its availability, performance, or functionality for competitive purposes, or to copy any features, functions, or graphics of the Software; and</p>
+  <p>4.9. <strong>EU/EEA/UK and similar jurisdictions.</strong> Nothing in Section 4.3 is intended to limit, and Section 4.3 does not apply to the extent it would unlawfully restrict, any rights you have that cannot be excluded or limited by contract under applicable law — including, where applicable, the right under Article 6 of Directive 2009/24/EC (and national implementations) to decompile the Software to the limited extent indispensable to achieve interoperability of an independently created program, and statutory rights of back-up, observation, study, and testing, and error correction. Before exercising any such right, you will give Licensor written notice and a reasonable opportunity to provide the necessary interoperability information on commercially reasonable terms. Any information so obtained may be used only for the permitted statutory purpose and may not be disclosed to third parties or used to create substantially similar software.</p>
+  <h2>5. Intellectual Property Ownership</h2>
+  <p>5.1. <strong>Licensor ownership.</strong> The Software, the Confidential Materials, the Documentation, the License Server, and all intellectual property rights therein (including all copyrights, patents, trade secrets, trademarks, and other proprietary rights) are and remain the sole and exclusive property of Licensor and its licensors. This Agreement grants you only the limited license expressly stated in Section 2.</p>
+  <p>5.2. <strong>Customer Content.</strong> As between the parties, you retain all right, title, and interest in and to your Customer Content. Licensor claims no ownership of Customer Content. Because the Software is self-hosted, Customer Content is not transmitted to Licensor in the ordinary course of operation (see Section 10).</p>
+  <p>5.3. <strong>Feedback.</strong> If you provide suggestions, feedback, or ideas about the Software ("<strong>Feedback</strong>"), you grant Licensor a perpetual, irrevocable, worldwide, royalty-free, sublicensable license to use and incorporate the Feedback into its products and services without restriction or obligation to you.</p>
+  <h2>6. Confidentiality and Trade Secrets</h2>
+  <p>6.1. <strong>Trade-secret status.</strong> You acknowledge that the Software's prompt templates, orchestration and routing logic, model-selection heuristics, and encrypted prompt bundles are <strong>valuable trade secrets</strong> of Licensor, derive independent economic value from not being generally known, and are subject to reasonable measures by Licensor to maintain their secrecy. Those measures include encryption, per-License encryption, native compilation and symbol stripping, access controls on the License Server, this Agreement's confidentiality and use restrictions, and per-deployment Watermarking.</p>
+  <p>6.2. <strong>Obligations.</strong> You will (a) hold the Confidential Materials in strict confidence; (b) use the Confidential Materials only as necessary to exercise your license under this Agreement; (c) protect the Confidential Materials using at least the same degree of care you use for your own most sensitive confidential information, and in no event less than a reasonable degree of care; (d) limit access to the Confidential Materials to personnel and contractors who have a need to know and who are bound by written confidentiality obligations at least as protective as this Section 6; and (e) not attempt to extract, expose, publish, or disclose any Confidential Materials.</p>
+  <p>6.3. <strong>Exclusions.</strong> Confidentiality obligations do not apply to information that you can demonstrate by written records (a) was rightfully in your possession without restriction before disclosure; (b) is or becomes publicly available through no act or omission of yours; (c) is rightfully received from a third party without a duty of confidentiality; or (d) is independently developed by you without use of or reference to the Confidential Materials. Disclosure compelled by law or court order is permitted only to the extent required, provided you give prompt notice (where lawful) and reasonable cooperation so Licensor may seek protective treatment.</p>
+  <p>6.4. <strong>Survival and remedies.</strong> The obligations in this Section 6 survive termination and continue for so long as the information remains a trade secret or otherwise confidential. You agree that any breach of this Section 6 or of Section 4 would cause irreparable harm for which monetary damages are inadequate, and that Licensor is entitled to seek injunctive and other equitable relief without the need to post a bond, in addition to any other available remedy.</p>
+  <h2>7. Per-Deployment Watermark / Leak Attribution</h2>
+  <p>7.1. <strong>Acknowledgment.</strong> You acknowledge and agree that each deployment's prompt bundle and related artifacts carry a <strong>unique, per-License Watermark (canary)</strong> that Licensor may use to identify the License associated with any copy of the Confidential Materials, and to attribute any unauthorized disclosure, extraction, publication, or leak to the responsible License.</p>
+  <p>7.2. <strong>Consent.</strong> You consent to the presence, operation, and use of the Watermark as a Technical Protection Measure and as a reasonable measure to protect Licensor's trade secrets. You will not remove, alter, obscure, forge, duplicate, or tamper with the Watermark (see Section 4.5).</p>
+  <p>7.3. <strong>Attribution.</strong> If Confidential Materials bearing your Watermark appear outside your authorized deployment, that appearance may be treated as evidence of a breach of Sections 4 and 6 attributable to your License, subject to your right to demonstrate that the disclosure did not result from your act, omission, or failure to maintain reasonable security. You will reasonably cooperate with Licensor's investigation of any suspected leak attributed to your License.</p>
+  <h2>8. Third-Party Providers, BYOK, and Open-Source Components</h2>
+  <p>8.1. <strong>BYOK / Providers.</strong> The Software calls LLM Providers using credentials you supply and configure. Your use of any Provider is governed solely by your agreement with that Provider. You are responsible for your Provider accounts, API keys, usage, costs, rate limits, and compliance with Provider terms. Licensor is not a party to, and is not responsible for, your relationship with any Provider, the availability or output of any Provider, or any charges you incur.</p>
+  <p>8.2. <strong>No markup; your costs.</strong> Provider usage costs are incurred directly between you and your Provider. Any cost figures the Software displays are estimates for your convenience and are not a bill from Licensor.</p>
+  <p>8.3. <strong>GitHub and other integrations.</strong> Where you enable integrations (for example, GitHub), your use of those services is governed by your agreement with the respective provider, and you are responsible for the credentials and permissions you grant.</p>
+  <p>8.4. <strong>Open-source components.</strong> The Software may include third-party open-source components licensed under their own terms. Those terms are provided in the Documentation or accompanying notices and govern your use of the applicable components; to the extent they conflict with this Agreement with respect to those components, the open-source terms control for those components only.</p>
+  <h2>9. Trial License</h2>
+  <p>9.1. <strong>Scope.</strong> If you obtain a Trial License, Sections 9.2–9.5 apply and control over any conflicting term for the duration of the trial.</p>
+  <p>9.2. <strong>Evaluation only; not for production.</strong> A Trial License is granted solely for your internal evaluation of the Software for a limited period specified by Licensor. <strong>You may not use the Trial License in any production, commercial, or live environment.</strong></p>
+  <p>9.3. <strong>Term and expiry.</strong> The Trial License is time-limited and will expire at the end of the trial period. The Software may automatically disable or limit functionality upon expiry. You will not circumvent or attempt to extend the trial period or its expiry mechanism.</p>
+  <p>9.4. <strong>Revocable.</strong> Licensor may suspend, revoke, modify, or discontinue the Trial License, or the trial program itself, at any time for any or no reason, without liability.</p>
+  <p>9.5. <strong>No warranty, no support, no indemnity.</strong> Notwithstanding anything else in this Agreement, the Trial License is provided <strong>"AS IS" and "AS AVAILABLE," without any warranty, support, service levels, or indemnification obligation whatsoever</strong>, and Licensor's aggregate liability arising out of or relating to the Trial License is, to the maximum extent permitted by law, limited to one hundred U.S. dollars (US$100).</p>
+  <p>9.6. <strong>Email gating.</strong> To obtain a Trial License you may be required to provide a valid email address, which Licensor processes as described in Section 10 and its Privacy Notice.</p>
+  <h2>10. Data, Privacy, and Local-First Processing</h2>
+  <p>10.1. <strong>Local-first; vendor not a processor of Customer Content.</strong> The Software is self-hosted and processes Customer Content entirely on your own infrastructure. In ordinary operation, Customer Content (including your code, prompts, diffs, logs, and generated artifacts) is <strong>not transmitted to Licensor</strong>, and Licensor does <strong>not</strong> act as a processor, service provider, or custodian of your Customer Content. The only outbound calls the Software makes are to (a) the LLM Providers you configure (BYOK), (b) third-party integrations you enable (for example, GitHub), and (c) the License Server.</p>
+  <p>10.2. <strong>Data received by the License Server.</strong> For license validation and administration only, the License Server receives: your License Key; a machine or deployment identifier; the Software version; and, for Trial Licenses, the email address used to obtain the trial. Licensor processes this limited data to validate licenses, enforce entitlements, prevent abuse, provide the trial, and maintain the service, as further described in Licensor's Privacy Notice at <a href="privacy.html">privacy.html</a>. Licensor does not require, and the License Server is not designed to receive, Customer Content.</p>
+  <p>10.3. <strong>Your responsibilities.</strong> As the party that controls the deployment, you are the controller of Customer Content and are solely responsible for its lawful collection and use, for securing your infrastructure, Provider keys, and secrets, for configuring access and network boundaries, and for complying with all laws applicable to your processing (including data-protection, confidentiality, and sectoral requirements). Any transmission of Customer Content to a Provider or integration results from your configuration and is your responsibility.</p>
+  <p>10.4. <strong>No reliance on Licensor for data security of your deployment.</strong> Because Licensor neither hosts nor accesses your deployment, Licensor is not responsible for the security, availability, backup, or integrity of Customer Content within your environment.</p>
+  <h2>11. Updates, Support, and Maintenance</h2>
+  <p>11.1. <strong>Updates.</strong> Licensor may make updates, upgrades, patches, or new versions available. Unless a separate support or subscription agreement states otherwise, Licensor is not obligated to provide any update, and updates when provided are governed by this Agreement.</p>
+  <p>11.2. <strong>Support.</strong> Any support, maintenance, or service levels are provided only if and as set out in a separate written order or support agreement. Absent such terms, the Software is provided without any support obligation.</p>
+  <p>11.3. <strong>Upgrade compatibility.</strong> Licensor will use commercially reasonable efforts to preserve existing deployment state across image upgrades, but you are responsible for maintaining backups and testing upgrades in your environment before relying on them.</p>
+  <h2>12. Fees and Taxes</h2>
+  <p>12.1. <strong>Fees.</strong> You will pay all fees for the Software as set out in the applicable order or invoice. Except as expressly stated or required by law, fees are non-refundable.</p>
+  <p>12.2. <strong>Taxes.</strong> Fees are exclusive of taxes, duties, and similar charges. You are responsible for all such amounts, excluding taxes based on Licensor's net income.</p>
+  <h2>13. Warranty Disclaimer</h2>
+  <p>13.1. <strong>"AS IS."</strong> EXCEPT FOR ANY EXPRESS LIMITED WARRANTY STATED IN A SEPARATE SIGNED AGREEMENT, THE SOFTWARE, DOCUMENTATION, LICENSE SERVER, AND ANY TRIAL ARE PROVIDED <strong>"AS IS" AND "AS AVAILABLE," WITH ALL FAULTS AND WITHOUT WARRANTY OF ANY KIND.</strong></p>
+  <p>13.2. <strong>Disclaimer.</strong> TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, LICENSOR AND ITS LICENSORS AND SUPPLIERS DISCLAIM ALL WARRANTIES, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE, INCLUDING ANY IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, QUIET ENJOYMENT, ACCURACY, AND NON-INFRINGEMENT, AND ANY WARRANTIES ARISING FROM COURSE OF DEALING, USAGE, OR TRADE PRACTICE.</p>
+  <p>13.3. <strong>No guarantee of results.</strong> LICENSOR DOES NOT WARRANT THAT THE SOFTWARE WILL BE UNINTERRUPTED, ERROR-FREE, OR SECURE; THAT DEFECTS WILL BE CORRECTED; THAT IT WILL MEET YOUR REQUIREMENTS; OR THAT ANY AGENT OUTPUT, PLAN, REVIEW, MERGE, PULL REQUEST, OR OTHER RESULT WILL BE ACCURATE, COMPLETE, SECURE, OR FIT FOR ANY PURPOSE. <strong>The Software orchestrates automated agents whose output is probabilistic; you are responsible for human review and verification of all output before relying on, merging, deploying, or shipping it.</strong> You assume all risk and responsibility for the results produced through your use of the Software and your Providers.</p>
+  <p>13.4. <strong>Jurisdictional limits.</strong> Some jurisdictions do not allow the exclusion of certain warranties, so some of the above exclusions may not apply to you; in that case such warranties are limited to the minimum period and extent permitted by law.</p>
+  <h2>14. Limitation of Liability</h2>
+  <p>14.1. <strong>Exclusion of indirect damages.</strong> TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, NEITHER PARTY (AND, FOR LICENSOR, ITS LICENSORS AND SUPPLIERS) WILL BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY, OR PUNITIVE DAMAGES, OR FOR ANY LOST PROFITS, LOST REVENUE, LOST OR CORRUPTED DATA OR CODE, BUSINESS INTERRUPTION, OR COST OF SUBSTITUTE PRODUCTS, ARISING OUT OF OR RELATING TO THIS AGREEMENT OR THE SOFTWARE, WHETHER IN CONTRACT, TORT, OR OTHERWISE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES AND EVEN IF A REMEDY FAILS OF ITS ESSENTIAL PURPOSE.</p>
+  <p>14.2. <strong>Aggregate cap.</strong> TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, LICENSOR'S TOTAL CUMULATIVE LIABILITY ARISING OUT OF OR RELATING TO THIS AGREEMENT WILL NOT EXCEED THE TOTAL FEES YOU PAID TO LICENSOR FOR THE SOFTWARE DURING THE <strong>TWELVE (12) MONTHS</strong> IMMEDIATELY PRECEDING THE EVENT GIVING RISE TO THE CLAIM (OR, FOR A TRIAL LICENSE, THE AMOUNT IN SECTION 9.5).</p>
+  <p>14.3. <strong>Exceptions.</strong> The limitations in Sections 14.1 and 14.2 do not apply to the extent prohibited by law and, to the extent a jurisdiction gives effect to such carve-outs, do not limit liability for: (a) your breach of Sections 4 (Restrictions), 6 (Confidentiality), or 7 (Watermark); (b) your infringement or misappropriation of Licensor's intellectual property; (c) your payment obligations; (d) your indemnification obligations under Section 15; or (e) a party's liability for death or personal injury caused by its negligence, fraud, or willful misconduct, or any other liability that cannot be limited or excluded by applicable law.</p>
+  <p>14.4. <strong>Basis of the bargain.</strong> The warranty disclaimer and the limitations in Sections 13 and 14 are a fundamental basis of the bargain and reflect the allocation of risk between the parties, including the price of the Software.</p>
+  <h2>15. Indemnification</h2>
+  <p>15.1. <strong>By you.</strong> You will defend, indemnify, and hold harmless Licensor and its affiliates, officers, directors, employees, and agents from and against any third-party claims, and any resulting losses, damages, liabilities, costs, and reasonable attorneys' fees, arising out of or relating to: (a) your use of the Software in breach of this Agreement; (b) your Customer Content or your configuration of Providers or integrations; (c) your violation of law or of any third party's rights; or (d) your breach of Sections 4, 6, or 7.</p>
+  <p>15.3. <strong>Procedure.</strong> The indemnified party will give prompt notice of the claim, reasonable cooperation, and sole control of the defense and settlement (provided no settlement imposes a non-indemnified obligation on the indemnified party without its consent).</p>
+  <h2>16. Term and Termination</h2>
+  <p>16.1. <strong>Term.</strong> This Agreement begins on the Effective Date (or your first download, installation, activation, or use, whichever is earlier) and continues for the term of your License, unless terminated earlier as provided here.</p>
+  <p>16.2. <strong>Termination for breach.</strong> Licensor may suspend activation and/or terminate this Agreement and your License immediately upon notice if you breach Sections 4, 6, or 7, or if you otherwise materially breach this Agreement and (for curable breaches) fail to cure within thirty (30) days of notice.</p>
+  <p>16.3. <strong>Termination of trial.</strong> A Trial License terminates as provided in Section 9.</p>
+  <p>16.4. <strong>Effect of termination.</strong> Upon termination or expiry: (a) all licenses granted to you end immediately; (b) you will cease all use of the Software and Confidential Materials; (c) you will, within thirty (30) days, uninstall, delete, and destroy all copies of the Software and Confidential Materials in your possession or control (and, on request, certify such destruction in writing); and (d) you will return or destroy License Keys. The License Server may cease validating your License.</p>
+  <p>16.5. <strong>Survival.</strong> Sections 1, 4, 5, 6, 7, 8.1, 10, 12, 13, 14, 15, 16.4, 16.5, and 17–24 survive termination or expiry.</p>
+  <h2>17. Audit and Verification</h2>
+  <p>17.1. <strong>Records.</strong> You will keep accurate records of your deployment and Seat usage during the term and for 12 months thereafter.</p>
+  <p>17.2. <strong>Verification.</strong> On reasonable prior notice and no more than once per 12-month period (absent suspected breach), Licensor may verify your compliance with Seat limits and this Agreement, through self-certification, review of License Server records, and/or an audit conducted during normal business hours in a manner that minimizes disruption and respects your confidentiality and security requirements. If verification reveals under-licensing, you will promptly acquire the necessary licenses; if it reveals usage exceeding 5% of your entitlement, you will also reimburse the reasonable cost of the audit.</p>
+  <h2>18. Export Control and Sanctions</h2>
+  <p>You will comply with all applicable export control, import, and economic sanctions laws and regulations, including those of the United States and any other applicable jurisdiction. You represent that you are not located in, organized under the laws of, or ordinarily resident in any country or region subject to comprehensive sanctions, and that you are not on any restricted-party list. You will not export, re-export, or make the Software available to any prohibited person, entity, destination, or end use (including prohibited military or weapons end uses).</p>
+  <h2>19. U.S. Government End Users</h2>
+  <p>The Software and Documentation are "commercial products" / "commercial computer software" and "commercial computer software documentation" as those terms are used in FAR 12.212 and DFARS 227.7202. Any use, duplication, or disclosure by the U.S. Government is subject to the restrictions in this Agreement and only those rights granted to the public, consistent with 48 C.F.R. 12.212 and 48 C.F.R. 227.7202-1 through 227.7202-4.</p>
+  <h2>20. Assignment</h2>
+  <p>You may not assign or transfer this Agreement or any License, by operation of law or otherwise, without Licensor's prior written consent; any attempted assignment in violation of this Section is void. You may assign this Agreement in its entirety to a successor in connection with a merger, acquisition, or sale of substantially all assets not involving a competitor of Licensor, upon prior written notice. Licensor may assign this Agreement without restriction. Subject to the foregoing, this Agreement binds and benefits the parties and their permitted successors and assigns.</p>
+  <h2>21. Governing Law and Venue</h2>
+  <p>21.1. <strong>Governing law.</strong> This Agreement is governed by the laws of England and Wales, without regard to its conflict-of-laws rules. The U.N. Convention on Contracts for the International Sale of Goods does not apply.</p>
+  <p>21.2. <strong>Venue.</strong> The parties submit to the exclusive jurisdiction and venue of the courts located in the courts of England and Wales for any dispute arising out of or relating to this Agreement, except that Licensor may seek injunctive or equitable relief (for example, to protect its intellectual property or Confidential Materials) in any court of competent jurisdiction.</p>
+  <h2>22. Changes to this Agreement</h2>
+  <p>Licensor may update this Agreement for future versions, renewals, or new Licenses by posting a revised version and/or providing notice. The version in effect when you activate or renew a License governs that License. Material changes will not apply retroactively to a paid License term already in effect without your consent, except as required by law.</p>
+  <h2>23. Notices</h2>
+  <p>Notices to Licensor must be in writing and sent to Reisnova Limited, 124 City Road, London, EC1V 2NX, England, Attn: Legal, with a copy to <a href="mailto:tech@aiorch.ai">tech@aiorch.ai</a>. Notices to you may be sent to the email or address associated with your License or account. Notices are effective on receipt (or, for email, on confirmed delivery).</p>
+  <h2>24. General</h2>
+  <p>24.1. <strong>Entire agreement.</strong> This Agreement (together with any order, invoice, and separately signed agreement that expressly references it) is the entire agreement between the parties regarding the Software and supersedes all prior or contemporaneous understandings. In case of conflict, a separately signed master agreement controls over this Agreement, which controls over an order, which controls over click-through terms, unless stated otherwise.</p>
+  <p>24.2. <strong>Order of precedence for trials.</strong> For a Trial License, Section 9 controls over any conflicting term for the trial period.</p>
+  <p>24.3. <strong>No waiver.</strong> No waiver is effective unless in writing, and no failure or delay in exercising a right waives it.</p>
+  <p>24.4. <strong>Severability.</strong> If any provision is held unenforceable, it will be modified to the minimum extent necessary to make it enforceable (or severed if it cannot be), and the remaining provisions remain in full force.</p>
+  <p>24.5. <strong>Independent contractors.</strong> The parties are independent contractors; this Agreement creates no partnership, agency, joint venture, or employment relationship.</p>
+  <p>24.6. <strong>Force majeure.</strong> Neither party is liable for delay or failure (other than payment obligations) caused by events beyond its reasonable control.</p>
+  <p>24.7. <strong>Third-party beneficiaries.</strong> Licensor's licensors and suppliers are intended third-party beneficiaries of the IP, confidentiality, disclaimer, and liability provisions. There are no other third-party beneficiaries.</p>
+  <p>24.8. <strong>Headings; interpretation.</strong> Headings are for convenience only. "Including" means "including without limitation."</p>
+  <p>24.9. <strong>Equitable relief.</strong> The parties acknowledge that breach of Sections 4, 6, or 7 may cause irreparable harm entitling Licensor to seek injunctive relief in addition to other remedies.</p>
+  <p><strong>By downloading, installing, activating, or using the Software, you acknowledge that you have read, understood, and agree to be bound by this Agreement.</strong></p>
+  <p>Reisnova Limited</p>
+  <p>124 City Road, London, EC1V 2NX, England</p>
+  <p><a href="mailto:tech@aiorch.ai">tech@aiorch.ai</a></p>
+  <p>Effective Date: 22 October 2026</p>
+
+  <div class="legal-company">
+    This End User License Agreement is separate from, and read together with, our <a href="terms.html">Terms of Service</a>, <a href="privacy.html">Privacy Policy</a> and <a href="cookies.html">Cookie Policy</a>.<br><br>
+    <strong>Reisnova Limited</strong> trading as AiOrch<br>
+    124 City Road, London, EC1V 2NX, England<br>
+    Contact: <a href="mailto:tech@aiorch.ai">tech@aiorch.ai</a>
+  </div>
+</div>
+
+<footer>
+  <a href="index.html" class="footer-brand">
+    <span class="brand-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <circle cx="12" cy="12" r="2.5" fill="currentColor" stroke="none"/>
+        <circle cx="12" cy="12" r="6"/>
+        <circle cx="12" cy="12" r="10" opacity="0.4"/>
+        <line x1="12" y1="2" x2="12" y2="22" opacity="0.25"/>
+        <line x1="2" y1="12" x2="22" y2="12" opacity="0.25"/>
+      </svg>
+    </span>
+    aiorch
+  </a>
+  <ul class="footer-links">
+    <li><a href="privacy.html">Privacy</a></li>
+    <li><a href="terms.html">Terms</a></li>
+    <li><a href="eula.html">EULA</a></li>
+    <li><a href="cookies.html">Cookies</a></li>
+  </ul>
+  <div class="footer-note">&copy; 2026 Reisnova Limited trading as AiOrch</div>
+</footer>
+
+</body>
+</html>
