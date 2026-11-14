@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# AIORCH — Interactive Docker Installer
+# AiOrch — Interactive Docker Installer
 # Usage: curl -fsSL https://aiorch.ai/install.sh | bash
 # =============================================================================
 
@@ -24,25 +24,32 @@ ORANGE='\033[38;5;208m'
 YELLOW='\033[38;5;214m'
 RED='\033[38;5;203m'
 
+# Brand accent — the aiorch. copper (~ #d7875f; reads on light and dark terminals).
+# Used sparingly: the wordmark and active prompts only.
+COPPER='\033[38;5;173m'
+COPPER_BOLD='\033[1;38;5;173m'
+
 # Utility
 CYAN='\033[38;5;87m'
 WHITE='\033[1;37m'
 MUTED='\033[38;5;242m'    # ~ #5a5a70
 MUTED2='\033[38;5;238m'   # ~ #3a3a50
 
-# NO_COLOR / non-TTY fallback — disable everything if output isn't a color terminal
+# NO_COLOR / non-TTY fallback — disable everything if output isn't a color terminal.
+# Every status word (available / Warning / Error / running / skipped) is carried
+# by the TEXT, so the output stays legible with color off.
 if [ -n "${NO_COLOR:-}" ] || [ ! -t 1 ]; then
-    RESET= BOLD= DIM= GREEN= GREEN_BOLD= ORANGE= YELLOW= RED= CYAN= WHITE= MUTED= MUTED2=
+    RESET= BOLD= DIM= GREEN= GREEN_BOLD= ORANGE= YELLOW= RED= CYAN= WHITE= MUTED= MUTED2= COPPER= COPPER_BOLD=
 fi
 
-# --- Helper functions ---
-ok()    { echo -e "  ${GREEN}✓${RESET}  $*"; }
-warn()  { echo -e "  ${YELLOW}⚡${RESET}  $*"; }
-err()   { echo -e "  ${RED}✗${RESET}  $*"; }
-info()  { echo -e "  ${CYAN}◆${RESET}  $*"; }
-skip()  { echo -e "  ${MUTED}○  $*${RESET}"; }
-next()  { echo -e "  ${GREEN}→${RESET}  $*"; }
-ask()   { echo -en "  ${WHITE}$*${RESET}"; }
+# --- Helper functions (calm tone; state is in the words, not the color) ---
+ok()    { echo -e "  $*"; }
+warn()  { echo -e "  ${YELLOW}Warning:${RESET} $*"; }
+err()   { echo -e "  ${RED}Error:${RESET} $*"; }
+info()  { echo -e "  ${MUTED}$*${RESET}"; }
+skip()  { echo -e "  ${MUTED}$*${RESET}"; }
+next()  { echo -e "  ${COPPER}→${RESET}  $*"; }
+ask()   { echo -en "  ${COPPER}$*${RESET}"; }
 
 # --- Verify /dev/tty is openable BEFORE any other check that touches it ---
 # install.sh reads from /dev/tty for prompts so it can stay interactive when
@@ -77,48 +84,29 @@ COLS=$({ stty size </dev/tty | cut -d' ' -f2; } 2>/dev/null)
 [ -z "$COLS" ] && COLS=80
 [ "$COLS" -lt 50 ] && COLS=50
 
-STEP_COUNTER=0
+# Section heading — bold, sentence case, separated by whitespace. No numbers,
+# no rules; the calm tone comes from space, not ornament.
 step() {
-    STEP_COUNTER=$((STEP_COUNTER + 1))
-    local num
-    num=$(printf "%02d" "$STEP_COUNTER")
-    local label
-    label="$(echo "$*" | tr '[:lower:]' '[:upper:]')"
-    local rule_width=$(( COLS > 100 ? 100 : COLS - 4 ))
-    [ "$rule_width" -lt 20 ] && rule_width=20
-    local rule
-    rule=$(printf '─%.0s' $(seq 1 "$rule_width"))
     echo ""
-    echo -e "${MUTED2}${rule}${RESET}"
-    echo -e "  ${GREEN}${num}${RESET}  ${BOLD}${WHITE}${label}${RESET}"
+    echo -e "  ${BOLD}${WHITE}$*${RESET}"
     echo ""
 }
 
-# --- Top marker — mirrors the nav bar on aiorch.ai ---
+# --- Wordmark — the aiorch. signature from the site, nothing louder ---
 echo ""
-echo -e "  ${GREEN}●${RESET}  ${BOLD}${WHITE}AIORCH${RESET}  ${MUTED}installer${RESET}"
+echo -e "  ${COPPER_BOLD}aiorch.${RESET}  ${MUTED}/  Install${RESET}"
 echo ""
-
-# --- ASCII wordmark, brand green, no background ---
-echo -e "${GREEN_BOLD}     █████╗ ██╗ ██████╗ ██████╗  ██████╗██╗  ██╗${RESET}"
-echo -e "${GREEN_BOLD}    ██╔══██╗██║██╔═══██╗██╔══██╗██╔════╝██║  ██║${RESET}"
-echo -e "${GREEN_BOLD}    ███████║██║██║   ██║██████╔╝██║     ███████║${RESET}"
-echo -e "${GREEN_BOLD}    ██╔══██║██║██║   ██║██╔══██╗██║     ██╔══██║${RESET}"
-echo -e "${GREEN_BOLD}    ██║  ██║██║╚██████╔╝██║  ██║╚██████╗██║  ██║${RESET}"
-echo -e "${GREEN_BOLD}    ╚═╝  ╚═╝╚═╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝${RESET}"
-echo ""
-echo -e "    ${MUTED}MULTI-AGENT CODE ORCHESTRATION · BYOK · NO TOKEN MARKUP${RESET}"
-echo -e "    ${DIM}${WHITE}Wake up to a PR you can actually merge${RESET}"
-echo -e "    ${DIM}${GREEN}https://aiorch.ai${RESET}"
+echo -e "  ${DIM}Multi-agent code orchestration · bring your own keys · no token markup${RESET}"
+echo -e "  ${DIM}https://aiorch.ai${RESET}"
 echo ""
 
 # =============================================================================
 # Section 1: Prerequisites
 # =============================================================================
-step "Prerequisites"
+step "System checks"
 
 # --- Refuse to run as root ---
-# AIORCH executes AI-generated code with the privileges of the host user.
+# AiOrch executes AI-generated code with the privileges of the host user.
 # Running as root would give those agents read access to SSH keys, the
 # package manager, /etc, every other user's home, and so on. The container
 # runtime does not protect against this — entrypoint.sh runs as the host
@@ -126,7 +114,7 @@ step "Prerequisites"
 if [ "$(id -u)" = "0" ]; then
     err "Running this installer as root is not supported."
     echo ""
-    echo -e "    ${DIM}AIORCH runs AI agents that execute arbitrary code with"
+    echo -e "    ${DIM}AiOrch runs AI agents that execute arbitrary code with"
     echo -e "    the same privileges as the host user. As root, those agents"
     echo -e "    could read SSH keys, modify system files, install packages,"
     echo -e "    and access every other user's data on this machine. The"
@@ -279,7 +267,7 @@ if ! command -v docker &>/dev/null; then
     read -p "$(echo -e "  ${MUTED}Press Enter to exit…${RESET}")" < /dev/tty
     exit 1
 fi
-ok "Docker ${DIM}$(docker --version | grep -oP '\d+\.\d+\.\d+')${RESET}"
+ok "Docker is available. ${DIM}$(docker --version | grep -oP '\d+\.\d+\.\d+')${RESET}"
 
 # --- Check Docker daemon access ---
 if ! docker info &>/dev/null 2>&1; then
@@ -301,14 +289,14 @@ if ! docker compose version &>/dev/null 2>&1; then
     read -p "$(echo -e "  ${MUTED}Press Enter to exit…${RESET}")" < /dev/tty
     exit 1
 fi
-ok "Docker Compose ${DIM}$(docker compose version --short)${RESET}"
+ok "Docker Compose is available. ${DIM}$(docker compose version --short)${RESET}"
 
 # --- Check Docker starts on boot ---
 if command -v systemctl &>/dev/null; then
     if systemctl is-enabled docker &>/dev/null; then
-        ok "Docker is enabled to start on boot"
+        ok "Docker starts on boot."
     else
-        warn "Docker is NOT enabled to start on boot."
+        warn "Docker is not enabled to start on boot."
         echo -e "      ${DIM}The orchestrator won't auto-start after a reboot.${RESET}"
         echo -e "      ${DIM}Fix: ${CYAN}sudo systemctl enable docker${RESET}"
     fi
@@ -317,10 +305,9 @@ fi
 # =============================================================================
 # Section 2: CLI Agent Setup
 # =============================================================================
-step "CLI Agent Setup"
-echo -e "  AIORCH can use CLI-based AI agents for code tasks."
-echo -e "  Select which CLI agents to configure. Each detected on"
-echo -e "  the host will be mounted into the container."
+step "Providers"
+echo -e "  ${DIM}AiOrch runs CLI-based coding agents. Codex ships in the image; any${RESET}"
+echo -e "  ${DIM}CLI detected on this host is mounted in. Others connect later in Settings.${RESET}"
 echo ""
 
 # --- Detect / select Claude CLI ---
@@ -332,12 +319,12 @@ if command -v claude &>/dev/null; then
     ok "Claude CLI found: ${CLAUDE_CLI_PATH}"
     INSTALL_CLAUDE_CHOICE="y"
 else
-    echo -e "  ${MUTED}○${RESET}  Claude CLI  ${DIM}(Anthropic — Claude Opus, Sonnet, Haiku)${RESET}"
+    echo -e "  ${MUTED}Claude CLI is not installed on this host.${RESET}  ${DIM}(Anthropic — Opus, Sonnet, Haiku)${RESET}"
     echo ""
     echo -e "      Install:       ${CYAN}curl -fsSL https://claude.ai/install.sh | bash${RESET}"
     echo -e "      Authenticate:  ${CYAN}claude${RESET}"
     echo ""
-    read -p "$(echo -e "  ${GREEN}→${RESET}  Install Claude CLI now? ${MUTED}(y/N)${RESET}: ")" INSTALL_CLAUDE_NOW < /dev/tty
+    read -p "$(echo -e "  ${COPPER}→${RESET}  Install Claude CLI now? ${MUTED}(y/N)${RESET}: ")" INSTALL_CLAUDE_NOW < /dev/tty
     if [ "${INSTALL_CLAUDE_NOW}" = "y" ] || [ "${INSTALL_CLAUDE_NOW}" = "Y" ]; then
         info "Installing Claude CLI..."
         if curl -fsSL https://claude.ai/install.sh | bash; then
@@ -351,7 +338,7 @@ else
                 info "Run ${CYAN}claude${RESET} after setup to authenticate."
             else
                 warn "Claude CLI installer ran but binary not found in PATH."
-                read -p "$(echo -e "  ${GREEN}→${RESET}  Path to claude binary ${MUTED}(or Enter to skip)${RESET}: ")" CLAUDE_CLI_PATH < /dev/tty
+                read -p "$(echo -e "  ${COPPER}→${RESET}  Path to claude binary ${MUTED}(or Enter to skip)${RESET}: ")" CLAUDE_CLI_PATH < /dev/tty
                 if [ -n "${CLAUDE_CLI_PATH}" ]; then
                     if [ ! -f "${CLAUDE_CLI_PATH}" ]; then
                         err "File not found: ${CLAUDE_CLI_PATH}"
@@ -365,7 +352,7 @@ else
             warn "Claude CLI installation failed. You can install it manually later."
         fi
     else
-        read -p "$(echo -e "  ${GREEN}→${RESET}  Path to claude binary ${MUTED}(or Enter to skip)${RESET}: ")" CLAUDE_CLI_PATH < /dev/tty
+        read -p "$(echo -e "  ${COPPER}→${RESET}  Path to claude binary ${MUTED}(or Enter to skip)${RESET}: ")" CLAUDE_CLI_PATH < /dev/tty
         if [ -n "${CLAUDE_CLI_PATH}" ]; then
             if [ ! -f "${CLAUDE_CLI_PATH}" ]; then
                 err "File not found: ${CLAUDE_CLI_PATH}"
@@ -387,12 +374,12 @@ if command -v kimi &>/dev/null; then
     ok "Kimi CLI found: ${KIMI_CLI_PATH}"
     INSTALL_KIMI_CHOICE="y"
 else
-    echo -e "  ${MUTED}○${RESET}  Kimi CLI  ${DIM}(Moonshot AI — Kimi K2)${RESET}"
+    echo -e "  ${MUTED}Kimi CLI is not installed on this host.${RESET}  ${DIM}(Moonshot AI — Kimi K2)${RESET}"
     echo ""
     echo -e "      Install:       ${CYAN}curl -LsSf https://code.kimi.com/install.sh | bash${RESET}"
     echo -e "      Verify:        ${CYAN}kimi --version${RESET}"
     echo ""
-    read -p "$(echo -e "  ${GREEN}→${RESET}  Install Kimi CLI now? ${MUTED}(y/N)${RESET}: ")" INSTALL_KIMI_NOW < /dev/tty
+    read -p "$(echo -e "  ${COPPER}→${RESET}  Install Kimi CLI now? ${MUTED}(y/N)${RESET}: ")" INSTALL_KIMI_NOW < /dev/tty
     if [ "${INSTALL_KIMI_NOW}" = "y" ] || [ "${INSTALL_KIMI_NOW}" = "Y" ]; then
         info "Installing Kimi CLI..."
         if curl -LsSf https://code.kimi.com/install.sh | bash; then
@@ -406,7 +393,7 @@ else
                 info "Run ${CYAN}kimi --version${RESET} to verify, then ${CYAN}kimi login${RESET} to authenticate."
             else
                 warn "Kimi CLI installer ran but binary not found in PATH."
-                read -p "$(echo -e "  ${GREEN}→${RESET}  Path to kimi binary ${MUTED}(or Enter to skip)${RESET}: ")" KIMI_CLI_PATH < /dev/tty
+                read -p "$(echo -e "  ${COPPER}→${RESET}  Path to kimi binary ${MUTED}(or Enter to skip)${RESET}: ")" KIMI_CLI_PATH < /dev/tty
                 if [ -n "${KIMI_CLI_PATH}" ] && [ ! -f "${KIMI_CLI_PATH}" ]; then
                     err "File not found: ${KIMI_CLI_PATH}"
                     KIMI_CLI_PATH=""
@@ -418,7 +405,7 @@ else
             warn "Kimi CLI installation failed. You can install it manually later."
         fi
     else
-        read -p "$(echo -e "  ${GREEN}→${RESET}  Path to kimi binary ${MUTED}(or Enter to skip)${RESET}: ")" KIMI_CLI_PATH < /dev/tty
+        read -p "$(echo -e "  ${COPPER}→${RESET}  Path to kimi binary ${MUTED}(or Enter to skip)${RESET}: ")" KIMI_CLI_PATH < /dev/tty
         if [ -n "${KIMI_CLI_PATH}" ]; then
             if [ ! -f "${KIMI_CLI_PATH}" ]; then
                 err "File not found: ${KIMI_CLI_PATH}"
@@ -444,15 +431,15 @@ if command -v codex &>/dev/null; then
     ok "Codex CLI found on host: ${CODEX_CLI_PATH} ${DIM}(will override bundled version)${RESET}"
     INSTALL_CODEX_CHOICE="y"
 else
-    echo -e "  ${GREEN}✓${RESET}  Codex CLI  ${DIM}(OpenAI — bundled in image, ready to use)${RESET}"
+    echo -e "  Codex is included. ${DIM}(OpenAI — bundled in the image, ready to use)${RESET}"
     echo ""
-    echo -e "      ${DIM}Codex ships with AIORCH and works out of the box once you${RESET}"
+    echo -e "      ${DIM}Codex ships with AiOrch and works out of the box once you${RESET}"
     echo -e "      ${DIM}authenticate inside the container: ${CYAN}docker exec -it aiorch-orchestrator-1 codex login${RESET}"
     echo ""
     echo -e "      ${DIM}Optional: install a host Codex CLI to override the bundled${RESET}"
     echo -e "      ${DIM}version (useful if you want a newer release than the image has).${RESET}"
     echo ""
-    read -p "$(echo -e "  ${GREEN}→${RESET}  Install host Codex CLI override? ${MUTED}(y/N)${RESET}: ")" INSTALL_CODEX_NOW < /dev/tty
+    read -p "$(echo -e "  ${COPPER}→${RESET}  Install host Codex CLI override? ${MUTED}(y/N)${RESET}: ")" INSTALL_CODEX_NOW < /dev/tty
     if [ "${INSTALL_CODEX_NOW}" = "y" ] || [ "${INSTALL_CODEX_NOW}" = "Y" ]; then
         if ! command -v npm &>/dev/null; then
             warn "npm not found on host — cannot install override here."
@@ -504,12 +491,12 @@ if [ -n "${CODEX_CLI_PATH}" ]; then
 else
     skip "Codex CLI    → skipped"
 fi
-echo -e "  ${DIM}Other providers (OpenAI, Gemini, Ollama) — configure in Settings.${RESET} ${GREEN}BYOK, zero markup.${RESET}"
+echo -e "  ${DIM}Other providers (OpenAI, Gemini, Ollama) — configure in Settings. BYOK, zero markup.${RESET}"
 
 # =============================================================================
 # Section 3: Installation Configuration
 # =============================================================================
-step "Installation Configuration"
+step "Install location"
 
 # --- Install directory ---
 # Default to a path under the user's HOME so the install is fully unprivileged
@@ -517,7 +504,7 @@ step "Installation Configuration"
 # /opt/aiorch (or any other root-owned path) explicitly — the sudo branch
 # below will handle that case.
 _default_install_dir="${HOME}/aiorch"
-read -p "$(echo -e "  ${GREEN}→${RESET}  Install directory ${MUTED}[${_default_install_dir}]${RESET}: ")" INSTALL_DIR < /dev/tty
+read -p "$(echo -e "  ${COPPER}→${RESET}  Install directory ${MUTED}[${_default_install_dir}]${RESET}: ")" INSTALL_DIR < /dev/tty
 INSTALL_DIR=${INSTALL_DIR:-${_default_install_dir}}
 # Expand a leading tilde the user may have typed literally — `read` does not
 # perform tilde expansion.
@@ -525,7 +512,7 @@ INSTALL_DIR="${INSTALL_DIR/#\~/$HOME}"
 
 if [ -d "${INSTALL_DIR}" ] && [ -f "${INSTALL_DIR}/docker-compose.yml" ]; then
     warn "Existing installation found at ${INSTALL_DIR}"
-    read -p "$(echo -e "  ${GREEN}→${RESET}  Overwrite configuration? ${MUTED}(y/N)${RESET}: ")" OVERWRITE < /dev/tty
+    read -p "$(echo -e "  ${COPPER}→${RESET}  Overwrite configuration? ${MUTED}(y/N)${RESET}: ")" OVERWRITE < /dev/tty
     if [ "${OVERWRITE}" != "y" ] && [ "${OVERWRITE}" != "Y" ]; then
         info "Aborting. Existing installation preserved."
         exit 0
@@ -563,28 +550,34 @@ fi
 ${_sudo} mkdir -p "${INSTALL_DIR}/data/sessions" "${INSTALL_DIR}/data/pipelines"
 ${_sudo} chown -R "$(id -u):$(id -g)" "${INSTALL_DIR}"
 
-# --- Port ---
-read -p "$(echo -e "  ${GREEN}→${RESET}  Port ${MUTED}[1230]${RESET}: ")" PORT < /dev/tty
+# --- Dashboard access (port + listen interface, grouped) ---
+step "Dashboard access"
+echo -e "  ${DIM}127.0.0.1 keeps the dashboard on this host — from another computer,${RESET}"
+echo -e "  ${DIM}reach it over an SSH tunnel (shown at the end). For direct access from${RESET}"
+echo -e "  ${DIM}your network, enter a VPN/private IP instead (avoid 0.0.0.0 unless a${RESET}"
+echo -e "  ${DIM}firewall or reverse proxy fronts it).${RESET}"
+echo ""
+read -p "$(echo -e "  ${COPPER}→${RESET}  Dashboard port ${MUTED}[1230]${RESET}: ")" PORT < /dev/tty
 PORT=${PORT:-1230}
-read -p "$(echo -e "  ${GREEN}→${RESET}  Host interface ${MUTED}[127.0.0.1; use VPN/private IP for remote access]${RESET}: ")" PUBLISH_HOST < /dev/tty
+read -p "$(echo -e "  ${COPPER}→${RESET}  Listen address ${MUTED}[127.0.0.1]${RESET}: ")" PUBLISH_HOST < /dev/tty
 PUBLISH_HOST=${PUBLISH_HOST:-127.0.0.1}
 
 # --- License key ---
-echo ""
-read -sp "$(echo -e "  ${GREEN}→${RESET}  License key ${MUTED}(Enter for 14-day trial)${RESET}: ")" LICENSE_KEY < /dev/tty
+step "License"
+read -sp "$(echo -e "  ${COPPER}→${RESET}  License key ${MUTED}(Enter for 14-day trial)${RESET}: ")" LICENSE_KEY < /dev/tty
 echo ""
 
 # --- License server URL ---
 LICENSE_URL="https://license.aiorch.ai"
 if [ -n "${LICENSE_KEY}" ]; then
-    read -p "$(echo -e "  ${GREEN}→${RESET}  License server URL ${MUTED}[${LICENSE_URL}]${RESET}: ")" CUSTOM_LICENSE_URL < /dev/tty
+    read -p "$(echo -e "  ${COPPER}→${RESET}  License server URL ${MUTED}[${LICENSE_URL}]${RESET}: ")" CUSTOM_LICENSE_URL < /dev/tty
     LICENSE_URL=${CUSTOM_LICENSE_URL:-${LICENSE_URL}}
 fi
 
 # --- Docker image ---
 REGISTRY="aiorch/orchestrator"
 IMAGE_TAG="latest"
-read -p "$(echo -e "  ${GREEN}→${RESET}  Docker image ${MUTED}[${REGISTRY}:${IMAGE_TAG}]${RESET}: ")" CUSTOM_IMAGE < /dev/tty
+read -p "$(echo -e "  ${COPPER}→${RESET}  Docker image ${MUTED}[${REGISTRY}:${IMAGE_TAG}]${RESET}: ")" CUSTOM_IMAGE < /dev/tty
 if [ -n "${CUSTOM_IMAGE}" ]; then
     REGISTRY="${CUSTOM_IMAGE%%:*}"
     IMAGE_TAG="${CUSTOM_IMAGE##*:}"
@@ -595,7 +588,7 @@ fi
 
 # --- Pull image ---
 echo ""
-info "Pulling image ${GREEN}→${RESET} ${CYAN}${REGISTRY}:${IMAGE_TAG}${RESET}"
+info "Pulling image ${COPPER}→${RESET} ${CYAN}${REGISTRY}:${IMAGE_TAG}${RESET}"
 docker pull "${REGISTRY}:${IMAGE_TAG}"
 
 # --- Generate session secret ---
@@ -614,7 +607,7 @@ fi
 step "Writing configuration"
 
 cat > "${INSTALL_DIR}/.env" << ENVEOF
-# AIORCH · Generated by install.sh
+# AiOrch · Generated by install.sh
 # Multi-agent code orchestration · BYOK · No token markup
 # Your keys. Your cost. Zero middleman.
 
@@ -700,41 +693,44 @@ ok "Environment config → ${INSTALL_DIR}/.env"
 # =============================================================================
 # Section 5: Project Directories
 # =============================================================================
-step "Project Directories"
+step "Project directories"
 echo -e "  Agents need access to your code repos via volume mounts."
-echo -e "  Default mounts: ${BOLD}/home${RESET}, ${BOLD}/opt${RESET}"
+echo -e "  ${DIM}For security, AiOrch mounts ONLY the specific project directories you"
+echo -e "  name here (plus the exact CLI binary dirs it needs) — never a broad parent"
+echo -e "  like /home or /opt. Agents run arbitrary code with full Shell access, so a"
+echo -e "  compromised or prompt-injected agent can read/modify anything mounted.${RESET}"
 echo -e "  ${DIM}(Container has its own /tmp via tmpfs — host /tmp not mounted.)${RESET}"
 echo ""
-read -p "$(echo -e "  ${GREEN}→${RESET}  Extra directories ${MUTED}(comma-separated, or Enter to skip)${RESET}: ")" EXTRA_DIRS < /dev/tty
+read -p "$(echo -e "  ${COPPER}→${RESET}  Project directories to mount ${MUTED}(comma-separated absolute paths, or Enter for none)${RESET}: ")" EXTRA_DIRS < /dev/tty
 
-PROJECT_MOUNTS="      - /home:/home:z
-      - /opt:/opt:z"
+# No broad default: start empty, mount only what the operator names (and, later,
+# the specific CLI binary dirs). You can add more any time via Settings → Project
+# Directories in the web UI (writes data/docker-compose.override.yml).
+PROJECT_MOUNTS=""
 
-# If the user's HOME isn't already covered by the default mounts (e.g.
-# /Users/foo on Mac, /local/home/foo with LDAP-mounted homes, /data/users/foo
-# on custom Linux setups, /root when AIORCH_ALLOW_ROOT=1), bind-mount that
-# specific user's HOME so CLI binaries and credentials under it are reachable
-# from inside the container. We mount the user's HOME only — not the parent
-# directory — to limit blast radius if the container is ever compromised.
-case "${HOME}" in
-    /home/*|/opt/*) ;;  # already covered by the default mounts
-    /|"")
-        warn "HOME is unset or '/'; CLI binary discovery may fail." ;;
-    *)
-        PROJECT_MOUNTS="${PROJECT_MOUNTS}
-      - ${HOME}:${HOME}:z"
-        ok "Mounting your HOME (${HOME}) for CLI binaries and credentials"
-        ;;
-esac
+# Append a narrow bind mount. A broad parent (/, /home, /opt, /usr, /etc, $HOME…)
+# re-opens the blast radius this default exists to close, so it requires explicit
+# confirmation and never happens silently.
+_add_project_mount() {
+    local d="$1"
+    case "${d}" in
+        /|/home|/opt|/usr|/etc|/var|/root|"${HOME}")
+            warn "Mounting ${d} exposes a broad tree to every agent (full read/write)."
+            read -p "$(echo -e "      ${BOLD}Type 'yes' to mount ${d} anyway:${RESET} ")" _broad < /dev/tty
+            if [ "${_broad}" != "yes" ]; then
+                echo -e "      ${DIM}Skipped ${d}.${RESET}"
+                return
+            fi ;;
+    esac
+    PROJECT_MOUNTS="${PROJECT_MOUNTS}
+      - ${d}:${d}:z"
+}
 
 if [ -n "${EXTRA_DIRS}" ]; then
     IFS=',' read -ra DIRS <<< "${EXTRA_DIRS}"
     for d in "${DIRS[@]}"; do
         d="$(echo "${d}" | xargs)"
-        if [ -n "${d}" ] && [ "${d}" != "/home" ] && [ "${d}" != "/opt" ]; then
-            PROJECT_MOUNTS="${PROJECT_MOUNTS}
-      - ${d}:${d}:z"
-        fi
+        [ -n "${d}" ] && _add_project_mount "${d}"
     done
 fi
 
@@ -777,17 +773,15 @@ for cli_label_path in "Claude:${CLAUDE_CLI_PATH}" "Kimi:${KIMI_CLI_PATH}" "Codex
             continue ;;
     esac
 
-    # Reject paths that fall outside any planned bind mount.
-    case "${cli_dir}" in
-        /home/*|/opt/*) ;;
-        ${HOME}/*|${HOME}) ;;
-        *)
-            # Outside default and HOME mounts. Warn and skip — the container
-            # cannot see this directory.
-            warn "${cli_label} CLI at ${cli_dir} is outside the planned mounts."
-            echo -e "      ${DIM}Either move it under \$HOME, or add ${cli_dir} to extra mounts above.${RESET}"
-            _cli_unreachable_warned=1
-            continue ;;
+    # Mount the specific CLI binary directory (narrow) so the container can reach
+    # it WITHOUT a broad /home or /opt mount. Skip if already covered by a mount
+    # the operator added above. This keeps CLI discovery working under the
+    # narrow-mount default (zero-trust mount policy — never a broad parent, never
+    # a credential dir like ~/.ssh or ~/.aws).
+    case "${PROJECT_MOUNTS}" in
+        *"- ${cli_dir}:${cli_dir}:z"*) ;;
+        *) PROJECT_MOUNTS="${PROJECT_MOUNTS}
+      - ${cli_dir}:${cli_dir}:z" ;;
     esac
 
     case ":${CLI_EXTRA_PATH}:" in
@@ -812,7 +806,8 @@ services:
       - .:/opt/aiorch/compose:z
       # Project directories — agents access your code through these mounts
 ${PROJECT_MOUNTS}
-      # CLI binaries discovered via /home:/home + PATH
+      # Project + CLI-binary dirs above are narrow bind mounts (no broad /home or
+      # /opt); host CLI dirs are also prepended to PATH below.
     env_file:
       - .env
     environment:
@@ -900,72 +895,150 @@ DEOF
 ok "Docker Compose config → ${INSTALL_DIR}/docker-compose.yml"
 
 # =============================================================================
-# Section 7: Start
+# Section 7: Start + health gate
 # =============================================================================
-step "Starting AIORCH"
+step "Starting AiOrch"
 cd "${INSTALL_DIR}"
-docker compose up -d
+
+# Bring the stack up. On success the verbose compose output is noise, so it is
+# summarized; on failure it is exactly what the operator needs, so it is shown.
+_up_log="$(mktemp 2>/dev/null || echo "/tmp/aiorch-up.$$")"
+if docker compose up -d >"${_up_log}" 2>&1; then
+    ok "Containers started."
+    rm -f "${_up_log}"
+else
+    err "The containers did not start."
+    echo ""
+    echo -e "    ${DIM}docker compose reported:${RESET}"
+    sed 's/^/      /' "${_up_log}" 2>/dev/null
+    rm -f "${_up_log}"
+    echo ""
+    echo -e "    ${DIM}Fix the problem above, then re-run:${RESET} ${CYAN}cd ${INSTALL_DIR} && docker compose up -d${RESET}"
+    exit 1
+fi
+
+# Don't call it running until the dashboard actually answers. The bind address
+# is reachable from this host at the loopback (bound to 0.0.0.0 / localhost) or
+# at the chosen private IP otherwise.
+case "${PUBLISH_HOST}" in
+    0.0.0.0|::|localhost) HEALTH_HOST=127.0.0.1 ;;
+    *)                    HEALTH_HOST="${PUBLISH_HOST}" ;;
+esac
+HEALTHY=0
+HEALTH_CHECKED=0
+if command -v curl &>/dev/null; then
+    HEALTH_CHECKED=1
+    printf '  %sWaiting for the dashboard to respond%s' "${MUTED}" "${RESET}"
+    for _i in $(seq 1 30); do
+        if curl -fsS -o /dev/null "http://${HEALTH_HOST}:${PORT}/health" 2>/dev/null; then
+            HEALTHY=1
+            break
+        fi
+        printf '%s.%s' "${MUTED}" "${RESET}"
+        sleep 1
+    done
+    printf '\n'
+fi
 
 # =============================================================================
 # Section 8: Post-install summary
 # =============================================================================
-step "Summary"
-
-_rw=$(( COLS > 100 ? 100 : COLS - 4 ))
-[ "$_rw" -lt 20 ] && _rw=20
-rule=$(printf '─%.0s' $(seq 1 "$_rw"))
-echo -e "${GREEN}${rule}${RESET}"
-echo -e "  ${GREEN}●${RESET}  ${BOLD}${WHITE}AIORCH IS RUNNING${RESET}   ${MUTED}first PR in ~15 min${RESET}"
-echo -e "${GREEN}${rule}${RESET}"
 echo ""
-echo -e "  ${BOLD}Dashboard${RESET}   ${GREEN}http://localhost:${PORT}${RESET}"
-echo -e "  ${BOLD}Data${RESET}        ${MUTED}${INSTALL_DIR}/data${RESET}"
-echo -e "  ${BOLD}Config${RESET}      ${MUTED}${INSTALL_DIR}/.env${RESET}"
-echo ""
-next "${BOLD}Next:${RESET} visit ${CYAN}/settings${RESET} — set master password and configure API keys."
-echo -e "      ${DIM}Your keys. Your cost. Zero middleman.${RESET}"
+if [ "${HEALTHY}" = "1" ]; then
+    echo -e "  ${BOLD}${WHITE}AiOrch is running.${RESET}"
+elif [ "${HEALTH_CHECKED}" = "0" ]; then
+    echo -e "  ${BOLD}${WHITE}AiOrch is starting.${RESET}"
+    echo -e "  ${MUTED}(Install curl to let the installer confirm readiness next time.)${RESET}"
+else
+    echo -e "  ${BOLD}${WHITE}AiOrch is starting${RESET} ${MUTED}— not responding yet.${RESET}"
+    echo -e "  ${MUTED}First boot can take a moment. Watch it come up:${RESET}"
+    echo -e "    ${CYAN}cd ${INSTALL_DIR} && docker compose logs -f${RESET}"
+fi
 echo ""
 
-# --- CLI status ---
+# --- Open the dashboard (the most visible thing: address + connection method) ---
+step "Open the dashboard"
+case "${PUBLISH_HOST}" in
+    127.0.0.1|localhost)
+        # Derive an SSH target: real user@host only when BOTH are known.
+        # SSH_CONNECTION is frequently absent (e.g. after `sudo -iu`), so fall
+        # back to the USER@HOST placeholder whenever either part is missing.
+        _ssh_user="$(id -un 2>/dev/null)"
+        _ssh_host=""
+        [ -n "${SSH_CONNECTION}" ] && _ssh_host="$(echo "${SSH_CONNECTION}" | awk '{print $3}')"
+        if [ -n "${_ssh_user}" ] && [ -n "${_ssh_host}" ]; then
+            _ssh_target="${_ssh_user}@${_ssh_host}"
+        else
+            _ssh_target="USER@HOST"
+        fi
+        echo -e "    ${BOLD}On this machine${RESET}     ${COPPER}http://127.0.0.1:${PORT}${RESET}"
+        echo -e "    ${BOLD}From your computer${RESET}"
+        echo -e "      ${CYAN}ssh -N -L 127.0.0.1:${PORT}:127.0.0.1:${PORT} ${_ssh_target}${RESET}"
+        echo -e "      ${DIM}Run this on your own computer, then open ${RESET}${COPPER}http://127.0.0.1:${PORT}${RESET}${DIM} while the tunnel is open.${RESET}"
+        ;;
+    0.0.0.0|::)
+        _net_host=""
+        [ -n "${SSH_CONNECTION}" ] && _net_host="$(echo "${SSH_CONNECTION}" | awk '{print $3}')"
+        echo -e "    ${BOLD}On this machine${RESET}     ${COPPER}http://127.0.0.1:${PORT}${RESET}"
+        if [ -n "${_net_host}" ]; then
+            echo -e "    ${BOLD}On your network${RESET}     ${COPPER}http://${_net_host}:${PORT}${RESET}"
+        else
+            echo -e "    ${BOLD}On your network${RESET}     ${COPPER}http://<this-host-ip>:${PORT}${RESET}"
+        fi
+        warn "Bound to all interfaces (0.0.0.0) — put a firewall or TLS reverse proxy in front."
+        ;;
+    *)
+        echo -e "    ${BOLD}On your network${RESET}     ${COPPER}http://${PUBLISH_HOST}:${PORT}${RESET}"
+        echo -e "      ${DIM}Devices that can reach ${PUBLISH_HOST} (same VPN/private network) open this address.${RESET}"
+        ;;
+esac
+echo ""
+
+# --- The real next step ---
+step "Next"
+echo -e "  Open the dashboard and set your master password."
+echo -e "  ${MUTED}Then add a provider under Settings — your keys, your cost, no markup.${RESET}"
+
+# --- Quieter details ---
+step "Details"
+echo -e "  ${MUTED}Data${RESET}      ${INSTALL_DIR}/data"
+echo -e "  ${MUTED}Config${RESET}    ${INSTALL_DIR}/.env"
+echo ""
+
 CLI_CONFIGURED=0
 if [ -n "${CLAUDE_CLI_PATH}" ]; then
-    next "Claude CLI mounted — run ${CYAN}claude${RESET} on host to authenticate"
+    next "Claude CLI mounted — run ${CYAN}claude${RESET} on the host to authenticate."
     CLI_CONFIGURED=1
 fi
 if [ -n "${KIMI_CLI_PATH}" ]; then
-    next "Kimi CLI mounted   — run ${CYAN}kimi login${RESET} on host to authenticate"
+    next "Kimi CLI mounted — run ${CYAN}kimi login${RESET} on the host to authenticate."
     CLI_CONFIGURED=1
 fi
 if [ -n "${CODEX_CLI_PATH}" ]; then
-    next "Codex CLI mounted  — run ${CYAN}codex login${RESET} on host to authenticate"
+    next "Codex CLI mounted — run ${CYAN}codex login${RESET} on the host to authenticate."
     CLI_CONFIGURED=1
 fi
 if [ ${CLI_CONFIGURED} -eq 0 ]; then
-    skip "No CLI agents configured"
-    echo -e "      ${DIM}Install any CLI on the host and re-run, or edit ${INSTALL_DIR}/docker-compose.yml${RESET}"
+    echo -e "  ${MUTED}No host CLI mounted. Codex is bundled; install others on the host and re-run.${RESET}"
 fi
-
 echo ""
 
-# --- License status ---
 if [ -n "${LICENSE_KEY}" ]; then
-    echo -e "  ${GREEN}●${RESET}  License: ${BOLD}configured${RESET}"
+    echo -e "  License   configured"
 else
-    echo -e "  ${YELLOW}●${RESET}  License: ${BOLD}14-day trial${RESET} active"
+    echo -e "  License   14-day trial active"
 fi
 
-# --- Docker autostart warning ---
 if command -v systemctl &>/dev/null && ! systemctl is-enabled docker &>/dev/null; then
     echo ""
-    warn "Docker won't start on boot."
-    echo -e "      ${DIM}Run: ${CYAN}sudo systemctl enable docker${RESET}"
+    warn "Docker is not enabled to start on boot — AiOrch won't return after a reboot."
+    echo -e "      ${DIM}Fix:${RESET} ${CYAN}sudo systemctl enable docker${RESET}"
 fi
 
-# --- Manage commands ---
 echo ""
-echo -e "  ${BOLD}MANAGE${RESET}   ${MUTED}cd ${INSTALL_DIR}${RESET}"
-echo -e "    ${DIM}docker compose logs -f${RESET}                        ${MUTED}# view logs${RESET}"
-echo -e "    ${DIM}docker compose restart${RESET}                        ${MUTED}# restart${RESET}"
-echo -e "    ${DIM}docker compose down${RESET}                           ${MUTED}# stop${RESET}"
-echo -e "    ${DIM}docker compose pull && docker compose up -d${RESET}   ${MUTED}# update${RESET}"
+echo -e "  ${BOLD}${WHITE}Manage${RESET}  ${MUTED}cd ${INSTALL_DIR}${RESET}"
+echo -e "    ${CYAN}docker compose logs -f${RESET}                        ${MUTED}# view logs${RESET}"
+echo -e "    ${CYAN}docker compose restart${RESET}                        ${MUTED}# restart${RESET}"
+echo -e "    ${CYAN}docker compose down${RESET}                           ${MUTED}# stop${RESET}"
+echo -e "    ${CYAN}docker compose pull && docker compose up -d${RESET}   ${MUTED}# update${RESET}"
 echo ""
