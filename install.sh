@@ -573,8 +573,30 @@ PUBLISH_HOST=${PUBLISH_HOST:-127.0.0.1}
 
 # --- License key ---
 step "License"
+echo -e "  ${DIM}Leave the key blank for a free 14-day trial. An email is required either${RESET}"
+echo -e "  ${DIM}way — trials are activated per email and paid seats are email-bound.${RESET}"
+echo ""
 read -sp "$(echo -e "  ${COPPER}→${RESET}  License key ${MUTED}(Enter for 14-day trial)${RESET}: ")" LICENSE_KEY < /dev/tty
 echo ""
+
+# --- License email (required for both trial and paid) ---
+# The server identity-gates trials and binds paid seats to an email, and the
+# orchestrator refuses to start a keyed license without one — so collect and
+# validate it up front rather than letting a fresh install dead-end at launch.
+_EMAIL_RE='^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'
+if [ -n "${LICENSE_KEY}" ]; then
+    _email_prompt="License email ${MUTED}(bound to your seat)${RESET}"
+else
+    _email_prompt="Email ${MUTED}(starts your 14-day trial)${RESET}"
+fi
+while true; do
+    read -p "$(echo -e "  ${COPPER}→${RESET}  ${_email_prompt}: ")" LICENSE_EMAIL < /dev/tty
+    LICENSE_EMAIL="$(printf '%s' "${LICENSE_EMAIL}" | tr -d '[:space:]')"
+    if [[ "${LICENSE_EMAIL}" =~ ${_EMAIL_RE} ]]; then
+        break
+    fi
+    warn "Enter a valid email address (e.g. you@example.com) — it is required to continue."
+done
 
 # --- License server URL ---
 LICENSE_URL="https://license.aiorch.ai"
@@ -651,6 +673,7 @@ ORCH_GITHUB_TOKEN=
 
 # License
 ORCH_LICENSE_KEY=${LICENSE_KEY}
+ORCH_LICENSE_EMAIL=${LICENSE_EMAIL}
 ORCH_LICENSE_URL=${LICENSE_URL}
 ORCH_LICENSE_HEARTBEAT_INTERVAL=300
 ORCH_LICENSE_GRACE_HOURS=24
@@ -1033,9 +1056,9 @@ fi
 echo ""
 
 if [ -n "${LICENSE_KEY}" ]; then
-    echo -e "  License   configured"
+    echo -e "  License   configured ${MUTED}(${LICENSE_EMAIL})${RESET}"
 else
-    echo -e "  License   14-day trial active"
+    echo -e "  License   14-day trial ${MUTED}(activates on first launch for ${LICENSE_EMAIL})${RESET}"
 fi
 
 if command -v systemctl &>/dev/null && ! systemctl is-enabled docker &>/dev/null; then
