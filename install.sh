@@ -52,23 +52,26 @@ next()  { echo -e "  ${COPPER}→${RESET}  $*"; }
 ask()   { echo -en "  ${COPPER}$*${RESET}"; }
 
 # --- Brand logo (the aiorch.ai top-left mark: ring-with-dot + wordmark) ---
-# Copper block-art logo on any color terminal; a compact one-line mark on very
-# narrow terminals; plain text when color is off. No images, no external tools —
-# renders the same on a plain SSH session.
-_LOGO_ART='     ▄█████▄                ▄▄▄                           ▄▄▄
-   ▄█▀ ▄▄▄ ▀█▄              ▀▀▀                           ███
-  ██ ▄█████▄ ██    ▀▀▀▀██▄  ███  ▄██▀▀█▄   ███▀▀▀ ▄▄█▀▀▀  ███▀▀██▄
-  ██ ███████ ██     ▄▄▄▄██  ███  ██   ███  ███    ██      ███  ███
-  ▀█▄ ▀███▀ ▄█▀    ██▀  ██  ███  ██   ███  ███    ██      ███  ███  ▄▄▄
-    ▀█▄▄▄▄▄█▀      ▀█▄▄███  ███  ▀██▄▄█▀   ███    ▀▀█▄▄▄  ███  ███  ███
-      ▀▀▀▀▀'
+# A clean copper figlet wordmark + ring-dot icon on any color terminal; a
+# compact one-line mark on very narrow terminals; plain text when color is off.
+# No images, no external tools — identical over a plain SSH session. The art is
+# printed with printf (not echo -e) so its backslashes/quotes are never mangled.
+_LOGO_ART=$(cat <<'LOGOEOF'
+   ╭─╮          _                _
+  ╭╯ ╰╮        (_)              | |
+  │ ● │    __ _ _  ___  _ __ ___| |__
+  ╰╮ ╭╯   / _` | |/ _ \| '__/ __| '_ \
+   ╰─╯   | (_| | | (_) | | | (__| | | |_
+          \__,_|_|\___/|_|  \___|_| |_(_)
+LOGOEOF
+)
 print_logo() {
     if [ -z "${RESET}" ]; then
         echo "  AiOrch installer"
         return
     fi
-    if [ "${COLS:-80}" -ge 74 ]; then
-        echo -e "${COPPER_BOLD}${_LOGO_ART}${RESET}"
+    if [ "${COLS:-80}" -ge 43 ]; then
+        printf '%b%s%b\n' "${COPPER_BOLD}" "${_LOGO_ART}" "${RESET}"
     else
         echo -e "  ${COPPER_BOLD}◉ aiorch.${RESET}"
     fi
